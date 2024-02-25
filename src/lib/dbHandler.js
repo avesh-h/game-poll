@@ -12,7 +12,7 @@ export const connectToDB = async () => {
     db.on("open", () => {
       console.log("Connected to DB!");
     });
-    await mongoose.connect(process.env.DB_URI);
+    mongoose.connect(process.env.DB_URI);
     isConnected = true;
   } catch (error) {
     console.log("------------------------>", error);

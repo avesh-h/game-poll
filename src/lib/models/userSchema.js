@@ -15,9 +15,11 @@ const userSchema = new mongoose.Schema({
       },
       message: (prop) => `${prop.value} is not a valid email.`,
     },
+    unique: true,
   },
   firstName: { type: String, required: [true, "First Name is required!"] },
   lastName: { type: String, required: [true, "Last Name is required!"] },
+  password: { type: String, required: [true, "Password is required!"] },
   phone: { type: String }, //Optional
   photo: { type: String }, //Optional
 });
@@ -25,4 +27,5 @@ const userSchema = new mongoose.Schema({
 //Also can check validate like this
 // userSchema.path("email").validate();
 
-export const User = mongoose.models.User || mongoose.model("Users", userSchema);
+export const User =
+  mongoose.models.Users || mongoose.model("Users", userSchema);
