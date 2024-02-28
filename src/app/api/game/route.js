@@ -8,8 +8,8 @@ export const POST = async (req) => {
     await connectToDB();
     const createdGame = new Game(requestBody);
     const game = await createdGame.save();
-    return new NextResponse(game);
+    return NextResponse.json({ game });
   } catch (error) {
-    return new NextResponse(error);
+    return NextResponse.json({ error });
   }
 };

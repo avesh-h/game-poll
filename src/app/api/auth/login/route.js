@@ -30,13 +30,13 @@ export const POST = async (req) => {
           userData,
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: "30s",
+            expiresIn: "1h",
           }
         );
         const refreshToken = jwt.sign(
           userData,
           process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: "60s" }
+          { expiresIn: "24h" }
         );
         const response = NextResponse.json(
           { accessToken, refreshToken },

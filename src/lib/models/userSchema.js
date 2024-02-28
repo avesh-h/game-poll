@@ -28,4 +28,4 @@ const userSchema = new mongoose.Schema({
 // userSchema.path("email").validate();
 
 export const User =
-  mongoose.models.Users || mongoose.model("Users", userSchema);
+  mongoose.models?.Users || mongoose.model("Users", userSchema);
