@@ -1,6 +1,4 @@
 import { jwtVerify } from "jose";
-import { NextResponse } from "next/server";
-import { User } from "./models/userSchema";
 
 const getSecretKey = () => {
   const secret = process.env.ACCESS_TOKEN_SECRET;

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
 export const POST = async (req) => {
+  console.log("body", await req.json());
   const { email, firstName, lastName, password, phone, photo } =
     await req.json();
   try {
