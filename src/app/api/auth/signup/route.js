@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
 export const POST = async (req) => {
-  console.log("body", await req.json());
   const { email, firstName, lastName, password, phone, photo } =
     await req.json();
   try {
@@ -30,7 +29,7 @@ export const POST = async (req) => {
       });
       await createUser.save();
       return NextResponse.json(
-        { message: "Successfully created!" },
+        { message: "Successfully created!", status: "success" },
         { status: 201 }
       );
     }

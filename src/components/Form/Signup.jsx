@@ -21,7 +21,7 @@ const muiTextProps = {
 
 //Add validation zod
 
-const Signup = () => {
+const Signup = ({ content, login, onSubmit, ...props }) => {
   const methods = useForm({
     defaultValues: {
       firstName: "",
@@ -41,11 +41,11 @@ const Signup = () => {
 
   const [signup, { isLoading }] = useSignupMutation();
 
-  const onSubmit = async (data, e) => {
-    console.log("Ddd", data);
-    const res = await signup(data);
-    reset();
-  };
+  // const onSubmit = async (data, e) => {
+  //   console.log("Ddd", data);
+  //   const res = await signup(data);
+  //   reset();
+  // };
 
   return (
     <Stack direction={"row"} justifyContent={"center"} marginTop={5}>
@@ -57,27 +57,39 @@ const Signup = () => {
         }}
       >
         <Typography variant="h5" textAlign={"center"} paddingBottom={3}>
-          Sign up
+          {content.title}
         </Typography>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth sx={{ gap: 3 }}>
-              <Box>
-                <MuiTextField
-                  {...muiTextProps}
-                  label="First name"
-                  name="firstName"
-                  register={register}
-                />
-              </Box>
-              <Box>
-                <MuiTextField
-                  {...muiTextProps}
-                  label="Last name"
-                  name="lastName"
-                  register={register}
-                />
-              </Box>
+              {!login && (
+                <Stack gap={3}>
+                  <Box>
+                    <MuiTextField
+                      {...muiTextProps}
+                      label="First name"
+                      name="firstName"
+                      register={register}
+                    />
+                  </Box>
+                  <Box>
+                    <MuiTextField
+                      {...muiTextProps}
+                      label="Last name"
+                      name="lastName"
+                      register={register}
+                    />
+                  </Box>
+                  <Box>
+                    <MuiTextField
+                      {...muiTextProps}
+                      label="Phone"
+                      name="phone"
+                      register={register}
+                    />
+                  </Box>
+                </Stack>
+              )}
               <Box>
                 <MuiTextField
                   {...muiTextProps}
@@ -89,21 +101,13 @@ const Signup = () => {
               <Box>
                 <MuiTextField
                   {...muiTextProps}
-                  label="Phone"
-                  name="phone"
-                  register={register}
-                />
-              </Box>
-              <Box>
-                <MuiTextField
-                  {...muiTextProps}
-                  label="Set Password"
+                  label={login ? "Password" : "Set Password"}
                   name="password"
                   register={register}
                 />
               </Box>
               <Box>
-                <Button type="submit">Submit</Button>
+                <Button type="submit">{content.buttonText}</Button>
               </Box>
             </FormControl>
           </form>
