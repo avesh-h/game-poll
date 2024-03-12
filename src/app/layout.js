@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import StoreProvider from "./StoreProvider";
+import MuiLocalizationProvider from "@/components/mui/MuiLocalizationProvider";
+
 // import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -13,7 +15,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <StoreProvider>
-        <body className={inter.className}>{children}</body>
+        <MuiLocalizationProvider>
+          <body className={inter.className}>{children}</body>
+        </MuiLocalizationProvider>
       </StoreProvider>
     </html>
   );

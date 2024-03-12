@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import MuiTextField from "../mui/MuiTextField";
-import { useSignupMutation } from "@/lib/actions/authActions";
 
 const muiTextProps = {
   id: "outlined-basic",
@@ -34,18 +33,9 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
 
   const {
     handleSubmit,
-    reset,
     register,
     formState: { errors },
   } = methods;
-
-  const [signup, { isLoading }] = useSignupMutation();
-
-  // const onSubmit = async (data, e) => {
-  //   console.log("Ddd", data);
-  //   const res = await signup(data);
-  //   reset();
-  // };
 
   return (
     <Stack direction={"row"} justifyContent={"center"} marginTop={5}>

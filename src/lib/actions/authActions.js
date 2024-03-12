@@ -9,7 +9,14 @@ export const authApi = apiInterceptor.injectEndpoints({
         body,
       }),
     }),
+    login: builder.mutation({
+      query: (body) => ({
+        url: "auth/login",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useSignupMutation } = authApi;
+export const { useSignupMutation, useLoginMutation } = authApi;

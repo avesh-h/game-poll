@@ -30,7 +30,7 @@ export const POST = async (req) => {
           userData,
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: "1h",
+            expiresIn: "1",
           }
         );
         const refreshToken = jwt.sign(
@@ -39,7 +39,7 @@ export const POST = async (req) => {
           { expiresIn: "24h" }
         );
         const response = NextResponse.json(
-          { accessToken, refreshToken },
+          { accessToken, status: "success" },
           { status: 200 }
         );
         response.cookies.set("refresh_token", refreshToken);

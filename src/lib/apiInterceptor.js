@@ -17,7 +17,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
   console.log("interceptor", { args, api, extraOptions });
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
-    const refreshResult = baseQuery("token/refresh/", api, extraOptions);
+    const refreshResult = baseQuery("/token", api, extraOptions);
     if (refreshResult.data) {
       //set refresh token in the cookie from the backend
       result = await baseQuery(args, api, extraOptions);

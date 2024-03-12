@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema(
   {
@@ -7,7 +7,10 @@ const gameSchema = new mongoose.Schema(
       enum: ["all", "team"],
       default: "all",
     },
-    availableSeats: {
+    gameName: {
+      type: String,
+    },
+    noOfPlayers: {
       type: Number,
       required: [true, "Number of seats are require."],
       min: [4, "Must be at least 4, got {VALUE}"],
@@ -31,9 +34,15 @@ const gameSchema = new mongoose.Schema(
       type: String,
       required: [true, "Need password for set the game."],
     },
+    totalAmount: {
+      type: Number,
+    },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );
+
+//Set default property
+gameSchema.path("members").default([]);
 
 export const Game = mongoose.models.Game || mongoose.model("Game", gameSchema);

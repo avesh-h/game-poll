@@ -1,3 +1,5 @@
+"use client";
+
 import Signup from "@/components/Form/Signup";
 import { useSignupMutation } from "@/lib/actions/authActions";
 import React from "react";
@@ -13,7 +15,9 @@ const page = () => {
 
   const onSubmit = async (data, e) => {
     const res = await signup(data);
-    console.log("res", res);
+    if (res.status === "success") {
+      router.push("/login");
+    }
   };
   return (
     <div>
