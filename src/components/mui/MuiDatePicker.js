@@ -18,9 +18,9 @@ const MuiDatePicker = ({ label, name, ...props }) => {
             value={dayjs(field?.value)}
             onChange={(newValue) => {
               if (onChange) {
-                onChange(newValue?.format("YYYY-MM-DD"));
+                onChange(newValue?.format("DD-MM-YYYY"));
               }
-              field.onChange(newValue?.format("YYYY-MM-DD"));
+              field.onChange(newValue?.format("DD-MM-YYYY"));
             }}
             slotProps={{
               textField: {

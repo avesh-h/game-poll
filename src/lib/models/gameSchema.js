@@ -21,10 +21,10 @@ const gameSchema = new mongoose.Schema(
       required: [true, "Name of venue is require."],
     },
     startTime: {
-      type: String,
+      type: Date,
       required: [true, "Start time of game is require."],
     },
-    endTime: { type: String, required: [true, "End time of game is require."] },
+    endTime: { type: Date, required: [true, "End time of game is require."] },
     gameDate: {
       type: Date,
       default: Date.now,
@@ -35,6 +35,9 @@ const gameSchema = new mongoose.Schema(
       required: [true, "Need password for set the game."],
     },
     totalAmount: {
+      type: Number,
+    },
+    totalHours: {
       type: Number,
     },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

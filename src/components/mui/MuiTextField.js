@@ -11,6 +11,12 @@ const InputField = styled(TextField)({
   },
 });
 
+const muiTextProps = {
+  id: "outlined-basic",
+  variant: "outlined",
+  size: "small",
+};
+
 const MuiTextField = ({
   sx,
   value,
@@ -27,6 +33,7 @@ const MuiTextField = ({
         value={value}
         type={type}
         inputProps={{ ...register(name), ...inputProps }}
+        {...muiTextProps}
         {...props}
       />
     </>

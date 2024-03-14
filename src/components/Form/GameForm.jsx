@@ -5,24 +5,25 @@ import {
   Button,
   Card,
   FormControl,
-  FormControlLabel,
   FormLabel,
-  Radio,
-  RadioGroup,
   Stack,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
+import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import MuiTextField from "../mui/MuiTextField";
 import MuiDatePicker from "../mui/MuiDatePicker";
+import MuiRadioGroup from "../mui/MuiRadioGroup";
+import MuiTextField from "../mui/MuiTextField";
 import MuiTimePicker from "../mui/MuiTimePicker";
-import { useState } from "react";
+import { useCreateGameMutation } from "@/lib/actions/gameActions";
+import { timeFormat } from "@/lib/utils/timeFormat";
+import { fnPressNumberKey } from "@/lib/utils/inputFunctions";
 
-const muiTextProps = {
-  id: "outlined-basic",
-  variant: "outlined",
-  size: "small",
-};
+const gameTypeValues = [
+  { label: "All", value: "all" },
+  { label: "Team", value: "team" },
+];
 
 //Add validation zod
 
@@ -30,6 +31,9 @@ const GameForm = ({ content, ...props }) => {
   const [selectedDate, setSelectedDate] = useState();
   const [startTime, setStartTime] = useState();
   const [endTime, setEndTime] = useState();
+
+  //Create game api
+  const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
   const methods = useForm({
     defaultValues: {
@@ -41,7 +45,8 @@ const GameForm = ({ content, ...props }) => {
       startTime: "",
       endTime: "",
       gamePassword: "",
-      totalCost: "",
+      totalAmount: "",
+      totalHours: "",
     },
   });
 
@@ -49,11 +54,26 @@ const GameForm = ({ content, ...props }) => {
     handleSubmit,
     register,
     formState: { errors },
+    reset,
   } = methods;
 
-  const onSubmit = (data) => {
-    console.log("ddd", { selectedDate, startTime, endTime });
-    // console.log("Ddd", data);
+  const onSubmit = async (data) => {
+    if (startTime && endTime) {
+      const dayJsStartTime = dayjs(startTime);
+      const dayJsEndTime = dayjs(endTime);
+      //Format for time
+      data.startTime = startTime;
+      data.endTime = endTime;
+      data.totalHours = dayJsEndTime.diff(dayJsStartTime, "h", true);
+    }
+    if (selectedDate) {
+      //Format for date
+      data.gameDate = selectedDate;
+    }
+    //API
+    const res = await createGame(data);
+    console.log("ress", res);
+    reset();
   };
 
   return (
@@ -75,27 +95,13 @@ const GameForm = ({ content, ...props }) => {
                 <FormLabel id="demo-radio-buttons-group-label">
                   Game Type:
                 </FormLabel>
-                <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="all"
-                  name="gameType"
-                >
-                  <Stack direction={"row"}>
-                    <FormControlLabel
-                      value="all"
-                      control={<Radio />}
-                      label="All"
-                    />
-                    <FormControlLabel
-                      value="team"
-                      control={<Radio />}
-                      label="Team"
-                    />
-                  </Stack>
-                </RadioGroup>
+                <MuiRadioGroup
+                  defaultValue={"all"}
+                  name={"gameType"}
+                  values={gameTypeValues}
+                />
                 <Box>
                   <MuiTextField
-                    {...muiTextProps}
                     label="Name of game"
                     name="gameName"
                     register={register}
@@ -103,18 +109,18 @@ const GameForm = ({ content, ...props }) => {
                 </Box>
                 <Box>
                   <MuiTextField
-                    {...muiTextProps}
                     label="No. of players"
                     name="noOfPlayers"
                     register={register}
+                    onKeyPress={fnPressNumberKey}
                   />
                 </Box>
                 <Box>
                   <MuiTextField
-                    {...muiTextProps}
                     label="Total cost"
-                    name="totalCost"
+                    name="totalAmount"
                     register={register}
+                    onKeyPress={fnPressNumberKey}
                   />
                 </Box>
               </Stack>
@@ -124,7 +130,6 @@ const GameForm = ({ content, ...props }) => {
                   Game Timing:
                 </FormLabel>
                 <MuiTextField
-                  {...muiTextProps}
                   label="Game Venue"
                   name="nameOfVenue"
                   register={register}
@@ -157,7 +162,6 @@ const GameForm = ({ content, ...props }) => {
               </Box>
               <Box>
                 <MuiTextField
-                  {...muiTextProps}
                   label={"Set Password"}
                   name="gamePassword"
                   register={register}

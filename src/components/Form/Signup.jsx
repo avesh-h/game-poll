@@ -11,13 +11,6 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import MuiTextField from "../mui/MuiTextField";
 
-const muiTextProps = {
-  id: "outlined-basic",
-  variant: "outlined",
-  size: "small",
-  type: "input",
-};
-
 //Add validation zod
 
 const Signup = ({ content, login, onSubmit, ...props }) => {
@@ -56,7 +49,6 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
                 <Stack gap={3}>
                   <Box>
                     <MuiTextField
-                      {...muiTextProps}
                       label="First name"
                       name="firstName"
                       register={register}
@@ -64,7 +56,6 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
                   </Box>
                   <Box>
                     <MuiTextField
-                      {...muiTextProps}
                       label="Last name"
                       name="lastName"
                       register={register}
@@ -72,7 +63,6 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
                   </Box>
                   <Box>
                     <MuiTextField
-                      {...muiTextProps}
                       label="Phone"
                       name="phone"
                       register={register}
@@ -81,16 +71,10 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
                 </Stack>
               )}
               <Box>
-                <MuiTextField
-                  {...muiTextProps}
-                  label="Email"
-                  name="email"
-                  register={register}
-                />
+                <MuiTextField label="Email" name="email" register={register} />
               </Box>
               <Box>
                 <MuiTextField
-                  {...muiTextProps}
                   label={login ? "Password" : "Set Password"}
                   name="password"
                   register={register}
