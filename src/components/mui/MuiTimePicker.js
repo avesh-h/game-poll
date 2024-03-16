@@ -23,7 +23,7 @@ const MuiTimePicker = ({ label, name, ...props }) => {
             }}
             slotProps={{
               textField: {
-                helperText: error?.type || error?.message,
+                helperText: error?.message || error?.type,
                 error: Boolean(error),
               },
             }}

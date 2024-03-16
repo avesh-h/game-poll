@@ -1,5 +1,7 @@
 "use client";
 
+import { useCreateGameMutation } from "@/lib/actions/gameActions";
+import { fnPressNumberKey } from "@/lib/utils/inputFunctions";
 import {
   Box,
   Button,
@@ -10,15 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import MuiDatePicker from "../mui/MuiDatePicker";
 import MuiRadioGroup from "../mui/MuiRadioGroup";
 import MuiTextField from "../mui/MuiTextField";
 import MuiTimePicker from "../mui/MuiTimePicker";
-import { useCreateGameMutation } from "@/lib/actions/gameActions";
-import { timeFormat } from "@/lib/utils/timeFormat";
-import { fnPressNumberKey } from "@/lib/utils/inputFunctions";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const gameTypeValues = [
   { label: "All", value: "all" },
@@ -35,6 +36,25 @@ const GameForm = ({ content, ...props }) => {
   //Create game api
   const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
+  //Validation
+  const gameSchema = Yup.object().shape({
+    gameName: Yup.string()
+      .required("Required Field!")
+      .min(3, "Too short!")
+      .max(12, "Too long!"),
+    noOfPlayers: Yup.string().required("Required Field!"),
+    gameType: Yup.string().required("Required Field!"),
+    nameOfVenue: Yup.string().required("Required Field!"),
+    gameDate: Yup.string().required("Required Field!"),
+    startTime: Yup.string().required("Required Field!"),
+    endTime: Yup.string().required("Required Field!"),
+    gamePassword: Yup.string()
+      .required("Required Field!")
+      .min(4, "Too short!")
+      .max(15, "Too long!"),
+    totalAmount: Yup.string().required("Required Field!"),
+  });
+
   const methods = useForm({
     defaultValues: {
       gameName: "",
@@ -46,8 +66,8 @@ const GameForm = ({ content, ...props }) => {
       endTime: "",
       gamePassword: "",
       totalAmount: "",
-      totalHours: "",
     },
+    resolver: yupResolver(gameSchema),
   });
 
   const {
@@ -72,7 +92,6 @@ const GameForm = ({ content, ...props }) => {
     }
     //API
     const res = await createGame(data);
-    console.log("ress", res);
     reset();
   };
 

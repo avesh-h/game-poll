@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import { useFormContext } from "react-hook-form";
 
 const InputField = styled(TextField)({
   width: "100%",
@@ -26,17 +26,21 @@ const MuiTextField = ({
   name,
   ...props
 }) => {
+  const {
+    formState: { errors },
+  } = useFormContext();
+
   return (
-    <>
-      <InputField
-        sx={{ ...sx }}
-        value={value}
-        type={type}
-        inputProps={{ ...register(name), ...inputProps }}
-        {...muiTextProps}
-        {...props}
-      />
-    </>
+    <InputField
+      sx={{ ...sx }}
+      value={value}
+      type={type}
+      inputProps={{ ...register(name), ...inputProps }}
+      error={errors[name] && errors[name]}
+      helperText={errors[name] && errors[name]?.message}
+      {...muiTextProps}
+      {...props}
+    />
   );
 };
 
