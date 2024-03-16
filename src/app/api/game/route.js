@@ -2,6 +2,7 @@ import { connectToDB } from "@/lib/dbHandler";
 import { Game } from "@/lib/models/gameSchema";
 import { NextResponse } from "next/server";
 import gameDao from "@/lib/daos/gameDao";
+import { httpStatusCode } from "@/lib/httpStatusCode";
 
 export const POST = async (req) => {
   const requestBody = await req.json();
@@ -14,6 +15,6 @@ export const POST = async (req) => {
       { status: 201 }
     );
   } catch (error) {
-    return NextResponse.json({ error });
+    return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
   }
 };
