@@ -20,6 +20,8 @@ import MuiTextField from "../mui/MuiTextField";
 import MuiTimePicker from "../mui/MuiTimePicker";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { errorMessages } from "@/lib/utils/validationMessage";
+import { enqueueSnackbar } from "notistack";
 
 const gameTypeValues = [
   { label: "All", value: "all" },
@@ -39,20 +41,20 @@ const GameForm = ({ content, ...props }) => {
   //Validation
   const gameSchema = Yup.object().shape({
     gameName: Yup.string()
-      .required("Required Field!")
-      .min(3, "Too short!")
-      .max(12, "Too long!"),
-    noOfPlayers: Yup.string().required("Required Field!"),
-    gameType: Yup.string().required("Required Field!"),
-    nameOfVenue: Yup.string().required("Required Field!"),
-    gameDate: Yup.string().required("Required Field!"),
-    startTime: Yup.string().required("Required Field!"),
-    endTime: Yup.string().required("Required Field!"),
+      .required(errorMessages.REQUIRED)
+      .min(3, errorMessages.TOO_SHORT)
+      .max(12, errorMessages.TOO_LONG),
+    noOfPlayers: Yup.string().required(errorMessages.REQUIRED),
+    gameType: Yup.string().required(errorMessages.REQUIRED),
+    nameOfVenue: Yup.string().required(errorMessages.REQUIRED),
+    gameDate: Yup.string().required(errorMessages.REQUIRED),
+    startTime: Yup.date().required(errorMessages.REQUIRED),
+    endTime: Yup.date().required(errorMessages.REQUIRED),
     gamePassword: Yup.string()
-      .required("Required Field!")
-      .min(4, "Too short!")
-      .max(15, "Too long!"),
-    totalAmount: Yup.string().required("Required Field!"),
+      .required(errorMessages.REQUIRED)
+      .min(4, errorMessages.TOO_SHORT)
+      .max(15, errorMessages.TOO_LONG),
+    totalAmount: Yup.string().required(errorMessages.REQUIRED),
   });
 
   const methods = useForm({
@@ -61,9 +63,9 @@ const GameForm = ({ content, ...props }) => {
       noOfPlayers: "",
       gameType: "all",
       nameOfVenue: "",
-      gameDate: "",
-      startTime: "",
-      endTime: "",
+      gameDate: dayjs().format("YYYY-MM-DD HH:mm:ss"), //current date as default
+      startTime: dayjs().format("YYYY-MM-DD HH:mm:ss"), //current time as default
+      endTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       gamePassword: "",
       totalAmount: "",
     },
@@ -75,6 +77,7 @@ const GameForm = ({ content, ...props }) => {
     register,
     formState: { errors },
     reset,
+    watch,
   } = methods;
 
   const onSubmit = async (data) => {
@@ -92,6 +95,9 @@ const GameForm = ({ content, ...props }) => {
     }
     //API
     const res = await createGame(data);
+    if (isSuccess) {
+      enqueueSnackbar(res?.data?.message, { variant: "success" });
+    }
     reset();
   };
 
@@ -161,21 +167,21 @@ const GameForm = ({ content, ...props }) => {
               <Box>
                 <MuiDatePicker
                   label={"Select Date"}
-                  name={"gameDate"}
+                  name="gameDate"
                   onChange={(value) => setSelectedDate(value)}
                 />
               </Box>
               <Box>
                 <MuiTimePicker
                   label={"Start time"}
-                  name={"startTime"}
+                  name="startTime"
                   onChange={(value) => setStartTime(value)}
                 />
               </Box>
               <Box>
                 <MuiTimePicker
                   label={"End time"}
-                  name={"endTime"}
+                  name="endTime"
                   onChange={(value) => setEndTime(value)}
                 />
               </Box>

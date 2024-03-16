@@ -1,0 +1,6 @@
+Complete first this:
+
+- Complete proper error handling from the front end side includes adding snackbar validation of form fields.
+- global error handling.
+- Set proper token for every request
+- handle unauthorized routes.
