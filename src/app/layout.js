@@ -1,6 +1,9 @@
+import NotistackProvider from "@/components/NotistackProvider";
+import MuiLocalizationProvider from "@/components/mui/MuiLocalizationProvider";
+import MuiThemeProvider from "@/theme/index";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { Inter } from "next/font/google";
 import StoreProvider from "./StoreProvider";
-import MuiLocalizationProvider from "@/components/mui/MuiLocalizationProvider";
 
 // import "./globals.css";
 
@@ -15,9 +18,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <StoreProvider>
-        <MuiLocalizationProvider>
-          <body className={inter.className}>{children}</body>
-        </MuiLocalizationProvider>
+        <AppRouterCacheProvider>
+          <MuiThemeProvider>
+            <MuiLocalizationProvider>
+              <NotistackProvider>
+                <body className={inter.className}>{children}</body>
+              </NotistackProvider>
+            </MuiLocalizationProvider>
+          </MuiThemeProvider>
+        </AppRouterCacheProvider>
       </StoreProvider>
     </html>
   );

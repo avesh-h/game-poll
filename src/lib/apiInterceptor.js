@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { errorHandler } from "./utils/errorHandler";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3000/api",
@@ -13,12 +14,11 @@ const baseQuery = fetchBaseQuery({
 
 //For in case access token expire
 const baseQueryWithReAuth = async (args, api, extraOptions) => {
-  console.log("called from here");
-  console.log("interceptor", { args, api, extraOptions });
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
-    const refreshResult = baseQuery("/token", api, extraOptions);
-    if (refreshResult.data) {
+    //Refresh token
+    const refreshResult = await baseQuery("/token", api, extraOptions);
+    if (refreshResult?.data) {
       //set refresh token in the cookie from the backend
       result = await baseQuery(args, api, extraOptions);
     } else {
@@ -26,6 +26,8 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
     }
   }
   console.log("result", result);
+  //Global error handling
+  errorHandler(result?.error);
   return result;
 };
 
