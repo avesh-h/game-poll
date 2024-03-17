@@ -1,6 +1,7 @@
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
-import { verifyAuth } from "./lib/jwtVerify";
+import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { verifyAuth } from './lib/jwtVerify';
 
 export const middleware = async (req) => {
   // const headerList = headers();
@@ -23,5 +24,5 @@ export const config = {
   //   matcher: ["/api/:path*"],
 
   //Block login and signup route for this middeware
-  matcher: ["/((?!api/auth).*)"],
+  matcher: ['/((?!api/auth).*)'],
 };

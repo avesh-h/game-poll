@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
-import { Controller, useFormContext } from "react-hook-form";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
+import { Controller, useFormContext } from 'react-hook-form';
 
-const MuiDatePicker = ({ label, name, ...props }) => {
+const MuiDatePicker = ({ label, name, onChange, ...props }) => {
   const { control } = useFormContext();
   return (
     <Controller
@@ -18,9 +18,9 @@ const MuiDatePicker = ({ label, name, ...props }) => {
             value={dayjs(field?.value)}
             onChange={(newValue) => {
               if (onChange) {
-                onChange(newValue?.format("DD-MM-YYYY"));
+                onChange(newValue?.format('DD-MM-YYYY'));
               }
-              field.onChange(newValue?.format("DD-MM-YYYY"));
+              field.onChange(newValue?.format('DD-MM-YYYY'));
             }}
             slotProps={{
               textField: {

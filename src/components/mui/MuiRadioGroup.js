@@ -1,6 +1,7 @@
-import { FormControlLabel, Radio, RadioGroup, Stack } from "@mui/material";
-import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import React from 'react';
+
+import { FormControlLabel, Radio, RadioGroup, Stack } from '@mui/material';
+import { Controller, useFormContext } from 'react-hook-form';
 
 const MuiRadioGroup = ({ values, defaultValue, name }) => {
   const { control } = useFormContext();
@@ -17,7 +18,7 @@ const MuiRadioGroup = ({ values, defaultValue, name }) => {
               name="gameType"
               {...field}
             >
-              <Stack direction={"row"}>
+              <Stack direction={'row'}>
                 {values?.length
                   ? values.map((value) => {
                       return (

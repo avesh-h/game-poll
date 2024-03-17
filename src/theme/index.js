@@ -1,11 +1,13 @@
-"use client";
+'use client';
+import { useMemo } from 'react';
+
 import {
   ThemeProvider as MUIThemeProvider,
   StyledEngineProvider,
   createTheme,
-} from "@mui/material";
-import { useMemo } from "react";
-import palette from "./palette";
+} from '@mui/material';
+
+import palette from './palette';
 
 const MuiThemeProvider = ({ children }) => {
   //Extra option we can add typography,breakpoint etc..

@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useCreateGameMutation } from "@/lib/actions/gameActions";
-import { fnPressNumberKey } from "@/lib/utils/inputFunctions";
+import { useCallback, useState } from 'react';
+
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Box,
   Button,
@@ -10,33 +11,32 @@ import {
   FormLabel,
   Stack,
   Typography,
-} from "@mui/material";
-import dayjs from "dayjs";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import MuiDatePicker from "../mui/MuiDatePicker";
-import MuiRadioGroup from "../mui/MuiRadioGroup";
-import MuiTextField from "../mui/MuiTextField";
-import MuiTimePicker from "../mui/MuiTimePicker";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { errorMessages } from "@/lib/utils/validationMessage";
-import { enqueueSnackbar } from "notistack";
+} from '@mui/material';
+import dayjs from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
+import { FormProvider, useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+
+import MuiDatePicker from '../mui/MuiDatePicker';
+import MuiRadioGroup from '../mui/MuiRadioGroup';
+import MuiTextField from '../mui/MuiTextField';
+import MuiTimePicker from '../mui/MuiTimePicker';
+// eslint-disable-next-line import/no-unresolved
+import { useCreateGameMutation } from '@/lib/actions/gameActions';
+// eslint-disable-next-line import/no-unresolved
+import { fnPressNumberKey } from '@/lib/utils/inputFunctions';
+// eslint-disable-next-line import/no-unresolved
+import { errorMessages } from '@/lib/utils/validationMessage';
 
 const gameTypeValues = [
-  { label: "All", value: "all" },
-  { label: "Team", value: "team" },
+  { label: 'All', value: 'all' },
+  { label: 'Team', value: 'team' },
 ];
 
-//Add validation zod
-
-const GameForm = ({ content, ...props }) => {
+const GameForm = ({ content }) => {
   const [selectedDate, setSelectedDate] = useState();
   const [startTime, setStartTime] = useState();
   const [endTime, setEndTime] = useState();
-
-  //Create game api
-  const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
   //Validation
   const gameSchema = Yup.object().shape({
@@ -59,26 +59,33 @@ const GameForm = ({ content, ...props }) => {
 
   const methods = useForm({
     defaultValues: {
-      gameName: "",
-      noOfPlayers: "",
-      gameType: "all",
-      nameOfVenue: "",
-      gameDate: dayjs().format("YYYY-MM-DD HH:mm:ss"), //current date as default
-      startTime: dayjs().format("YYYY-MM-DD HH:mm:ss"), //current time as default
-      endTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      gamePassword: "",
-      totalAmount: "",
+      gameName: '',
+      noOfPlayers: '',
+      gameType: 'all',
+      nameOfVenue: '',
+      gameDate: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current date as default
+      startTime: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
+      endTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      gamePassword: '',
+      totalAmount: '',
     },
     resolver: yupResolver(gameSchema),
   });
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-    watch,
-  } = methods;
+  const { handleSubmit, register, reset } = methods;
+
+  const disableEndTimebeforeStartTime = useCallback(
+    (date) => {
+      if (date.isBefore(startTime)) {
+        return true;
+      }
+      return false;
+    },
+    [startTime]
+  );
+
+  //Create game api
+  const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
   const onSubmit = async (data) => {
     if (startTime && endTime) {
@@ -87,7 +94,7 @@ const GameForm = ({ content, ...props }) => {
       //Format for time
       data.startTime = startTime;
       data.endTime = endTime;
-      data.totalHours = dayJsEndTime.diff(dayJsStartTime, "h", true);
+      data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
     }
     if (selectedDate) {
       //Format for date
@@ -95,22 +102,22 @@ const GameForm = ({ content, ...props }) => {
     }
     //API
     const res = await createGame(data);
-    if (isSuccess) {
-      enqueueSnackbar(res?.data?.message, { variant: "success" });
+    if (isSuccess || res?.data?.message) {
+      enqueueSnackbar(res?.data?.message, { variant: 'success' });
     }
     reset();
   };
 
   return (
-    <Stack direction={"row"} justifyContent={"center"} marginTop={5}>
+    <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
       <Card
         sx={{
-          width: "40%",
-          minWidth: "250px",
+          width: '40%',
+          minWidth: '250px',
           p: 2,
         }}
       >
-        <Typography variant="h5" textAlign={"center"} paddingBottom={3}>
+        <Typography variant="h5" textAlign={'center'} paddingBottom={3}>
           {content.title}
         </Typography>
         <FormProvider {...methods}>
@@ -121,8 +128,8 @@ const GameForm = ({ content, ...props }) => {
                   Game Type:
                 </FormLabel>
                 <MuiRadioGroup
-                  defaultValue={"all"}
-                  name={"gameType"}
+                  defaultValue={'all'}
+                  name={'gameType'}
                   values={gameTypeValues}
                 />
                 <Box>
@@ -166,37 +173,43 @@ const GameForm = ({ content, ...props }) => {
               </Box>
               <Box>
                 <MuiDatePicker
-                  label={"Select Date"}
+                  label={'Select Date'}
                   name="gameDate"
                   onChange={(value) => setSelectedDate(value)}
+                  disablePast
                 />
               </Box>
               <Box>
                 <MuiTimePicker
-                  label={"Start time"}
+                  label={'Start time'}
                   name="startTime"
                   onChange={(value) => setStartTime(value)}
+                  disablePast
                 />
               </Box>
               <Box>
                 <MuiTimePicker
-                  label={"End time"}
+                  label={'End time'}
                   name="endTime"
                   onChange={(value) => setEndTime(value)}
+                  shouldDisableTime={disableEndTimebeforeStartTime}
+                  disablePast
                 />
               </Box>
               <Box>
                 <MuiTextField
-                  label={"Set Password"}
+                  label={'Set Password'}
                   name="gamePassword"
                   register={register}
                 />
-                <Typography sx={{ fontSize: "12px", pt: 1 }}>
+                <Typography sx={{ fontSize: '12px', pt: 1 }}>
                   Note: The form is only accessible with the password you set.
                 </Typography>
               </Box>
               <Box>
-                <Button type="submit">{content.buttonText}</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {content.buttonText}
+                </Button>
               </Box>
             </FormControl>
           </form>

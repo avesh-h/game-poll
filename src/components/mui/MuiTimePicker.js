@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import dayjs from "dayjs";
-import { Controller, useFormContext } from "react-hook-form";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
+import { Controller, useFormContext } from 'react-hook-form';
 
-const MuiTimePicker = ({ label, name, ...props }) => {
+const MuiTimePicker = ({ label, name, onChange, ...props }) => {
   const { control } = useFormContext();
   return (
     <Controller

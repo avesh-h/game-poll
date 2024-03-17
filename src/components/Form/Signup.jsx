@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -7,39 +7,36 @@ import {
   FormControl,
   Stack,
   Typography,
-} from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
-import MuiTextField from "../mui/MuiTextField";
+} from '@mui/material';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import MuiTextField from '../mui/MuiTextField';
 
 //Add validation zod
 
-const Signup = ({ content, login, onSubmit, ...props }) => {
+const Signup = ({ content, login, onSubmit }) => {
   const methods = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      password: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      password: '',
     },
   });
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, register } = methods;
 
   return (
-    <Stack direction={"row"} justifyContent={"center"} marginTop={5}>
+    <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
       <Card
         sx={{
-          width: "30%",
-          minWidth: "250px",
+          width: '30%',
+          minWidth: '250px',
           p: 2,
         }}
       >
-        <Typography variant="h5" textAlign={"center"} paddingBottom={3}>
+        <Typography variant="h5" textAlign={'center'} paddingBottom={3}>
           {content.title}
         </Typography>
         <FormProvider {...methods}>
@@ -75,7 +72,7 @@ const Signup = ({ content, login, onSubmit, ...props }) => {
               </Box>
               <Box>
                 <MuiTextField
-                  label={login ? "Password" : "Set Password"}
+                  label={login ? 'Password' : 'Set Password'}
                   name="password"
                   register={register}
                 />

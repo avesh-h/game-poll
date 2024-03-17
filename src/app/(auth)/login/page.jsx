@@ -1,13 +1,17 @@
-"use client";
+'use client';
 
-import React from "react";
-import Signup from "@/components/Form/Signup";
-import { useLoginMutation } from "@/lib/actions/authActions";
-import { useRouter } from "next/navigation";
+import React from 'react';
+
+import { useRouter } from 'next/navigation';
+
+// eslint-disable-next-line import/no-unresolved
+import Signup from '@/components/Form/Signup';
+// eslint-disable-next-line import/no-unresolved
+import { useLoginMutation } from '@/lib/actions/authActions';
 
 const content = {
-  title: "Login",
-  buttonText: "Sign in",
+  title: 'Login',
+  buttonText: 'Sign in',
 };
 
 const page = () => {
@@ -16,8 +20,8 @@ const page = () => {
 
   const onSubmit = async (data, e) => {
     const res = await login(data);
-    if (res?.data?.status === "success") {
-      router.push("/dashboard");
+    if (res?.data?.status === 'success') {
+      router.push('/dashboard');
     }
   };
   return (

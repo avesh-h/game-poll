@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import React, { useRef } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import { SnackbarProvider } from "notistack";
-import IconButton from "@mui/material/IconButton";
-import { Box, SvgIcon } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
-import DoneIcon from "@mui/icons-material/Done";
-import WarningIcon from "@mui/icons-material/Warning";
-import ErrorIcon from "@mui/icons-material/Error";
+import React, { useRef } from 'react';
+
+import CloseIcon from '@mui/icons-material/Close';
+import DoneIcon from '@mui/icons-material/Done';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
+import WarningIcon from '@mui/icons-material/Warning';
+import { Box, SvgIcon } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { SnackbarProvider } from 'notistack';
 
 const NotistackProvider = ({ children }) => {
   const notistackRef = useRef(null);
@@ -49,10 +50,10 @@ function SnackbarIcon({ component, color }) {
           mr: 1.5,
           width: 40,
           height: 40,
-          display: "flex",
+          display: 'flex',
           borderRadius: 1.5,
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: 'center',
+          justifyContent: 'center',
           //   color: `${color}.main`,
           //   bgcolor: (theme) => alpha(theme.palette[color].main, 0.16),
         }}
