@@ -1,13 +1,18 @@
-"use client";
+'use client';
 
-import Signup from "@/components/Form/Signup";
-import { useSignupMutation } from "@/lib/actions/authActions";
-import React from "react";
-import { useRouter } from "next/navigation";
+// eslint-disable-next-line import/no-unresolved
+import React from 'react';
+
+import { useRouter } from 'next/navigation';
+
+// eslint-disable-next-line import/no-unresolved
+import Signup from '@/components/Form/Signup';
+// eslint-disable-next-line import/no-unresolved
+import { useSignupMutation } from '@/lib/actions/authActions';
 
 const content = {
-  title: "Sign up",
-  buttonText: "Submit",
+  title: 'Sign up',
+  buttonText: 'Submit',
 };
 const page = () => {
   const router = useRouter();
@@ -15,8 +20,8 @@ const page = () => {
 
   const onSubmit = async (data, e) => {
     const res = await signup(data);
-    if (res.status === "success") {
-      router.push("/login");
+    if (res.status === 'success') {
+      router.push('/login');
     }
   };
   return (
