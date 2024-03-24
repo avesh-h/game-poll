@@ -1,4 +1,4 @@
-import { Game } from "../models/gameSchema";
+import { Game } from '../models/gameSchema';
 
 class gameDao {
   async createGame(data) {
@@ -8,4 +8,5 @@ class gameDao {
   }
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default new gameDao();

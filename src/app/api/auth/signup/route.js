@@ -1,7 +1,8 @@
-import { connectToDB } from "@/lib/dbHandler";
-import { User } from "@/lib/models/userSchema";
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
+import { NextResponse } from 'next/server';
+
+import { connectToDB } from '@/lib/dbHandler';
+import { User } from '@/lib/models/userSchema';
 
 export const POST = async (req) => {
   const { email, firstName, lastName, password, phone, photo } =
@@ -11,7 +12,7 @@ export const POST = async (req) => {
     const isUserExist = await User.findOne({ email });
     if (isUserExist) {
       return NextResponse.json(
-        { error: "User already exist!" },
+        { error: 'User already exist!' },
         { status: 400 }
       );
     } else {
@@ -29,7 +30,7 @@ export const POST = async (req) => {
       });
       await createUser.save();
       return NextResponse.json(
-        { message: "Successfully created!", status: "success" },
+        { message: 'Successfully created!', status: 'success' },
         { status: 201 }
       );
     }

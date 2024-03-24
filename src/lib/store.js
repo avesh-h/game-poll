@@ -1,5 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { apiInterceptor } from "./apiInterceptor";
+import { configureStore } from '@reduxjs/toolkit';
+
+import { apiInterceptor } from './apiInterceptor';
 
 //Now we configure the redux toolkit query in next so in the next js the store will be declare as a individually per request not once.
 

@@ -55,12 +55,17 @@
   },
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "detect",
     },
+    "import/extensions": [
+      ".js",
+      ".jsx"
+    ],
     "import/resolver": {
       "node": {
-        "paths": ["src"],
-        "extensions": [".js", ".jsx"]
+        "paths": ["src"]
+
+        // "extensions": [".js", ".jsx"]
       }
     }
   }

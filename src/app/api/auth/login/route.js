@@ -1,8 +1,10 @@
-import { connectToDB } from "@/lib/dbHandler";
-import { User } from "@/lib/models/userSchema";
-import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+import { NextResponse } from 'next/server';
+
+import { connectToDB } from '@/lib/dbHandler';
+import { User } from '@/lib/models/userSchema';
 
 export const POST = async (req) => {
   const { email, password } = await req.json();
@@ -11,7 +13,7 @@ export const POST = async (req) => {
     const existedUser = await User.findOne({ email });
     if (!existedUser) {
       return NextResponse.json(
-        { message: "User does not exist!" },
+        { message: 'User does not exist!' },
         { status: 400 }
       );
     } else {
@@ -30,24 +32,24 @@ export const POST = async (req) => {
           userData,
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: "1",
+            expiresIn: '1',
           }
         );
         const refreshToken = jwt.sign(
           userData,
           process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: "24h" }
+          { expiresIn: '24h' }
         );
         const response = NextResponse.json(
-          { accessToken, status: "success" },
+          { accessToken, status: 'success' },
           { status: 200 }
         );
-        response.cookies.set("refresh_token", refreshToken);
+        response.cookies.set('refresh_token', refreshToken);
         return response;
       } else {
         //Password wrong
         return NextResponse.json(
-          { message: "Incorrect password!" },
+          { message: 'Incorrect password!' },
           { status: 400 }
         );
       }

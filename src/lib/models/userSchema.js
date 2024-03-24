@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 //Also need to add validation check here.
 
@@ -18,9 +18,9 @@ const userSchema = new mongoose.Schema({
     },
     unique: true,
   },
-  firstName: { type: String, required: [true, "First Name is required!"] },
-  lastName: { type: String, required: [true, "Last Name is required!"] },
-  password: { type: String, required: [true, "Password is required!"] },
+  firstName: { type: String, required: [true, 'First Name is required!'] },
+  lastName: { type: String, required: [true, 'Last Name is required!'] },
+  password: { type: String, required: [true, 'Password is required!'] },
   phone: { type: String }, //Optional
   photo: { type: String }, //Optional
 });
@@ -29,4 +29,4 @@ const userSchema = new mongoose.Schema({
 // userSchema.path("email").validate();
 
 export const User =
-  mongoose.models?.Users || mongoose.model("Users", userSchema);
+  mongoose.models?.Users || mongoose.model('Users', userSchema);

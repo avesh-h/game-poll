@@ -1,9 +1,9 @@
-import { jwtVerify } from "jose";
+import { jwtVerify } from 'jose';
 
 const getSecretKey = () => {
   const secret = process.env.ACCESS_TOKEN_SECRET;
   if (!secret) {
-    return new Error("Cannot found secret key");
+    return new Error('Cannot found secret key');
   }
   return secret;
 };
@@ -16,6 +16,6 @@ export const verifyAuth = async (token) => {
     );
     return decoded.payload;
   } catch (error) {
-    return new Error("Jwt expired!");
+    return new Error('Jwt expired!');
   }
 };
