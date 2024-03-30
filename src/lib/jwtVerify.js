@@ -1,7 +1,7 @@
 import { jwtVerify } from 'jose';
 
 const getSecretKey = () => {
-  const secret = process.env.ACCESS_TOKEN_SECRET;
+  const secret = process.env.NEXTAUTH_SECRET;
   if (!secret) {
     return new Error('Cannot found secret key');
   }

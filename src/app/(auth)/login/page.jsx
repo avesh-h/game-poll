@@ -1,14 +1,11 @@
 'use client';
 
-import React from 'react';
-
-import { useRouter } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 // eslint-disable-next-line import/no-unresolved
 import Signup from '@/components/Form/Signup';
 // eslint-disable-next-line import/no-unresolved
-import { useLoginMutation } from '@/lib/actions/authActions';
 import { enqueueSnackbar } from 'notistack';
 
 const content = {
@@ -28,7 +25,6 @@ const page = () => {
       ...data,
       redirect: false,
     });
-    console.log('resssss', res);
     if (res?.error) {
       enqueueSnackbar(res?.error, { variant: 'error' });
     } else {
