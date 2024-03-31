@@ -1,7 +1,9 @@
+'use client';
+
 import { Button } from '@mui/material';
 
-const MuiButton = () => {
-  return <Button>try</Button>;
+const MuiButton = ({ title, ...others }) => {
+  return <Button {...others}>{title}</Button>;
 };
 
 export default MuiButton;

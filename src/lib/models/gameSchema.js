@@ -40,7 +40,15 @@ const gameSchema = new mongoose.Schema(
     totalHours: {
       type: Number,
     },
-    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    members: [
+      {
+        _id: false,
+        id: { type: mongoose.Schema.ObjectId },
+        name: String,
+        role: { type: String, enum: ['organizer', 'member'] },
+        postion: String,
+      },
+    ],
   },
   { timestamps: true }
 );

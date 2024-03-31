@@ -1,20 +1,24 @@
 'use client';
 
-import GameForm from '@/components/Form/GameForm';
-import { useSession } from 'next-auth/react';
+import MuiButton from '@/components/Buttons/Button';
+import { useRouter } from 'next/navigation';
 
 const content = {
   title: 'Create Game',
   buttonText: 'Create',
 };
 
-const page = () => {
-  const session = useSession();
+//TODO:Need to design user profile dashboard page.
+const Dashboard = () => {
+  const router = useRouter();
   return (
     <div>
-      <GameForm content={content} />
+      <MuiButton
+        title={'Create Game'}
+        onClick={() => router.push('/create-game')}
+      />
     </div>
   );
 };
 
-export default page;
+export default Dashboard;

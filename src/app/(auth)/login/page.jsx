@@ -13,7 +13,7 @@ const content = {
   buttonText: 'Sign in',
 };
 
-const page = () => {
+const Login = () => {
   const router = useRouter();
   const session = useSession();
 
@@ -39,4 +39,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Login;

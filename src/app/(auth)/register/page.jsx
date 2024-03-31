@@ -14,7 +14,7 @@ const content = {
   title: 'Sign up',
   buttonText: 'Submit',
 };
-const page = () => {
+const SignupPage = () => {
   const router = useRouter();
   const [signup, { isLoading }] = useSignupMutation();
 
@@ -31,4 +31,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignupPage;

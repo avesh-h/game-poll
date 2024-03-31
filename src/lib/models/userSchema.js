@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 
 //Also need to add validation check here.
 
+//Always remember whenever you making change in schema don't forget to restart the project because the changes will be work after restart for the models.
+
 // This Schema is about the user that register in to create game.
 
 const userSchema = new mongoose.Schema({

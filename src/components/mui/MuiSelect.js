@@ -5,30 +5,41 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import { styled } from '@mui/material';
 
-export default function MuiSelect() {
+const StyledSelect = styled(Select)({
+  '& .MuiSelect-select': {
+    padding: '10px',
+  },
+});
+
+export default function MuiSelect({ title, options, value }) {
   const [age, setAge] = React.useState('');
 
   const handleChange = (event) => {
+    console.log(event.target.value);
     setAge(event.target.value);
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={age}
-          label="Age"
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+    <FormControl fullWidth>
+      <InputLabel id="demo-simple-select-label">{title}</InputLabel>
+      <StyledSelect
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={value}
+        label="Age"
+        onChange={handleChange}
+      >
+        {options?.length &&
+          options?.map((option, i) => {
+            return (
+              <MenuItem key={`${option}-${i}`} value={option}>
+                {option}
+              </MenuItem>
+            );
+          })}
+      </StyledSelect>
+    </FormControl>
   );
 }
