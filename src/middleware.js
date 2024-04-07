@@ -42,5 +42,7 @@ export default withAuth(async (req) => {
 // });
 
 export const config = {
-  matcher: ['/((?!api|register|login|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!api|register|login|games|members|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

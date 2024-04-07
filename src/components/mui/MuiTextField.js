@@ -24,11 +24,12 @@ const MuiTextField = ({
   inputProps,
   register,
   name,
+  disabled,
   ...props
 }) => {
-  const {
-    formState: { errors },
-  } = useFormContext();
+  const { formState } = useFormContext();
+
+  const errors = formState?.errors || {};
 
   return (
     <InputField
@@ -38,6 +39,7 @@ const MuiTextField = ({
       inputProps={{ ...register(name), ...inputProps }}
       error={errors[name] && errors[name]}
       helperText={errors[name] && errors[name]?.message}
+      disabled={disabled}
       {...muiTextProps}
       {...props}
     />

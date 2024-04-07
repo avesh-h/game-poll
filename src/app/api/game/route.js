@@ -1,9 +1,8 @@
-import { connectToDB } from '@/lib/dbHandler';
-import { Game } from '@/lib/models/gameSchema';
-import { NextResponse } from 'next/server';
 import gameDao from '@/lib/daos/gameDao';
+import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
+import { NextResponse } from 'next/server';
 
 export const POST = async (req) => {
   const requestBody = await req.json();
@@ -13,9 +12,9 @@ export const POST = async (req) => {
     if (gameOrganizer) {
       const organizer = {
         id: gameOrganizer?.user?.id || gameOrganizer?.token?.userId,
+        email: gameOrganizer?.user?.email || gameOrganizer?.token?.email,
         role: 'organizer',
         name: gameOrganizer?.user?.name || gameOrganizer?.token?.name,
-        position: 'ST',
       };
       const createdGame = await gameDao.createGame(requestBody, organizer);
       return NextResponse.json(

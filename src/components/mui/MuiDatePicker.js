@@ -13,14 +13,14 @@ const MuiDatePicker = ({ label, name, onChange, ...props }) => {
       render={({ field, fieldState: { error } }) => {
         return (
           <DatePicker
-            format="DD/MM/YYYY"
+            format="YYYY-MM-DD"
             label={label}
             value={dayjs(field?.value)}
             onChange={(newValue) => {
               if (onChange) {
-                onChange(newValue?.format('DD-MM-YYYY'));
+                onChange(newValue?.format('YYYY-MM-DD'));
               }
-              field.onChange(newValue?.format('DD-MM-YYYY'));
+              field.onChange(newValue?.format('YYYY-MM-DD'));
             }}
             slotProps={{
               textField: {

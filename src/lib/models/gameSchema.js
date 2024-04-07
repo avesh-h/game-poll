@@ -47,6 +47,7 @@ const gameSchema = new mongoose.Schema(
         name: String,
         role: { type: String, enum: ['organizer', 'member'] },
         postion: String,
+        email: String,
       },
     ],
   },

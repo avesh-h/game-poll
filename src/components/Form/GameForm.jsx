@@ -1,11 +1,9 @@
 'use client';
 
-import EditIcon from '@mui/icons-material/Edit';
-import { Button, FormLabel, Grid, Stack, Typography } from '@mui/material';
+import { FormLabel, Stack } from '@mui/material';
 import { useCallback } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import MuiSelect from '../mui/MuiSelect';
-import MuiTextField from '../mui/MuiTextField';
+import { useForm } from 'react-hook-form';
+import PlayerForm from './PlayerForm';
 
 const playingPositions = [
   'ST',
@@ -23,9 +21,13 @@ const playingPositions = [
 ];
 
 const GameForm = ({ formData }) => {
-  const methods = useForm();
-  console.log('data', formData);
+  const methods = useForm({
+    playerName: '',
+    position: '',
+  });
   const { handleSubmit, register, reset } = methods;
+
+  const handleChange = () => {};
 
   const getAllPlayers = useCallback(() => {
     const addedPlayers = [];
@@ -39,54 +41,30 @@ const GameForm = ({ formData }) => {
         addedPlayers.push({});
       }
     }
-    console.log('added', addedPlayers);
     return addedPlayers;
   }, [formData]);
 
+  //Member form submission
+  const onSubmit = useCallback((memberData) => {
+    console.log('member', memberData);
+  }, []);
+
   return (
     <Stack alignItems={'center'}>
-      <FormProvider {...methods}>
-        <form style={{ width: '80%' }}>
-          <FormLabel id="demo-radio-buttons-group-label">
-            Select Your Seat:
-          </FormLabel>
-          {formData &&
-            getAllPlayers()?.length &&
-            getAllPlayers().map((player, ind) => {
-              return (
-                <Stack direction={'row'} alignItems={'center'}>
-                  <Typography pr={2}>{ind + 1}</Typography>
-                  <Grid container spacing={2} mt={1}>
-                    <Grid item xs={4}>
-                      <MuiTextField
-                        label="Enter your name"
-                        name="playerName"
-                        register={register}
-                        value={player?.name || ''}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <MuiSelect
-                        title={'Position'}
-                        options={playingPositions}
-                        name={'position'}
-                        value={player?.position || ''}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <Button type="submit">Submit</Button>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <Button>
-                        <EditIcon />
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Stack>
-              );
-            })}
-        </form>
-      </FormProvider>
+      <FormLabel id="demo-radio-buttons-group-label">
+        Select Your Seat:
+      </FormLabel>
+      {formData &&
+        getAllPlayers()?.map((player, ind) => {
+          console.log('player', player);
+          return (
+            <PlayerForm
+              player={player}
+              ind={ind}
+              key={`${player?.name}-${ind}`}
+            />
+          );
+        })}
     </Stack>
   );
 };

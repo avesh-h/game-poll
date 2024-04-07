@@ -35,9 +35,13 @@ const gameTypeValues = [
 ];
 
 const CreateGameForm = ({ content }) => {
-  const [selectedDate, setSelectedDate] = useState();
-  const [startTime, setStartTime] = useState();
-  const [endTime, setEndTime] = useState();
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs().format('YYYY-MM-DD HH:mm:ss')
+  );
+  const [startTime, setStartTime] = useState(
+    dayjs().format('YYYY-MM-DD HH:mm:ss')
+  );
+  const [endTime, setEndTime] = useState(dayjs().format('YYYY-MM-DD HH:mm:ss'));
   const router = useRouter();
 
   //Validation
@@ -65,7 +69,7 @@ const CreateGameForm = ({ content }) => {
       noOfPlayers: '',
       gameType: 'all',
       nameOfVenue: '',
-      gameDate: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current date as default
+      gameDate: dayjs().format('YYYY-MM-DD'), //current date as default
       startTime: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
       endTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       gamePassword: '',
@@ -85,7 +89,6 @@ const CreateGameForm = ({ content }) => {
     },
     [startTime]
   );
-
   //Create game api
   const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
@@ -175,7 +178,9 @@ const CreateGameForm = ({ content }) => {
                 <MuiDatePicker
                   label={'Select Date'}
                   name="gameDate"
-                  onChange={(value) => setSelectedDate(value)}
+                  onChange={(value) =>
+                    setSelectedDate(dayjs(value).format('YYYY-MM-DD'))
+                  }
                   disablePast
                 />
               </Box>
@@ -183,7 +188,9 @@ const CreateGameForm = ({ content }) => {
                 <MuiTimePicker
                   label={'Start time'}
                   name="startTime"
-                  onChange={(value) => setStartTime(value)}
+                  onChange={(value) =>
+                    setStartTime(dayjs(value).format('YYYY-MM-DD HH:mm:ss'))
+                  }
                   disablePast
                 />
               </Box>
@@ -191,7 +198,9 @@ const CreateGameForm = ({ content }) => {
                 <MuiTimePicker
                   label={'End time'}
                   name="endTime"
-                  onChange={(value) => setEndTime(value)}
+                  onChange={(value) =>
+                    setEndTime(dayjs(value).format('YYYY-MM-DD HH:mm:ss'))
+                  }
                   shouldDisableTime={disableEndTimebeforeStartTime}
                   disablePast
                 />
