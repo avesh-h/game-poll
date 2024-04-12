@@ -12,7 +12,6 @@ const memberSchema = new mongoose.Schema({
       },
       message: (prop) => `${prop.value} is not a valid email.`,
     },
-    unique: true,
   },
   name: { type: String, required: [true, 'Name is required!'] },
   gamePassword: { type: String, required: [true, 'Password is required!'] },

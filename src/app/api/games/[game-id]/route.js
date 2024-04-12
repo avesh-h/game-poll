@@ -23,3 +23,31 @@ export const GET = async (request, { params }) => {
     return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
   }
 };
+
+export const POST = async (request) => {
+  const playerData = await request.json();
+  const gameId = playerData?.gameId;
+  try {
+    //TODO:Update only members field in the schema
+    await connectToDB();
+    const selectedGame = await gameDao.getSingleGame(gameId);
+    if (selectedGame) {
+      //For update or add the member
+      const updatedGame = await gameDao.addOrUpdateMembersField(
+        gameId,
+        playerData?.id,
+        playerData
+      );
+      return NextResponse.json(
+        { game: updatedGame, status: 'success' },
+        { status: httpStatusCode.OK }
+      );
+    }
+    return NextResponse.json(
+      { error: 'Not found!' },
+      { status: httpStatusCode.NOT_FOUND }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
+  }
+};

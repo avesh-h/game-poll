@@ -25,6 +25,7 @@ const GameForm = ({ formData }) => {
     playerName: '',
     position: '',
   });
+
   const { handleSubmit, register, reset } = methods;
 
   const handleChange = () => {};
@@ -56,12 +57,11 @@ const GameForm = ({ formData }) => {
       </FormLabel>
       {formData &&
         getAllPlayers()?.map((player, ind) => {
-          console.log('player', player);
           return (
             <PlayerForm
               player={player}
               ind={ind}
-              key={`${player?.name}-${ind}`}
+              key={`${player?.playerName}-${ind}`}
             />
           );
         })}

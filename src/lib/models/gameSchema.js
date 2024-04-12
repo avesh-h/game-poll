@@ -44,10 +44,11 @@ const gameSchema = new mongoose.Schema(
       {
         _id: false,
         id: { type: mongoose.Schema.ObjectId },
-        name: String,
+        playerName: String,
         role: { type: String, enum: ['organizer', 'member'] },
-        postion: String,
+        position: String,
         email: String,
+        gameId: { type: mongoose.Schema.ObjectId },
       },
     ],
   },
@@ -58,3 +59,7 @@ const gameSchema = new mongoose.Schema(
 gameSchema.path('members').default([]);
 
 export const Game = mongoose.models.Game || mongoose.model('Game', gameSchema);
+
+// NOTE: If the member with same email and different gameID isn't create then check into the db that the uniqueIndex is not have set on the email in compass.
+
+// OR Use dropIndex like this db.members.dropIndex("email_1")

@@ -9,25 +9,42 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import MuiTextField from '../mui/MuiTextField';
 
 import { useAddMemberMutation } from '@/lib/actions/memberActions';
+import { enqueueSnackbar } from 'notistack';
+import { API_STATUS } from '@/constants/apiStatuses';
 
 const MemberForm = () => {
   const methods = useForm({ email: '', name: '', gamePassword: '' });
   const params = useParams();
-  const [addMember, { isLoading }] = useAddMemberMutation();
+  const [addMember, { isLoading, isSuccess }] = useAddMemberMutation();
   const { handleSubmit, register, reset } = methods;
+  const router = useRouter();
 
+  //Submit
   const onSubmit = async (memberData) => {
     const gameId = params?.['gameId'];
-    if (gameId) {
-      console.log('memberData', memberData);
+    if (gameId && Object.values(memberData)?.length) {
       memberData.gameId = gameId;
       const response = await addMember(memberData);
-      console.log('res', response);
+
+      if (response?.data?.status === API_STATUS?.success || isSuccess) {
+        enqueueSnackbar('Successfully Added!', { variant: 'success' });
+        //Store member session in local storage
+        localStorage.setItem(
+          'session-user',
+          JSON.stringify({
+            email: response?.data?.member?.email,
+            memberId: response?.data?.member?._id,
+            name: response?.data?.member?.name,
+          })
+        );
+        reset();
+        router.push(`/games/${gameId}`);
+      }
     }
   };
   return (

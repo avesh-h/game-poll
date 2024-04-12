@@ -14,7 +14,7 @@ export const POST = async (req) => {
         id: gameOrganizer?.user?.id || gameOrganizer?.token?.userId,
         email: gameOrganizer?.user?.email || gameOrganizer?.token?.email,
         role: 'organizer',
-        name: gameOrganizer?.user?.name || gameOrganizer?.token?.name,
+        playerName: gameOrganizer?.user?.name || gameOrganizer?.token?.name,
       };
       const createdGame = await gameDao.createGame(requestBody, organizer);
       return NextResponse.json(

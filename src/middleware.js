@@ -1,4 +1,4 @@
-import { withAuth } from 'next-auth/middleware';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 
 //Having error when we import auth options in middleware
@@ -16,33 +16,28 @@ import { NextResponse } from 'next/server';
 // ];
 
 //Ready made function of middleware in next auth
-export default withAuth(async (req) => {
-  const token = req?.nextauth?.token;
-  if (!token) {
-    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
-  }
-  //TODO: return error for the global error handler of rtk query interceptor.
-});
-
-// export const middleware = async (req) => {
-//   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-//   console.log('middleware', token);
-//   //If no token it will give us null
+// export default withAuth(async (req) => {
+//   console.log('reqqqqqqqqqqq', req);
+//   const token = req?.nextauth?.token;
 //   if (!token) {
 //     return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
 //   }
-//   // it will automatically start next code without next function
-// };
-
-// export default withAuth({
-//   jwt: { decode: authOptions.jwt?.decode },
-//   callbacks: {
-//     authorized: ({ token }) => !!token,
-//   },
+//   //TODO: return error for the global error handler of rtk query interceptor.
 // });
+
+export const middleware = async (req) => {
+  const token =
+    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET })) ||
+    req?.cookies?.get('accessToken')?.value;
+  //If no token it will give us null
+  if (!token) {
+    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+  }
+  // it will automatically start next code without next function
+};
 
 export const config = {
   matcher: [
-    '/((?!api|register|login|games|members|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|register|login|members|_next/static|_next/image|favicon.ico).*)',
   ],
 };

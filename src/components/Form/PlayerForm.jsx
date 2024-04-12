@@ -1,3 +1,5 @@
+'use client';
+
 import { isAllowToEditPlayersDetails } from '@/lib/utils/editPlayerDetails';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Grid, Stack, Typography } from '@mui/material';
@@ -7,6 +9,7 @@ import MuiSelect from '../mui/MuiSelect';
 import MuiTextField from '../mui/MuiTextField';
 import { useParams } from 'next/navigation';
 import { useAddPlayerMutation } from '@/lib/actions/gameActions';
+import { GAME_MEMBER } from '@/constants/role';
 
 const playingPositions = [
   'ST',
@@ -26,7 +29,7 @@ const playingPositions = [
 const PlayerForm = ({ player, ind }) => {
   const session = useSession();
   const methods = useForm({
-    playerName: player?.name || '',
+    playerName: player?.playerName || '',
     position: player?.position || '',
   });
   const { register, handleSubmit, watch, reset } = methods;
@@ -34,9 +37,21 @@ const PlayerForm = ({ player, ind }) => {
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
 
   const onSubmit = async (playerData) => {
-    console.log('playerData', playerData);
     if (Object.values(playerData)?.length && params?.['game-id']) {
       playerData.gameId = params?.['game-id'];
+      let memberId, email;
+
+      if (localStorage.getItem('session-user')) {
+        const memberObj = JSON.parse(localStorage.getItem('session-user'));
+        memberId = memberObj?.memberId;
+        email = memberObj?.email;
+      } else {
+        memberId = session?.data?.user?.id;
+        email = session?.data?.user?.email;
+      }
+      playerData.email = email;
+      playerData.id = memberId;
+      playerData.role = player?.role || GAME_MEMBER;
       const res = await addPlayer(playerData);
     }
     // reset();
@@ -52,7 +67,7 @@ const PlayerForm = ({ player, ind }) => {
               <MuiTextField
                 label="Enter your name"
                 name="playerName"
-                value={player?.name}
+                value={player?.playerName}
                 register={register}
               />
             </Grid>
@@ -66,7 +81,9 @@ const PlayerForm = ({ player, ind }) => {
               />
             </Grid>
             <Grid item xs={2}>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isLoading}>
+                Submit
+              </Button>
             </Grid>
             {/* Session id of member that redirected for add in the seats */}
             {isAllowToEditPlayersDetails(player, session?.data?.user?.id) && (
