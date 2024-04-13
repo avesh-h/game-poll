@@ -1,9 +1,11 @@
+/* eslint-disable import/no-unresolved */
 'use client';
+
+import { useParams } from 'next/navigation';
 
 import GameForm from '@/components/Form/GameForm';
 import LoadinScreen from '@/components/LoadinScreen';
 import { useGetSingleGameQuery } from '@/lib/actions/gameActions';
-import { useParams } from 'next/navigation';
 
 const GameFormPage = () => {
   //For client side

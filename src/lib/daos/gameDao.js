@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 import { Game } from '../models/gameSchema';
 
 class gameDao {
@@ -23,6 +25,42 @@ class gameDao {
       }
     }
     return member;
+  }
+
+  async findMemberWithEmailOrName(gameId, playerEmail, playerName) {
+    const member = await Game.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(gameId),
+          $or: [
+            { 'members.playerName': playerName },
+            { 'members.email': playerEmail },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          members: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: '$members',
+                  cond: {
+                    $or: [
+                      { $eq: ['$$this.playerName', playerName] },
+                      { $eq: ['$$this.email', playerEmail] },
+                    ],
+                  },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+    ]);
+    return member?.length ? member[0]?.members : null;
   }
 
   // Function to update member field based on gameId and memberId
@@ -57,4 +95,5 @@ class gameDao {
   }
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default new gameDao();

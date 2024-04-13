@@ -1,7 +1,9 @@
+/* eslint-disable import/no-unresolved */
 'use client';
 
-import MemberForm from '@/components/Form/MemberForm';
 import React from 'react';
+
+import MemberForm from '@/components/Form/MemberForm';
 
 const MemberPage = () => {
   return (

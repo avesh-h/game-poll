@@ -1,15 +1,17 @@
+/* eslint-disable import/no-unresolved */
 'use client';
 
-import { isAllowToEditPlayersDetails } from '@/lib/utils/editPlayerDetails';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Grid, Stack, Typography } from '@mui/material';
+import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { FormProvider, useForm } from 'react-hook-form';
+
 import MuiSelect from '../mui/MuiSelect';
 import MuiTextField from '../mui/MuiTextField';
-import { useParams } from 'next/navigation';
-import { useAddPlayerMutation } from '@/lib/actions/gameActions';
 import { GAME_MEMBER } from '@/constants/role';
+import { useAddPlayerMutation } from '@/lib/actions/gameActions';
+import { isAllowToEditPlayersDetails } from '@/lib/utils/editPlayerDetails';
 
 const playingPositions = [
   'ST',
@@ -36,6 +38,10 @@ const PlayerForm = ({ player, ind }) => {
   const params = useParams();
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
 
+  //STATE
+  const playerName = watch('playerName');
+  const position = watch('position');
+
   const onSubmit = async (playerData) => {
     if (Object.values(playerData)?.length && params?.['game-id']) {
       playerData.gameId = params?.['game-id'];
@@ -54,7 +60,6 @@ const PlayerForm = ({ player, ind }) => {
       playerData.role = player?.role || GAME_MEMBER;
       const res = await addPlayer(playerData);
     }
-    // reset();
   };
 
   return (
@@ -81,7 +86,10 @@ const PlayerForm = ({ player, ind }) => {
               />
             </Grid>
             <Grid item xs={2}>
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading || !(playerName && position)}
+              >
                 Submit
               </Button>
             </Grid>

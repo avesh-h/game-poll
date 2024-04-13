@@ -1,7 +1,9 @@
+/* eslint-disable import/no-unresolved */
+import { NextResponse } from 'next/server';
+
 import gameDao from '@/lib/daos/gameDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
-import { NextResponse } from 'next/server';
 
 //We can also directly use the server action of next 14 instad of create the new api here.
 export const GET = async (request, { params }) => {
