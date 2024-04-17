@@ -1,7 +1,8 @@
 /* eslint-disable import/no-unresolved */
 'use client';
 
-import EditIcon from '@mui/icons-material/Edit';
+import { useEffect, useState } from 'react';
+
 import { Button, Grid, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -9,9 +10,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import MuiSelect from '../mui/MuiSelect';
 import MuiTextField from '../mui/MuiTextField';
+import PlayerNameCard from '../PlayerNameCard';
+import { API_STATUS } from '@/constants/apiStatuses';
 import { GAME_MEMBER } from '@/constants/role';
 import { useAddPlayerMutation } from '@/lib/actions/gameActions';
-import { isAllowToEditPlayersDetails } from '@/lib/utils/editPlayerDetails';
 
 const playingPositions = [
   'ST',
@@ -30,17 +32,25 @@ const playingPositions = [
 
 const PlayerForm = ({ player, ind }) => {
   const session = useSession();
+  const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
     playerName: player?.playerName || '',
     position: player?.position || '',
   });
-  const { register, handleSubmit, watch, reset } = methods;
+  const { register, handleSubmit, watch, setValue } = methods;
   const params = useParams();
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
 
   //STATE
   const playerName = watch('playerName');
   const position = watch('position');
+
+  //For set value for first time
+  useEffect(() => {
+    setValue('playerName', player?.playerName);
+    setValue('position', player?.position);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (playerData) => {
     if (Object.values(playerData)?.length && params?.['game-id']) {
@@ -59,49 +69,50 @@ const PlayerForm = ({ player, ind }) => {
       playerData.id = memberId;
       playerData.role = player?.role || GAME_MEMBER;
       const res = await addPlayer(playerData);
+      if (res?.data?.status === API_STATUS?.success) {
+        setIsEdit(false);
+      }
     }
   };
 
   return (
     <FormProvider {...methods}>
       <form style={{ width: '80%' }} onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction={'row'} alignItems={'center'}>
+        <Stack direction={'row'} alignItems={'center'} pt={2}>
           <Typography pr={2}>{ind + 1}</Typography>
-          <Grid container spacing={2} mt={1}>
-            <Grid item xs={4}>
-              <MuiTextField
-                label="Enter your name"
-                name="playerName"
-                value={player?.playerName}
-                register={register}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <MuiSelect
-                title={'Position'}
-                options={playingPositions}
-                name="position"
-                value={player?.position}
-                register={register}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Button
-                type="submit"
-                disabled={isLoading || !(playerName && position)}
-              >
-                Submit
-              </Button>
-            </Grid>
-            {/* Session id of member that redirected for add in the seats */}
-            {isAllowToEditPlayersDetails(player, session?.data?.user?.id) && (
+          {!isEdit && Object?.values(player)?.length ? (
+            <PlayerNameCard
+              player={player}
+              setIsEdit={setIsEdit}
+              session={session}
+            />
+          ) : (
+            <Grid container spacing={2} mt={1}>
+              <Grid item xs={4}>
+                <MuiTextField
+                  label="Enter your name"
+                  name="playerName"
+                  register={register}
+                />
+              </Grid>
               <Grid item xs={2}>
-                <Button>
-                  <EditIcon />
+                <MuiSelect
+                  title={'Position'}
+                  options={playingPositions}
+                  name="position"
+                  register={register}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !(playerName && position)}
+                >
+                  Submit
                 </Button>
               </Grid>
-            )}
-          </Grid>
+            </Grid>
+          )}
         </Stack>
       </form>
     </FormProvider>

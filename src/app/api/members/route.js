@@ -13,48 +13,48 @@ export const POST = async (req) => {
     await connectToDB();
     const game = await gameDao.getSingleGame(memberData?.gameId);
 
-    if (memberData?.isNewMember) {
-      //For new member
-      if (memberData?.email) {
-        const isSameMemberExist = game?.members?.find(
-          (member) => member?.email === memberData?.email
+    //For new member
+    if (memberData?.email) {
+      const isSameMemberExist = game?.members?.find(
+        (member) => member?.email === memberData?.email
+      );
+      if (isSameMemberExist) {
+        return NextResponse.json(
+          { error: 'Same email already exist!', status: 'failed' },
+          { status: httpStatusCode.BAD_REQUEST }
         );
-        if (isSameMemberExist) {
+      }
+    }
+    if (memberData?.gamePassword !== game?.gamePassword) {
+      return NextResponse.json(
+        { error: 'Invalid password!', status: 'failed' },
+        { status: httpStatusCode.BAD_REQUEST }
+      );
+    } else {
+      let member;
+      if (memberData?.isNewMember) {
+        //We can add check here if user with same name is already exist in list than throw error from here
+        //new member add
+        member = await memberDao.createMember(memberData);
+      } else {
+        //existed member login for edit the details
+        member = await gameDao.findMemberWithEmailOrName(
+          memberData?.gameId,
+          memberData?.email,
+          memberData?.name
+        );
+        if (member?.message) {
           return NextResponse.json(
-            { error: 'Same email already exist!', status: 'failed' },
-            { status: httpStatusCode.BAD_REQUEST }
+            { error: member, status: 'failed' },
+            { status: httpStatusCode.NOT_FOUND }
           );
         }
       }
-      const createMember = await memberDao.createMember(memberData);
-      //Add case of getting error while create new member here
-      const accessToken = generateTokenForMember(createMember);
+      const accessToken = generateTokenForMember(member);
 
       const response = NextResponse.json(
-        { member: createMember, status: 'success' },
+        { member, status: 'success' },
         { status: httpStatusCode.CREATED }
-      );
-      //Set token in cookie
-      response.cookies.set('accessToken', accessToken);
-      return response;
-    } else {
-      //For existing account
-      const existMember = await gameDao.findMemberWithEmailOrName(
-        memberData?.gameId,
-        memberData?.email,
-        memberData?.name
-      );
-      if (!existMember) {
-        return NextResponse.json(
-          { error: 'Player does not exist!', status: 'failed' },
-          { status: httpStatusCode.NOT_FOUND }
-        );
-      }
-      const accessToken = generateTokenForMember(existMember);
-
-      const response = NextResponse.json(
-        { member: existMember, status: 'success' },
-        { status: httpStatusCode.OK }
       );
       //Set token in cookie
       response.cookies.set('accessToken', accessToken);

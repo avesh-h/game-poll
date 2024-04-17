@@ -10,15 +10,14 @@ const RootStyle = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  overflow: 'hidden',
 }));
 
 function LoadingScreen({ ...other }) {
   return (
-    <>
-      <RootStyle {...other}>
-        <CircularProgress color="primary" />
-      </RootStyle>
-    </>
+    <RootStyle {...other}>
+      <CircularProgress color="primary" />
+    </RootStyle>
   );
 }
 

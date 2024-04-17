@@ -104,7 +104,9 @@ const MemberForm = () => {
                 />
               </Box>
               <Box>
-                <Button type="submit">Submit</Button>
+                <Button type="submit" disabled={isLoading}>
+                  Submit
+                </Button>
               </Box>
               <Divider />
               <Typography variant="h6" textAlign={'center'}>
@@ -113,7 +115,10 @@ const MemberForm = () => {
               <Stack direction={'row'} justifyContent={'space-around'}>
                 <Button
                   sx={{ fontSize: '12px' }}
-                  onClick={() => setIsNewMember((prev) => !prev)}
+                  onClick={() => {
+                    setIsNewMember((prev) => !prev);
+                    reset();
+                  }}
                 >
                   {isNewMember ? 'As a player' : 'Add Player'}
                 </Button>

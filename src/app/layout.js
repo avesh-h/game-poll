@@ -1,8 +1,10 @@
-import Providers from '@/components/Providers';
+/* eslint-disable import/no-unresolved */
 import { Inter } from 'next/font/google';
-import Header from '@/components/Layouts/Header';
 
-// import "./globals.css";
+import Header from '@/components/Layouts/Header';
+import Providers from '@/components/Providers';
+
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

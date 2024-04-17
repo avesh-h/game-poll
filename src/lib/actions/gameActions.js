@@ -13,8 +13,9 @@ export const gameActions = apiInterceptor.injectEndpoints({
       query: (params) => ({
         url: `/games/${params}`,
         method: 'GET',
-        //params,     Only for adding search params
+        //params,     Only for adding search params key value pair({key:value})
       }),
+      providesTags: ['getSingleGame'],
     }),
     addPlayer: builder.mutation({
       query: (body) => ({
@@ -22,6 +23,7 @@ export const gameActions = apiInterceptor.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['getSingleGame'],
     }),
   }),
 });

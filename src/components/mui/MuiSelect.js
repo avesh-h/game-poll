@@ -1,12 +1,10 @@
 'use client';
 
-import * as React from 'react';
-import Box from '@mui/material/Box';
+import { styled } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { styled } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
 const StyledSelect = styled(Select)({
@@ -18,7 +16,6 @@ const StyledSelect = styled(Select)({
 export default function MuiSelect({
   title,
   options,
-  value,
   register,
   inputProps,
   name,
@@ -29,14 +26,16 @@ export default function MuiSelect({
     <Controller
       name={name}
       control={control}
-      render={() => {
+      render={({ field, fieldState: { error } }) => {
         return (
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">{title}</InputLabel>
             <StyledSelect
+              {...field}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={value}
+              error={!!error}
+              helperText={error?.message}
               sx={{
                 '& .MuiOutlinedInput-input': {
                   py: '12px',

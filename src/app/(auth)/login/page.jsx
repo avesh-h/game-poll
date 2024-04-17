@@ -1,12 +1,12 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/order */
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { signIn, signOut, useSession } from 'next-auth/react';
 
-// eslint-disable-next-line import/no-unresolved
-import Signup from '@/components/Form/Signup';
-// eslint-disable-next-line import/no-unresolved
 import { enqueueSnackbar } from 'notistack';
+import Signup from '@/components/Form/Signup';
 
 const content = {
   title: 'Login',

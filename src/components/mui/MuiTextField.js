@@ -11,20 +11,13 @@ const InputField = styled(TextField)({
   },
 });
 
-const muiTextProps = {
-  id: 'outlined-basic',
-  variant: 'outlined',
-  size: 'small',
-};
-
 const MuiTextField = ({
   sx,
-  value,
   type,
   inputProps,
-  register,
   name,
   disabled,
+  register,
   ...props
 }) => {
   const { formState } = useFormContext();
@@ -34,13 +27,15 @@ const MuiTextField = ({
   return (
     <InputField
       sx={{ ...sx }}
-      value={value}
+      name={name}
       type={type}
       inputProps={{ ...register(name), ...inputProps }}
       error={errors[name] && errors[name]}
       helperText={errors[name] && errors[name]?.message}
       disabled={disabled}
-      {...muiTextProps}
+      id="outlined-basic"
+      variant="outlined"
+      size="small"
       {...props}
     />
   );

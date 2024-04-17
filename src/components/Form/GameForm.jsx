@@ -1,34 +1,21 @@
+/* eslint-disable import/namespace */
+/* eslint-disable import/no-unresolved */
 'use client';
 
-import { FormLabel, Stack } from '@mui/material';
 import { useCallback } from 'react';
-import { useForm } from 'react-hook-form';
-import PlayerForm from './PlayerForm';
 
-const playingPositions = [
-  'ST',
-  'GK',
-  'LW',
-  'RW',
-  'CAM',
-  'CDM',
-  'CM',
-  'RM',
-  'LM',
-  'CB',
-  'RB',
-  'LB',
-];
+import { FormLabel, Stack } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
+
+import PlayerForm from './PlayerForm';
+import useCookie from '@/lib/custom-hooks/useCookie';
 
 const GameForm = ({ formData }) => {
-  const methods = useForm({
-    playerName: '',
-    position: '',
-  });
-
-  const { handleSubmit, register, reset } = methods;
-
-  const handleChange = () => {};
+  const router = useRouter();
+  const session = useSession();
+  const [value, , removeCookie] = useCookie('accessToken');
+  const params = useParams();
 
   const getAllPlayers = useCallback(() => {
     const addedPlayers = [];
@@ -45,27 +32,47 @@ const GameForm = ({ formData }) => {
     return addedPlayers;
   }, [formData]);
 
-  //Member form submission
-  const onSubmit = useCallback((memberData) => {
-    console.log('member', memberData);
-  }, []);
-
   return (
-    <Stack alignItems={'center'}>
-      <FormLabel id="demo-radio-buttons-group-label">
-        Select Your Seat:
-      </FormLabel>
-      {formData &&
-        getAllPlayers()?.map((player, ind) => {
-          return (
-            <PlayerForm
-              player={player}
-              ind={ind}
-              key={`${player?.playerName}-${ind}`}
-            />
-          );
-        })}
-    </Stack>
+    <>
+      <Stack alignItems={'center'}>
+        <FormLabel id="demo-radio-buttons-group-label">
+          Select Your Seat:
+        </FormLabel>
+
+        {formData &&
+          getAllPlayers()?.map((player, ind) => {
+            return (
+              <PlayerForm
+                player={player}
+                ind={ind}
+                key={`${player?.playerName}-${ind}`}
+              />
+            );
+          })}
+      </Stack>
+      {/* Temporary logout without design */}
+      <button
+        onClick={() => {
+          if (session?.data?.user?.id) {
+            //session logout for organizer
+            signOut();
+            //redirect to login
+            router.push('/login');
+          } else {
+            //member logout
+            localStorage.removeItem('session-user');
+
+            if (value) {
+              removeCookie();
+            }
+            //redirect to member login
+            router.push(`/members/${params?.['game-id']}`);
+          }
+        }}
+      >
+        Logout
+      </button>
+    </>
   );
 };
 

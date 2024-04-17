@@ -28,39 +28,48 @@ class gameDao {
   }
 
   async findMemberWithEmailOrName(gameId, playerEmail, playerName) {
-    const member = await Game.aggregate([
-      {
-        $match: {
-          _id: new ObjectId(gameId),
-          $or: [
-            { 'members.playerName': playerName },
-            { 'members.email': playerEmail },
-          ],
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          members: {
-            $arrayElemAt: [
-              {
-                $filter: {
-                  input: '$members',
-                  cond: {
-                    $or: [
-                      { $eq: ['$$this.playerName', playerName] },
-                      { $eq: ['$$this.email', playerEmail] },
-                    ],
-                  },
-                },
-              },
-              0,
+    try {
+      const member = await Game.aggregate([
+        {
+          $match: {
+            _id: new ObjectId(gameId),
+            $or: [
+              { 'members.playerName': playerName },
+              { 'members.email': playerEmail },
             ],
           },
         },
-      },
-    ]);
-    return member?.length ? member[0]?.members : null;
+        {
+          $project: {
+            _id: 0,
+            members: {
+              $arrayElemAt: [
+                {
+                  $filter: {
+                    input: '$members',
+                    cond: {
+                      $or: [
+                        { $eq: ['$$this.playerName', playerName] },
+                        { $eq: ['$$this.email', playerEmail] },
+                      ],
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+          },
+        },
+      ]);
+      if (member[0]?.members) {
+        return member[0]?.members;
+      }
+      throw Error('Player does not exist!');
+    } catch (error) {
+      return {
+        message: error?.message,
+      };
+    }
   }
 
   // Function to update member field based on gameId and memberId
@@ -79,6 +88,7 @@ class gameDao {
       );
 
       if (memberIndex === -1) {
+        //Player entry for first time
         game?.members?.push(playerData);
       } else {
         // Update the specific field of the member
