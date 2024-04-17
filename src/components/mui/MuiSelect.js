@@ -19,6 +19,7 @@ export default function MuiSelect({
   register,
   inputProps,
   name,
+  disabled,
 }) {
   const { control } = useFormContext();
 
@@ -28,7 +29,7 @@ export default function MuiSelect({
       control={control}
       render={({ field, fieldState: { error } }) => {
         return (
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={disabled}>
             <InputLabel id="demo-simple-select-label">{title}</InputLabel>
             <StyledSelect
               {...field}

@@ -10,6 +10,7 @@ import { signOut, useSession } from 'next-auth/react';
 
 import PlayerForm from './PlayerForm';
 import useCookie from '@/lib/custom-hooks/useCookie';
+import { findLoggedInMember } from '@/lib/utils/editPlayerDetails';
 
 const GameForm = ({ formData }) => {
   const router = useRouter();
@@ -40,12 +41,13 @@ const GameForm = ({ formData }) => {
         </FormLabel>
 
         {formData &&
-          getAllPlayers()?.map((player, ind) => {
+          getAllPlayers()?.map((player, ind, arr) => {
             return (
               <PlayerForm
                 player={player}
                 ind={ind}
                 key={`${player?.playerName}-${ind}`}
+                isNewMember={findLoggedInMember(arr)}
               />
             );
           })}

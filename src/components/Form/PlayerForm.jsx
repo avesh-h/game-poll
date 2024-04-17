@@ -30,7 +30,7 @@ const playingPositions = [
   'LB',
 ];
 
-const PlayerForm = ({ player, ind }) => {
+const PlayerForm = ({ player, ind, existPlayer }) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -93,6 +93,11 @@ const PlayerForm = ({ player, ind }) => {
                   label="Enter your name"
                   name="playerName"
                   register={register}
+                  disabled={
+                    !!existPlayer &&
+                    !session?.data &&
+                    existPlayer?.id !== player?.id
+                  }
                 />
               </Grid>
               <Grid item xs={2}>
@@ -101,6 +106,11 @@ const PlayerForm = ({ player, ind }) => {
                   options={playingPositions}
                   name="position"
                   register={register}
+                  disabled={
+                    !!existPlayer &&
+                    !session?.data &&
+                    existPlayer?.id !== player?.id
+                  }
                 />
               </Grid>
               <Grid item xs={2}>
