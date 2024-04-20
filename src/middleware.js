@@ -1,11 +1,9 @@
-import { getToken } from 'next-auth/jwt';
+import { jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-//Having error when we import auth options in middleware
-// import { authOptions } from './lib/nextAuth/auth';
-
-//We can also make full list of session protected and unprotected route seperately like below example:
-// const protectedRoutes = ['/dashboard', '/shops', '/dashboard'];
+import { verifyAuth } from './lib/jwtVerify';
 
 // const authRoutes = [
 //   '/signin',
@@ -15,25 +13,37 @@ import { NextResponse } from 'next/server';
 //   '/activate',
 // ];
 
-//Ready made function of middleware in next auth
-// export default withAuth(async (req) => {
-//   console.log('reqqqqqqqqqqq', req);
-//   const token = req?.nextauth?.token;
-//   if (!token) {
-//     return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
-//   }
-//   //TODO: return error for the global error handler of rtk query interceptor.
-// });
-
 export const middleware = async (req) => {
-  const token =
-    (await getToken({ req, secret: process.env.NEXTAUTH_SECRET })) ||
-    req?.cookies?.get('accessToken')?.value;
-  //If no token it will give us null
-  if (!token) {
-    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+  const token = cookies().get('accessToken');
+  if (token?.value) {
+    const verifiedUser = await verifyAuth(token?.value);
+    if (!verifiedUser?.payload) {
+      //jwt error redirect to members login page
+      req.cookies.delete('accessToken');
+      const response = NextResponse.redirect(
+        `${process.env.NEXTAUTH_URL}/login`
+      );
+      response.cookies.delete('accessToken');
+      return response;
+    }
+  } else {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) {
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+    }
+    const encodedKey = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
+    try {
+      const decoded = await jwtVerify(token?.jwtToken, encodedKey, {});
+    } catch (error) {
+      //JWT related errors
+      const response = NextResponse.redirect(
+        `${process.env.NEXTAUTH_URL}/login`
+      );
+      response.cookies.delete('next-auth.session-token');
+      return response;
+    }
   }
-  // it will automatically start next code without next function
+  return NextResponse.next();
 };
 
 export const config = {

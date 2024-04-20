@@ -20,7 +20,7 @@ const Login = () => {
   console.log('session', session);
   // const [login, { isLoading }] = useLoginMutation();
 
-  const onSubmit = async (data, e) => {
+  const onSubmit = async (data) => {
     const res = await signIn('credentials', {
       ...data,
       redirect: false,

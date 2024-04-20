@@ -26,7 +26,7 @@
     "react/react-in-jsx-scope": "off",
     "prettier/prettier": ["error"],
     "no-debugger": 1,
-    "quotes": ["error", "single"],
+    "quotes": ["warn", "single"],
     "import/order": [
       "error",
       {

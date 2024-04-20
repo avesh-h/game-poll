@@ -1,4 +1,5 @@
 /* eslint-disable import/no-unresolved */
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import gameDao from '@/lib/daos/gameDao';
@@ -14,7 +15,7 @@ export const POST = async (req) => {
     const game = await gameDao.getSingleGame(memberData?.gameId);
 
     //For new member
-    if (memberData?.email) {
+    if (memberData?.email && memberData?.isNewMember) {
       const isSameMemberExist = game?.members?.find(
         (member) => member?.email === memberData?.email
       );
@@ -50,15 +51,21 @@ export const POST = async (req) => {
           );
         }
       }
-      const accessToken = generateTokenForMember(member);
+      //Create payload for token
+      const payload = {
+        id: member?._id,
+        ...(member?.email && { email: member?.email }),
+        gameId: member?.gameId,
+      };
+      const accessToken = await generateTokenForMember(payload);
 
-      const response = NextResponse.json(
-        { member, status: 'success' },
-        { status: httpStatusCode.CREATED }
-      );
-      //Set token in cookie
-      response.cookies.set('accessToken', accessToken);
-      return response;
+      if (accessToken) {
+        cookies().set('accessToken', accessToken, { maxAge: 60 * 1000 });
+        return NextResponse.json(
+          { member, status: 'success' },
+          { status: httpStatusCode.CREATED }
+        );
+      }
     }
   } catch (error) {
     return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });

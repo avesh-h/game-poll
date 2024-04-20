@@ -1,7 +1,7 @@
 import { jwtVerify } from 'jose';
 
 const getSecretKey = () => {
-  const secret = process.env.NEXTAUTH_SECRET;
+  const secret = process.env.ACCESS_TOKEN_SECRET;
   if (!secret) {
     return new Error('Cannot found secret key');
   }
@@ -9,13 +9,11 @@ const getSecretKey = () => {
 };
 
 export const verifyAuth = async (token) => {
+  const encodedKey = new TextEncoder().encode(getSecretKey());
   try {
-    const decoded = await jwtVerify(
-      token,
-      new TextEncoder().encode(getSecretKey())
-    );
-    return decoded.payload;
+    const decoded = await jwtVerify(token, encodedKey, {});
+    return decoded;
   } catch (error) {
-    return new Error('Jwt expired!');
+    return { error: error?.message };
   }
 };

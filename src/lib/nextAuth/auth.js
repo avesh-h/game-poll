@@ -1,11 +1,13 @@
-import userDao from '@/lib/daos/userDao';
-import { connectToDB } from '@/lib/dbHandler';
+/* eslint-disable import/no-unresolved */
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import bcrypt from 'bcrypt';
 import { SignJWT } from 'jose';
 import { getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 import clientPromise from '../mongoAdapter/mongoAdapter';
+import userDao from '@/lib/daos/userDao';
+import { connectToDB } from '@/lib/dbHandler';
 
 //FOR GENERATE JWT
 const generateJWT = async (payload) => {
@@ -16,7 +18,7 @@ const generateJWT = async (payload) => {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('5 min')
+    .setExpirationTime('2h')
     .sign(encodedKey);
 
   return token;
@@ -39,7 +41,7 @@ export const authOptions = {
 
           if (!existedUser) {
             //User not exist
-            throw new Error("User doesn't Exist!");
+            throw new Error('User does not Exist!');
           } else {
             //Compare password
             const isPasswordCorrect = await bcrypt.compare(
@@ -51,11 +53,11 @@ export const authOptions = {
               throw new Error('Invalid Credentials!');
             } else {
               //generate JWT
-              const jwt = await generateJWT({
+              const payload = {
                 email: existedUser?.email,
                 userId: existedUser?._id,
-              });
-
+              };
+              const jwt = await generateJWT(payload);
               return {
                 id: existedUser?._id,
                 name: `${existedUser?.firstName} ${existedUser?.lastName}`,
@@ -73,8 +75,8 @@ export const authOptions = {
 
   session: {
     strategy: 'jwt',
-    // Seconds - How long until an idle session expires and is no longer valid.
-    maxAge: 1 * 60 * 60, //Session expiry  (we can set in seconds)
+    // Seconds - How long until an idle session expires and is no longer valid
+    maxAge: 24 * 60 * 60, //Session expiry  (we can set in seconds)
   },
   secret: process.env.NEXTAUTH_SECRET,
   // jwt: {
@@ -95,15 +97,19 @@ export const authOptions = {
   // },
 
   callbacks: {
-    async jwt({ token, user }) {
+    jwt: async ({ user, token }) => {
       //For just change the property name
-      token.userId = token.sub;
+      if (user) {
+        token.userId = token.sub;
+        token.jwtToken = user.token;
+      }
       return token;
     },
+
     session: async ({ session, token }) => {
-      if (session?.user) {
+      if (session?.user && token?.jwtToken) {
         session.user.id = token.sub;
-        session.user.token = token;
+        session.user.token = token.jwtToken;
       }
       return session;
     },

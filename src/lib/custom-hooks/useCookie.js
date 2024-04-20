@@ -4,10 +4,13 @@ import Cookies from 'js-cookie';
 
 export default function useCookie(name, defaultValue) {
   const [value, setValue] = useState(() => {
-    const cookie = Cookies.get(name);
-    if (cookie) return cookie;
-    Cookies.set(name, defaultValue);
-    return defaultValue;
+    if (defaultValue) {
+      Cookies.set(name, defaultValue);
+      return defaultValue;
+    } else {
+      const cookie = Cookies.get(name);
+      return cookie;
+    }
   });
 
   const updateCookie = useCallback(

@@ -5,18 +5,18 @@
 import { useCallback } from 'react';
 
 import { FormLabel, Stack } from '@mui/material';
+import Cookies from 'js-cookie';
 import { useParams, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 
 import PlayerForm from './PlayerForm';
-import useCookie from '@/lib/custom-hooks/useCookie';
 import { findLoggedInMember } from '@/lib/utils/editPlayerDetails';
 
 const GameForm = ({ formData }) => {
   const router = useRouter();
   const session = useSession();
-  const [value, , removeCookie] = useCookie('accessToken');
   const params = useParams();
+  const isAuth = Cookies.get('accessToken');
 
   const getAllPlayers = useCallback(() => {
     const addedPlayers = [];
@@ -47,7 +47,7 @@ const GameForm = ({ formData }) => {
                 player={player}
                 ind={ind}
                 key={`${player?.playerName}-${ind}`}
-                isNewMember={findLoggedInMember(arr)}
+                existPlayer={findLoggedInMember(arr)}
               />
             );
           })}
@@ -62,10 +62,9 @@ const GameForm = ({ formData }) => {
             router.push('/login');
           } else {
             //member logout
-            localStorage.removeItem('session-user');
-
-            if (value) {
-              removeCookie();
+            if (isAuth) {
+              localStorage.removeItem('session-user');
+              Cookies.remove('accessToken');
             }
             //redirect to member login
             router.push(`/members/${params?.['game-id']}`);
