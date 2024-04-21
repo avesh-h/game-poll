@@ -1,28 +1,13 @@
 /* eslint-disable import/no-unresolved */
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import bcrypt from 'bcrypt';
-import { SignJWT } from 'jose';
 import { getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import clientPromise from '../mongoAdapter/mongoAdapter';
+import { generateToken } from '../utils/generateToken';
 import userDao from '@/lib/daos/userDao';
 import { connectToDB } from '@/lib/dbHandler';
-
-//FOR GENERATE JWT
-const generateJWT = async (payload) => {
-  const secret = process.env.NEXTAUTH_SECRET || 'secret';
-  //Key only acceptes one of these symmetric secrets ['CryptoKey','Uint8Array']
-  //in short we need to convert our secret key into any of these encoded text.
-  const encodedKey = new TextEncoder().encode(secret);
-  const token = await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('2h')
-    .sign(encodedKey);
-
-  return token;
-};
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -57,7 +42,7 @@ export const authOptions = {
                 email: existedUser?.email,
                 userId: existedUser?._id,
               };
-              const jwt = await generateJWT(payload);
+              const jwt = await generateToken(payload);
               return {
                 id: existedUser?._id,
                 name: `${existedUser?.firstName} ${existedUser?.lastName}`,

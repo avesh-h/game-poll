@@ -1,4 +1,3 @@
-import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
@@ -14,34 +13,31 @@ import { verifyAuth } from './lib/jwtVerify';
 // ];
 
 export const middleware = async (req) => {
-  const token = cookies().get('accessToken');
-  if (token?.value) {
-    const verifiedUser = await verifyAuth(token?.value);
-    if (!verifiedUser?.payload) {
-      //jwt error redirect to members login page
-      req.cookies.delete('accessToken');
+  const token =
+    (await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    })) || cookies().get('accessToken');
+  if (!token) {
+    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+  }
+  try {
+    const decoded = await verifyAuth(token?.jwtToken || token?.value);
+    if (!decoded?.payload) {
       const response = NextResponse.redirect(
         `${process.env.NEXTAUTH_URL}/login`
       );
-      response.cookies.delete('accessToken');
+      if (cookies().has('accessToken')) {
+        response.cookies.delete('accessToken');
+      } else {
+        response.cookies.delete('next-auth.session-token');
+      }
       return response;
     }
-  } else {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token) {
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
-    }
-    const encodedKey = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
-    try {
-      const decoded = await jwtVerify(token?.jwtToken, encodedKey, {});
-    } catch (error) {
-      //JWT related errors
-      const response = NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/login`
-      );
-      response.cookies.delete('next-auth.session-token');
-      return response;
-    }
+  } catch (error) {
+    //JWT related errors
+    const response = NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+    return response;
   }
   return NextResponse.next();
 };

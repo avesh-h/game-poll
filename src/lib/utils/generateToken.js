@@ -1,6 +1,6 @@
 import { SignJWT } from 'jose';
 
-export const generateTokenForMember = async (payload) => {
+export const generateToken = async (payload) => {
   const secret = process.env.ACCESS_TOKEN_SECRET || 'secret';
   //Key only acceptes one of these symmetric secrets ['CryptoKey','Uint8Array']
   //in short we need to convert our secret key into any of these encoded text.

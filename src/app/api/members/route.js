@@ -6,7 +6,7 @@ import gameDao from '@/lib/daos/gameDao';
 import memberDao from '@/lib/daos/memberDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
-import { generateTokenForMember } from '@/lib/utils/generateMemberToken';
+import { generateToken } from '@/lib/utils/generateToken';
 
 export const POST = async (req) => {
   const memberData = await req.json();
@@ -57,7 +57,7 @@ export const POST = async (req) => {
         ...(member?.email && { email: member?.email }),
         gameId: member?.gameId,
       };
-      const accessToken = await generateTokenForMember(payload);
+      const accessToken = await generateToken(payload);
 
       if (accessToken) {
         cookies().set('accessToken', accessToken, { maxAge: 60 * 1000 });
