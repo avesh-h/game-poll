@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Inter } from 'next/font/google';
 
 import Header from '@/components/Layouts/Header';

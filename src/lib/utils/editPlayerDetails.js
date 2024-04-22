@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { GAME_MEMBER, GAME_ORGANIZER } from '@/constants/role';
 
 export const isAllowToEditPlayersDetails = (player, sessionId) => {

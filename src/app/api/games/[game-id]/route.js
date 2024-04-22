@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { NextResponse } from 'next/server';
 
 import gameDao from '@/lib/daos/gameDao';

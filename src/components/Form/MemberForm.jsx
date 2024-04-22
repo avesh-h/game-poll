@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 'use client';
 
 //Landing page for the members who click on the link

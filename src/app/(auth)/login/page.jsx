@@ -1,11 +1,9 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/order */
 'use client';
 
 import { useRouter } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
-
 import { enqueueSnackbar } from 'notistack';
+
 import Signup from '@/components/Form/Signup';
 
 const content = {

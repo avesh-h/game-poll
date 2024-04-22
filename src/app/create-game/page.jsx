@@ -1,5 +1,4 @@
 import CreateGameForm from '@/components/Form/CreateGameForm';
-import React from 'react';
 
 const content = {
   title: 'Create Game',

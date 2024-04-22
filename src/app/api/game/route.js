@@ -1,8 +1,9 @@
+import { NextResponse } from 'next/server';
+
 import gameDao from '@/lib/daos/gameDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
-import { NextResponse } from 'next/server';
 
 export const POST = async (req) => {
   const requestBody = await req.json();

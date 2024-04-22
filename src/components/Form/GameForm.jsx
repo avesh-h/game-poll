@@ -1,5 +1,3 @@
-/* eslint-disable import/namespace */
-/* eslint-disable import/no-unresolved */
 'use client';
 
 import { useCallback } from 'react';

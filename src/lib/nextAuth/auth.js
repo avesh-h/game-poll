@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth';

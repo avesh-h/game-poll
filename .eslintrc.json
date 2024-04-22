@@ -20,6 +20,7 @@
   ],
   "rules": {
     "no-unused-vars": "warn",
+    "import/no-unresolved": "off",
     "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "off", // Checks rules of Hooks: Need to add next lint
     "react-hooks/exhaustive-deps": "warn",
@@ -28,7 +29,7 @@
     "no-debugger": 1,
     "quotes": ["warn", "single"],
     "import/order": [
-      "error",
+      "warn",
       {
         "groups": ["builtin", "external", "internal"],
         "pathGroups": [

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 'use client';
 
 import { Box, Stack } from '@mui/material';
