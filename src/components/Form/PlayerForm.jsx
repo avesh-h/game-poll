@@ -12,7 +12,11 @@ import MuiTextField from '../mui/MuiTextField';
 import PlayerNameCard from '../PlayerNameCard';
 import { API_STATUS } from '@/constants/apiStatuses';
 import { GAME_MEMBER } from '@/constants/role';
-import { useAddPlayerMutation } from '@/lib/actions/gameActions';
+import {
+  useAddPlayerMutation,
+  useGetSingleGameQuery,
+} from '@/lib/actions/gameActions';
+import { localMember } from '@/lib/utils/editPlayerDetails';
 
 const playingPositions = [
   'ST',
@@ -38,6 +42,7 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
   });
   const { register, handleSubmit, watch, setValue } = methods;
   const params = useParams();
+  const { data: gameDetails } = useGetSingleGameQuery(params?.['game-id']);
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
 
   //STATE
@@ -56,6 +61,12 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
       playerData.gameId = params?.['game-id'];
       let memberId, email;
 
+      const memberExist = gameDetails?.selectedGame?.members?.find(
+        (member) =>
+          member?.id === session?.data?.user?.id ||
+          member?.id === localMember()?.memberId
+      );
+      //Check for admin is adding member.
       if (localStorage.getItem('session-user')) {
         const memberObj = JSON.parse(localStorage.getItem('session-user'));
         memberId = memberObj?.memberId;
@@ -64,8 +75,15 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
         memberId = session?.data?.user?.id;
         email = session?.data?.user?.email;
       }
-      playerData.email = email;
-      playerData.id = memberId;
+      if (player?.id) {
+        playerData.id = player?.id;
+        playerData.email = player?.email;
+      } else {
+        if (!memberExist) {
+          playerData.id = memberId;
+          playerData.email = email;
+        }
+      }
       playerData.role = player?.role || GAME_MEMBER;
       const res = await addPlayer(playerData);
       if (res?.data?.status === API_STATUS?.success) {
@@ -79,7 +97,10 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
       <form style={{ width: '80%' }} onSubmit={handleSubmit(onSubmit)}>
         <Stack direction={'row'} alignItems={'center'} pt={2}>
           <Typography pr={2}>{ind + 1}</Typography>
-          {!isEdit && Object?.values(player)?.length ? (
+          {!isEdit &&
+          Object?.values(player)?.length &&
+          'position' in player &&
+          'playerName' in player ? (
             <PlayerNameCard
               player={player}
               setIsEdit={setIsEdit}

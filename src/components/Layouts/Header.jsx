@@ -1,23 +1,33 @@
 'use client';
 
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { useRouter } from 'next/navigation';
-import { Stack } from '@mui/material';
 
-const pages = ['Create Game', 'List'];
+import AdbIcon from '@mui/icons-material/Adb';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Stack } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { useRouter } from 'next/navigation';
+
+const pages = [
+  {
+    title: 'Create Game',
+    value: 'create-game',
+  },
+  {
+    title: 'Games List',
+    value: 'gamesList',
+  },
+];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -33,8 +43,9 @@ function ResponsiveAppBar() {
   };
 
   //Page navigation
-  const handlePageNavigation = () => {
+  const handlePageNavigation = (page) => {
     //Navigation
+    router.push(`/${page?.value}`);
     handleCloseNavMenu();
   };
 
@@ -100,8 +111,11 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page?.value}
+                  onClick={() => handlePageNavigation(page)}
+                >
+                  <Typography textAlign="center">{page?.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -128,11 +142,11 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page?.value}
+                onClick={() => handlePageNavigation(page)}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page?.title}
               </Button>
             ))}
           </Box>

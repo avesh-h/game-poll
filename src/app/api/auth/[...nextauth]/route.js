@@ -1,5 +1,6 @@
-import { authOptions } from '@/lib/nextAuth/auth';
 import NextAuth from 'next-auth/next';
+
+import { authOptions } from '@/lib/nextAuth/auth';
 
 // For advance options
 // export default async function auth(req, res) {

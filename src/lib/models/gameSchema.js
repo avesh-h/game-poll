@@ -30,6 +30,7 @@ const gameSchema = new mongoose.Schema(
       default: Date.now,
       required: [true, 'Date of the game is require.'],
     },
+    organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
     gamePassword: {
       type: String,
       required: [true, 'Need password for set the game.'],

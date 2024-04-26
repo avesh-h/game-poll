@@ -2,7 +2,7 @@ import { GAME_MEMBER, GAME_ORGANIZER } from '@/constants/role';
 
 export const isAllowToEditPlayersDetails = (player, sessionId) => {
   const flag =
-    ((player?.role === GAME_ORGANIZER && sessionId === player?.id) ||
+    (sessionId ||
       (player?.role === GAME_MEMBER &&
         player?.id === localMember()?.memberId)) &&
     player?.playerName &&

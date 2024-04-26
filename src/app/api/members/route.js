@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+import { GAME_ORGANIZER } from '@/constants/role';
 import gameDao from '@/lib/daos/gameDao';
 import memberDao from '@/lib/daos/memberDao';
 import { connectToDB } from '@/lib/dbHandler';
@@ -43,6 +44,13 @@ export const POST = async (req) => {
           memberData?.email,
           memberData?.name
         );
+        if (member?.role === GAME_ORGANIZER) {
+          //If Organizer logged through member form
+          return NextResponse.json(
+            { error: 'Invalid username or password!', status: 'failed' },
+            { status: httpStatusCode.NOT_FOUND }
+          );
+        }
         if (member?.message) {
           return NextResponse.json(
             { error: member, status: 'failed' },
