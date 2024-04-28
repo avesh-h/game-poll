@@ -25,6 +25,12 @@ export const gameActions = apiInterceptor.injectEndpoints({
       }),
       invalidatesTags: ['getSingleGame'],
     }),
+    getAllGames: builder.query({
+      query: () => ({
+        url: '/gamesList',
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -32,4 +38,5 @@ export const {
   useCreateGameMutation,
   useGetSingleGameQuery,
   useAddPlayerMutation,
+  useGetAllGamesQuery,
 } = gameActions;

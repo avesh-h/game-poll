@@ -27,6 +27,11 @@ class gameDao {
     return member;
   }
 
+  async findGamesByOrganizerId(id) {
+    const games = await Game.find({ organizerId: id });
+    return games;
+  }
+
   async findMemberWithEmailOrName(gameId, playerEmail, playerName) {
     try {
       const member = await Game.aggregate([
