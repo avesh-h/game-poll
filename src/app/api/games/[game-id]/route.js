@@ -75,3 +75,37 @@ export const POST = async (request) => {
     return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
   }
 };
+
+const updateGame = async (req, context) => {
+  const requestBody = await req.json();
+  console.log('reqqqq', requestBody);
+};
+
+const deleteGame = async (req, ctx) => {
+  const gameId = ctx?.params?.['game-id'];
+  try {
+    if (!gameId) {
+      return NextResponse.json(
+        { message: 'Invalid request!', status: 'failed' },
+        { status: httpStatusCode.BAD_REQUEST }
+      );
+    }
+    await connectToDB();
+    const findGame = await gameDao.getSingleGame(gameId);
+    if (!findGame) {
+      return NextResponse.json(
+        { error: 'Not found!', status: 'failed' },
+        { status: httpStatusCode.NOT_FOUND }
+      );
+    }
+    await gameDao.deleteGameById(gameId);
+    return NextResponse.json(
+      { message: 'Successfully removed!', status: 'success' },
+      { status: httpStatusCode.OK }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
+  }
+};
+
+export { deleteGame as DELETE, updateGame as PUT };

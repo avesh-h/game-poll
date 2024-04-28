@@ -2,13 +2,23 @@ import { apiInterceptor } from '../apiInterceptor';
 
 export const gameActions = apiInterceptor.injectEndpoints({
   endpoints: (builder) => ({
+    getAllGames: builder.query({
+      query: () => ({
+        url: '/gamesList',
+        method: 'GET',
+      }),
+      providesTags: ['getAllGames'],
+    }),
+
     createGame: builder.mutation({
       query: (body) => ({
-        url: '/game',
+        url: '/games',
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['getAllGames'],
     }),
+
     getSingleGame: builder.query({
       query: (params) => ({
         url: `/games/${params}`,
@@ -17,6 +27,7 @@ export const gameActions = apiInterceptor.injectEndpoints({
       }),
       providesTags: ['getSingleGame'],
     }),
+
     addPlayer: builder.mutation({
       query: (body) => ({
         url: `/games/${body?.gameId}`,
@@ -25,11 +36,13 @@ export const gameActions = apiInterceptor.injectEndpoints({
       }),
       invalidatesTags: ['getSingleGame'],
     }),
-    getAllGames: builder.query({
-      query: () => ({
-        url: '/gamesList',
-        method: 'GET',
+
+    deleteGame: builder.mutation({
+      query: (id) => ({
+        url: `/games/${id}`,
+        method: 'DELETE',
       }),
+      invalidatesTags: ['getAllGames'],
     }),
   }),
 });
@@ -39,4 +52,5 @@ export const {
   useGetSingleGameQuery,
   useAddPlayerMutation,
   useGetAllGamesQuery,
+  useDeleteGameMutation,
 } = gameActions;

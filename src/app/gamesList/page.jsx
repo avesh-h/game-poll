@@ -6,13 +6,18 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
 
 import TableMoreMenu from '@/components/Table/TableMoreMenu';
 import TableWrapper from '@/components/Table/TableWrapper';
-import { useGetAllGamesQuery } from '@/lib/actions/gameActions';
+import {
+  useDeleteGameMutation,
+  useGetAllGamesQuery,
+} from '@/lib/actions/gameActions';
 
 const GamesList = () => {
   const { data: games, isLoading, isFetching } = useGetAllGamesQuery();
+  const [deleteGame, { isLoading: isDeleting }] = useDeleteGameMutation();
   const [rowLoader, setRowLoader] = useState('');
   const [openMenu, setOpenMenuActions] = useState(null);
   const [rowData, setRowData] = useState();
@@ -46,8 +51,12 @@ const GamesList = () => {
           key: 'edit',
         },
         {
-          event: () => {
+          event: async () => {
             //delete game form
+            const res = await deleteGame(row?._id);
+            if (res?.data?.message) {
+              enqueueSnackbar(res?.data?.message, { variant: 'success' });
+            }
             handleCloseMenu();
           },
           getLink: () => {},
@@ -68,7 +77,7 @@ const GamesList = () => {
 
       return actions;
     },
-    [router]
+    [deleteGame, router]
   );
 
   //Columns
@@ -140,7 +149,7 @@ const GamesList = () => {
       },
       {
         field: 'More',
-        headerName: 'more',
+        headerName: 'action',
         sx: { textAlign: 'center', justifyContent: 'center' },
         render: (row) => actionButtonIcon(row),
       },
@@ -167,7 +176,7 @@ const GamesList = () => {
 
   return (
     <div>
-      {isLoading || (isFetching && !games?.games?.length) ? (
+      {isLoading || isDeleting || (isFetching && !games?.games?.length) ? (
         <>Loading...</>
       ) : (
         <TableWrapper

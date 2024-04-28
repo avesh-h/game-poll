@@ -32,6 +32,10 @@ class gameDao {
     return games;
   }
 
+  async deleteGameById(id) {
+    return await Game.findByIdAndDelete(id);
+  }
+
   async findMemberWithEmailOrName(gameId, playerEmail, playerName) {
     try {
       const member = await Game.aggregate([

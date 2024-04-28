@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -21,13 +22,9 @@ import MuiDatePicker from '../mui/MuiDatePicker';
 import MuiRadioGroup from '../mui/MuiRadioGroup';
 import MuiTextField from '../mui/MuiTextField';
 import MuiTimePicker from '../mui/MuiTimePicker';
-// eslint-disable-next-line import/no-unresolved
 import { useCreateGameMutation } from '@/lib/actions/gameActions';
-// eslint-disable-next-line import/no-unresolved
 import { fnPressNumberKey } from '@/lib/utils/inputFunctions';
-// eslint-disable-next-line import/no-unresolved
 import { errorMessages } from '@/lib/utils/validationMessage';
-import { useRouter } from 'next/navigation';
 
 const gameTypeValues = [
   { label: 'All', value: 'all' },
@@ -35,13 +32,6 @@ const gameTypeValues = [
 ];
 
 const CreateGameForm = ({ content }) => {
-  const [selectedDate, setSelectedDate] = useState(
-    dayjs().format('YYYY-MM-DD HH:mm:ss')
-  );
-  const [startTime, setStartTime] = useState(
-    dayjs().format('YYYY-MM-DD HH:mm:ss')
-  );
-  const [endTime, setEndTime] = useState(dayjs().format('YYYY-MM-DD HH:mm:ss'));
   const router = useRouter();
 
   //Validation
@@ -69,41 +59,31 @@ const CreateGameForm = ({ content }) => {
       noOfPlayers: '',
       gameType: 'all',
       nameOfVenue: '',
-      gameDate: dayjs().format('YYYY-MM-DD'), //current date as default
       startTime: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
       endTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      gameDate: '',
       gamePassword: '',
       totalAmount: '',
     },
     resolver: yupResolver(gameSchema),
   });
 
-  const { handleSubmit, register, reset } = methods;
+  const { handleSubmit, register, reset, watch, setValue } = methods;
 
-  const disableEndTimebeforeStartTime = useCallback(
-    (date) => {
-      if (date.isBefore(startTime)) {
-        return true;
-      }
-      return false;
-    },
-    [startTime]
-  );
+  //Contants
+  const selectedDate = watch('gameDate');
+  const selectedStartTime = watch('startTime');
+
   //Create game api
   const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
 
   const onSubmit = async (data) => {
-    if (startTime && endTime) {
-      const dayJsStartTime = dayjs(startTime);
-      const dayJsEndTime = dayjs(endTime);
-      //Format for time
-      data.startTime = startTime;
-      data.endTime = endTime;
+    if (data?.gameDate && data?.startTime && data?.endTime) {
+      data.startTime = dayjs(data.startTime).format('YYYY-MM-DD HH:mm:ss');
+      data.endTime = dayjs(data.endTime).format('YYYY-MM-DD HH:mm:ss');
+      const dayJsStartTime = dayjs(data.startTime);
+      const dayJsEndTime = dayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
-    }
-    if (selectedDate) {
-      //Format for date
-      data.gameDate = selectedDate;
     }
     //API
     const res = await createGame(data);
@@ -113,6 +93,25 @@ const CreateGameForm = ({ content }) => {
       router.push(`/games/${res?.data?.createdGame?._id}`);
     }
   };
+
+  //Disable all past time
+  const disableTime = () => {
+    if (selectedDate && dayjs(selectedDate).isAfter(dayjs())) {
+      return false;
+    }
+    return true;
+  };
+
+  //End time cannot before start time
+  const disableEndTimebeforeStartTime = useCallback(
+    (date) => {
+      if (date.isBefore(selectedStartTime)) {
+        return true;
+      }
+      return false;
+    },
+    [selectedStartTime]
+  );
 
   return (
     <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
@@ -178,31 +177,31 @@ const CreateGameForm = ({ content }) => {
                 <MuiDatePicker
                   label={'Select Date'}
                   name="gameDate"
-                  onChange={(value) =>
-                    setSelectedDate(dayjs(value).format('YYYY-MM-DD'))
-                  }
-                  disablePast
+                  onChange={(value) => {
+                    setValue(
+                      'startTime',
+                      dayjs().format('YYYY-MM-DD HH:mm:ss')
+                    );
+                    setValue('endTime', dayjs().format('YYYY-MM-DD HH:mm:ss'));
+                  }}
+                  disablePast={disableTime()}
                 />
               </Box>
               <Box>
                 <MuiTimePicker
                   label={'Start time'}
                   name="startTime"
-                  onChange={(value) =>
-                    setStartTime(dayjs(value).format('YYYY-MM-DD HH:mm:ss'))
-                  }
-                  disablePast
+                  disabled={!selectedDate}
+                  disablePast={disableTime()}
                 />
               </Box>
               <Box>
                 <MuiTimePicker
                   label={'End time'}
                   name="endTime"
-                  onChange={(value) =>
-                    setEndTime(dayjs(value).format('YYYY-MM-DD HH:mm:ss'))
-                  }
+                  disabled={!selectedDate}
                   shouldDisableTime={disableEndTimebeforeStartTime}
-                  disablePast
+                  disablePast={disableTime()}
                 />
               </Box>
               <Box>

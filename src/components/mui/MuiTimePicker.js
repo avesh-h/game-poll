@@ -17,9 +17,9 @@ const MuiTimePicker = ({ label, name, onChange, ...props }) => {
             value={dayjs(field?.value)}
             onChange={(newValue) => {
               if (onChange) {
-                onChange(newValue);
+                onChange(dayjs(newValue).format('YYYY-MM-DD HH:mm:ss'));
               }
-              field.onChange(newValue);
+              field.onChange(dayjs(newValue).format('YYYY-MM-DD HH:mm:ss'));
             }}
             slotProps={{
               textField: {
