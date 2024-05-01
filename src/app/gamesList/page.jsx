@@ -44,6 +44,7 @@ const GamesList = () => {
         {
           event: () => {
             //Navigate edit game form
+            router.push(`/create-game/${row?._id}`);
             handleCloseMenu();
           },
           getLink: () => {},

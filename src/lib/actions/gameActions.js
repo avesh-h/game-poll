@@ -19,6 +19,15 @@ export const gameActions = apiInterceptor.injectEndpoints({
       invalidatesTags: ['getAllGames'],
     }),
 
+    updateGame: builder.mutation({
+      query: (body) => ({
+        url: `/games/${body?.gameId}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['getSingleGame', 'getAllGames'],
+    }),
+
     getSingleGame: builder.query({
       query: (params) => ({
         url: `/games/${params}`,
@@ -53,4 +62,5 @@ export const {
   useAddPlayerMutation,
   useGetAllGamesQuery,
   useDeleteGameMutation,
+  useUpdateGameMutation,
 } = gameActions;

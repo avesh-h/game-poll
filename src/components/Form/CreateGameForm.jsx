@@ -22,7 +22,11 @@ import MuiDatePicker from '../mui/MuiDatePicker';
 import MuiRadioGroup from '../mui/MuiRadioGroup';
 import MuiTextField from '../mui/MuiTextField';
 import MuiTimePicker from '../mui/MuiTimePicker';
-import { useCreateGameMutation } from '@/lib/actions/gameActions';
+import { API_STATUS } from '@/constants/apiStatuses';
+import {
+  useCreateGameMutation,
+  useUpdateGameMutation,
+} from '@/lib/actions/gameActions';
 import { fnPressNumberKey } from '@/lib/utils/inputFunctions';
 import { errorMessages } from '@/lib/utils/validationMessage';
 
@@ -31,7 +35,7 @@ const gameTypeValues = [
   { label: 'Team', value: 'team' },
 ];
 
-const CreateGameForm = ({ content }) => {
+const CreateGameForm = ({ content, gameData }) => {
   const router = useRouter();
 
   //Validation
@@ -55,15 +59,19 @@ const CreateGameForm = ({ content }) => {
 
   const methods = useForm({
     defaultValues: {
-      gameName: '',
-      noOfPlayers: '',
-      gameType: 'all',
-      nameOfVenue: '',
-      startTime: dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
-      endTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      gameDate: '',
-      gamePassword: '',
-      totalAmount: '',
+      gameName: gameData?.gameName || '',
+      noOfPlayers: gameData?.noOfPlayers || '',
+      gameType: gameData?.gameType || 'all',
+      nameOfVenue: gameData?.nameOfVenue || '',
+      startTime:
+        dayjs(gameData?.startTime).format('YYYY-MM-DD HH:mm:ss') ||
+        dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
+      endTime:
+        dayjs(gameData?.endTime).format('YYYY-MM-DD HH:mm:ss') ||
+        dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      gameDate: dayjs(gameData?.gameDate).format('YYYY-MM-DD') || '',
+      gamePassword: gameData?.gamePassword || '',
+      totalAmount: gameData?.totalAmount || '',
     },
     resolver: yupResolver(gameSchema),
   });
@@ -75,7 +83,10 @@ const CreateGameForm = ({ content }) => {
   const selectedStartTime = watch('startTime');
 
   //Create game api
-  const [createGame, { isLoading, isSuccess }] = useCreateGameMutation();
+  const [createGame, { isLoading }] = useCreateGameMutation();
+
+  //Update game api
+  const [updateGame, { isLoading: isUpdating }] = useUpdateGameMutation();
 
   const onSubmit = async (data) => {
     if (data?.gameDate && data?.startTime && data?.endTime) {
@@ -86,11 +97,20 @@ const CreateGameForm = ({ content }) => {
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
     }
     //API
-    const res = await createGame(data);
-    if (isSuccess || res?.data?.message) {
-      enqueueSnackbar(res?.data?.message, { variant: 'success' });
-      reset();
-      router.push(`/games/${res?.data?.createdGame?._id}`);
+    let res;
+    if (gameData) {
+      data.gameId = gameData?._id;
+      res = await updateGame(data);
+      if (res?.data?.status === API_STATUS.success) {
+        enqueueSnackbar('Successfully Updated!', { variant: 'success' });
+      }
+    } else {
+      res = await createGame(data);
+      if (res?.data?.message) {
+        enqueueSnackbar(res?.data?.message, { variant: 'success' });
+        reset();
+        router.push(`/games/${res?.data?.createdGame?._id}`);
+      }
     }
   };
 
@@ -215,7 +235,7 @@ const CreateGameForm = ({ content }) => {
                 </Typography>
               </Box>
               <Box>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading || isUpdating}>
                   {content.buttonText}
                 </Button>
               </Box>

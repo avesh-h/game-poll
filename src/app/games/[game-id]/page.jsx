@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 
 import GameForm from '@/components/Form/GameForm';
-import LoadinScreen from '@/components/LoadinScreen';
+import LoadingScreen from '@/components/LoadingScreen';
 import { useGetSingleGameQuery } from '@/lib/actions/gameActions';
 
 const GameFormPage = () => {
@@ -13,7 +13,7 @@ const GameFormPage = () => {
   const { data, isLoading } = useGetSingleGameQuery(gameId);
 
   if (isLoading) {
-    return <LoadinScreen />;
+    return <LoadingScreen />;
   }
   return (
     <div>

@@ -78,7 +78,30 @@ export const POST = async (request) => {
 
 const updateGame = async (req, context) => {
   const requestBody = await req.json();
-  console.log('reqqqq', requestBody);
+  const gameId = context?.params?.['game-id'];
+
+  try {
+    await connectToDB();
+    const selectedGame = await gameDao.getSingleGame(
+      requestBody?.gameId || gameId
+    );
+    if (!selectedGame) {
+      return NextResponse.json(
+        { error: 'Not found!' },
+        { status: httpStatusCode.BAD_REQUEST }
+      );
+    }
+    const updatedGame = await gameDao.updateGame(
+      requestBody?.gameId || gameId,
+      requestBody
+    );
+    return NextResponse.json(
+      { updatedGame, status: 'success' },
+      { status: httpStatusCode.OK }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
+  }
 };
 
 const deleteGame = async (req, ctx) => {

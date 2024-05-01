@@ -32,6 +32,13 @@ class gameDao {
     return games;
   }
 
+  async updateGame(id, updateGame) {
+    const updatedGame = await Game.findByIdAndUpdate(id, updateGame, {
+      new: true,
+    });
+    return updatedGame;
+  }
+
   async deleteGameById(id) {
     return await Game.findByIdAndDelete(id);
   }
