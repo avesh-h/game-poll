@@ -1,12 +1,13 @@
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
-import { User } from "@/lib/models/userSchema";
-import { NextResponse } from "next/server";
-import { connectToDB } from "@/lib/dbHandler";
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { connectToDB } from '@/lib/dbHandler';
+import { User } from '@/lib/models/userSchema';
 
 export const POST = async (req) => {
   const { accessToken } = await req.json();
-  const refreshToken = cookies().get("refresh_token");
+  const refreshToken = cookies().get('refresh_token');
   try {
     await connectToDB();
     if (accessToken) {
@@ -18,7 +19,7 @@ export const POST = async (req) => {
         const existUser = await User.findOne({ email: decoded.email });
         if (!existUser) {
           return NextResponse(
-            { error: "Authentication Error!", status: "failed" },
+            { error: 'Authentication Error!', status: 'failed' },
             { status: 403 }
           );
         }
@@ -31,23 +32,23 @@ export const POST = async (req) => {
           userData,
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: "1m",
+            expiresIn: '1m',
           }
         );
         const newRefreshToken = jwt.sign(
           userData,
           process.env.REFRESH_TOKEN_SECRET,
-          { expiresIn: "24h" }
+          { expiresIn: '24h' }
         );
         const response = NextResponse.json(
           { accessToken: newAccessToken },
           { status: 200 }
         );
-        response.cookies.set("refresh_token", newRefreshToken);
+        response.cookies.set('refresh_token', newRefreshToken);
         return response;
       }
     }
   } catch (error) {
-    return NextResponse.json({ error, status: "failed" }, { status: 401 });
+    return NextResponse.json({ error, status: 'failed' }, { status: 401 });
   }
 };

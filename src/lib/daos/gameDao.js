@@ -5,7 +5,7 @@ import { Game } from '../models/gameSchema';
 class gameDao {
   async createGame(data, organizer) {
     const game = new Game(data);
-    game.members.push(organizer);
+    game.members[0] = organizer;
     await game.save();
     return game;
   }
@@ -99,13 +99,16 @@ class gameDao {
       }
 
       // Find the index of the member with memberId in the members array
+
+      //TODO:Check logic we don't need this loop after latest changes
       const memberIndex = game.members.findIndex(
         (member) => String(member.id) === memberId
       );
 
       if (memberIndex === -1) {
         //Player entry for first time
-        game?.members?.push(playerData);
+        game.members[playerData?.memberIndex || playerData?.playerIndex] =
+          playerData;
       } else {
         // Update the specific field of the member
         game.members[memberIndex].playerName = playerData?.playerName;

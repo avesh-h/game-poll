@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button, Grid, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
@@ -33,7 +33,7 @@ const playingPositions = [
   'LB',
 ];
 
-const PlayerForm = ({ player, ind, existPlayer }) => {
+const PlayerForm = ({ player, ind, existPlayer, team }) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -44,6 +44,17 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
   const params = useParams();
   const { data: gameDetails } = useGetSingleGameQuery(params?.['game-id']);
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
+
+  //Existed Member In Game
+  const existedMemberInGame = useMemo(() => {
+    if (localStorage.getItem('session-user')) {
+      const existedMember = JSON.parse(localStorage.getItem('session-user'));
+      // console.log('details', gameDetails?.selectedGame);
+      return gameDetails?.selectedGame?.members?.find(
+        (m) => m.id === existedMember?.memberId
+      );
+    }
+  }, [gameDetails?.selectedGame?.members]);
 
   //STATE
   const playerName = watch('playerName');
@@ -61,10 +72,11 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
       playerData.gameId = params?.['game-id'];
       let memberId, email;
 
-      const memberExist = gameDetails?.selectedGame?.members?.find(
-        (member) =>
-          member?.id === session?.data?.user?.id ||
-          member?.id === localMember()?.memberId
+      const memberExist = gameDetails?.selectedGame?.members?.find((member) =>
+        member?.id
+          ? member?.id === session?.data?.user?.id ||
+            member?.id === localMember()?.memberId
+          : null
       );
       //Check for admin is adding member.
       if (localStorage.getItem('session-user')) {
@@ -85,6 +97,12 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
         }
       }
       playerData.role = player?.role || GAME_MEMBER;
+      playerData.playerIndex = ind;
+      playerData.memberIndex = player?.memberIndex;
+
+      if (gameDetails?.selectedGame?.gameType === 'team') {
+        playerData.team = team;
+      }
       const res = await addPlayer(playerData);
       if (res?.data?.status === API_STATUS?.success) {
         setIsEdit(false);
@@ -114,26 +132,28 @@ const PlayerForm = ({ player, ind, existPlayer }) => {
                   name="playerName"
                   register={register}
                   disabled={
-                    !!existPlayer &&
-                    !session?.data &&
-                    existPlayer?.id !== player?.id
+                    (!session?.data &&
+                      (existPlayer?.id !== player?.id ||
+                        existedMemberInGame?.id !== player?.id)) ||
+                    isLoading
                   }
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={4}>
                 <MuiSelect
                   title={'Position'}
                   options={playingPositions}
                   name="position"
                   register={register}
                   disabled={
-                    !!existPlayer &&
-                    !session?.data &&
-                    existPlayer?.id !== player?.id
+                    (!session?.data &&
+                      (existPlayer?.id !== player?.id ||
+                        existedMemberInGame?.id !== player?.id)) ||
+                    isLoading
                   }
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={4}>
                 <Button
                   type="submit"
                   disabled={isLoading || !(playerName && position)}

@@ -31,5 +31,5 @@ export const validateLoggedInUserByID = (player, sessionId) =>
   (player?.role === GAME_MEMBER && player?.id === localMember()?.memberId);
 
 export const findLoggedInMember = (membersArr) => {
-  return membersArr?.find((m) => m.id === localMember()?.memberId);
+  return membersArr?.find((m) => m?.id === localMember()?.memberId);
 };

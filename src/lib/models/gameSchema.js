@@ -13,8 +13,8 @@ const gameSchema = new mongoose.Schema(
     noOfPlayers: {
       type: Number,
       required: [true, 'Number of seats are require.'],
-      min: [4, 'Must be at least 4, got {VALUE}'],
-      max: 12,
+      min: [6, 'Must be at least 4, got {VALUE}'],
+      max: 30,
     },
     nameOfVenue: {
       type: String,
@@ -50,6 +50,9 @@ const gameSchema = new mongoose.Schema(
         position: String,
         email: String,
         gameId: { type: mongoose.Schema.ObjectId },
+        team: { type: String },
+        playerIndex: { type: Number }, //Only for the team array index UI position
+        memberIndex: { type: Number }, //Only for the main array index UI position
       },
     ],
   },

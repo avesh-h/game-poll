@@ -36,6 +36,15 @@ export const POST = async (req) => {
       if (memberData?.isNewMember) {
         //We can add check here if user with same name is already exist in list than throw error from here
         //new member add
+        const isSameMemberNameExist = game?.members?.find(
+          (member) => member?.playerName === memberData?.name
+        );
+        if (isSameMemberNameExist) {
+          return NextResponse.json(
+            { error: 'Same name with player already exist!', status: 'failed' },
+            { status: httpStatusCode.BAD_REQUEST }
+          );
+        }
         member = await memberDao.createMember(memberData);
       } else {
         //existed member login for edit the details

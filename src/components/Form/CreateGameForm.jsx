@@ -105,11 +105,46 @@ const CreateGameForm = ({ content, gameData }) => {
         enqueueSnackbar('Successfully Updated!', { variant: 'success' });
       }
     } else {
-      res = await createGame(data);
-      if (res?.data?.message) {
-        enqueueSnackbar(res?.data?.message, { variant: 'success' });
-        reset();
-        router.push(`/games/${res?.data?.createdGame?._id}`);
+      //Create empty objects for the members
+      const members = [];
+      let startIndex = 0;
+      let startFromZero = false;
+      for (let i = 0; i < data?.noOfPlayers; i++) {
+        if (data?.gameType === 'team') {
+          //Gametype = "team"
+          if (i > Math.ceil(data?.noOfPlayers / 2) - 1) {
+            if (!startFromZero) {
+              startIndex = 0;
+              members[i] = {
+                playerIndex: startIndex,
+                team: 'teamB',
+                memberIndex: i,
+              };
+              startFromZero = true;
+            } else {
+              startIndex++;
+              members[i] = {
+                playerIndex: startIndex,
+                team: 'teamB',
+                memberIndex: i,
+              };
+            }
+          } else {
+            members[i] = { playerIndex: i, team: 'teamA', memberIndex: i };
+          }
+        } else {
+          //Gametype = "all"
+          members[i] = { playerIndex: i };
+        }
+      }
+      data.members = members;
+      if (data?.members?.length) {
+        res = await createGame(data);
+        if (res?.data?.message) {
+          enqueueSnackbar(res?.data?.message, { variant: 'success' });
+          reset();
+          router.push(`/games/${res?.data?.createdGame?._id}`);
+        }
       }
     }
   };
@@ -197,7 +232,7 @@ const CreateGameForm = ({ content, gameData }) => {
                 <MuiDatePicker
                   label={'Select Date'}
                   name="gameDate"
-                  onChange={(value) => {
+                  onChange={() => {
                     setValue(
                       'startTime',
                       dayjs().format('YYYY-MM-DD HH:mm:ss')
