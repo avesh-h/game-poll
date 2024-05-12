@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { ObjectId } from 'mongodb';
 
 import { Game } from '../models/gameSchema';
@@ -98,23 +99,10 @@ class gameDao {
         return game; // Handle case where game with given ID is not found
       }
 
-      // Find the index of the member with memberId in the members array
+      //Player added and update in both below same logic
+      game.members[playerData?.memberIndex || playerData?.playerIndex] =
+        playerData;
 
-      //TODO:Check logic we don't need this loop after latest changes
-      const memberIndex = game.members.findIndex(
-        (member) => String(member.id) === memberId
-      );
-
-      if (memberIndex === -1) {
-        //Player entry for first time
-        game.members[playerData?.memberIndex || playerData?.playerIndex] =
-          playerData;
-      } else {
-        // Update the specific field of the member
-        game.members[memberIndex].playerName = playerData?.playerName;
-        game.members[memberIndex].position = playerData?.position;
-        game.members[memberIndex].email = playerData?.email;
-      }
       // Save the updated game document
       const updatedGame = await game.save();
       return updatedGame;
@@ -124,5 +112,4 @@ class gameDao {
   }
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default new gameDao();
