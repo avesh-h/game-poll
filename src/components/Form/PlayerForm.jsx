@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button, Grid, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import MuiSelect from '../mui/MuiSelect';
@@ -16,6 +17,7 @@ import {
   useAddPlayerMutation,
   useGetSingleGameQuery,
 } from '@/lib/actions/gameActions';
+import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
 
 const playingPositions = [
@@ -44,12 +46,12 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
   const params = useParams();
   const { data: gameDetails } = useGetSingleGameQuery(params?.['game-id']);
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
+  const [removeMember, { isLoading: isDeleting }] = useRemoveMemberMutation();
 
   //Existed Member In Game
   const existedMemberInGame = useMemo(() => {
     if (localStorage.getItem('session-user')) {
       const existedMember = JSON.parse(localStorage.getItem('session-user'));
-      // console.log('details', gameDetails?.selectedGame);
       return gameDetails?.selectedGame?.members?.find(
         (m) => m.id === existedMember?.memberId
       );
@@ -110,6 +112,22 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
     }
   };
 
+  //TODO: Before this add modal for are you sure you want to remove this player
+  const handleRemovePlayer = useCallback(
+    async (playerDetails) => {
+      if (playerDetails) {
+        const response = await removeMember({
+          id: playerDetails?.id,
+          gameId: playerDetails?.gameId,
+        });
+        if (response?.data?.status === API_STATUS?.success) {
+          enqueueSnackbar(response?.data?.message, { variant: 'success' });
+        }
+      }
+    },
+    [removeMember]
+  );
+
   return (
     <FormProvider {...methods}>
       <form style={{ width: '80%' }} onSubmit={handleSubmit(onSubmit)}>
@@ -123,6 +141,7 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
               player={player}
               setIsEdit={setIsEdit}
               session={session}
+              removeHandler={handleRemovePlayer}
             />
           ) : (
             <Grid container spacing={2} mt={1}>

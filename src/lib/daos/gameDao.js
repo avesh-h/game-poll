@@ -110,6 +110,70 @@ class gameDao {
       return error;
     }
   }
+
+  //Delete member from the game
+  async deletePlayerFromGameById(gameId, playerId) {
+    //This code deleting the whole member element from the array ,but we want to remove some fields from the array so it cannot remove required fields like index and memberIndex
+    const deletedMember = Game.updateOne(
+      {
+        _id: gameId,
+      },
+      //Empty these fields of the member
+      {
+        $unset: {
+          'members.$[elem].playerName': '',
+          'members.$[elem].id': '',
+          'members.$[elem].role': '',
+          'members.$[elem].position': '',
+          'members.$[elem].email': '',
+          'members.$[elem].gameId': '',
+        },
+      },
+      //To get the perticular element from the members array.
+      { arrayFilters: [{ 'elem.id': playerId }] }
+    );
+    return deletedMember;
+  }
 }
 
 export default new gameDao();
+
+//Aggregation methods try
+
+//To delete the member from the game
+// const deletedMember = Game.updateOne(
+//   { _id: gameId },
+//   { $pull: { members: { id: playerId } } }
+// );
+
+//TO find the perticular member from the game id with member id
+// const pipeline = [
+//   {
+//     $match:
+//       /**
+//        * query: The query in MQL.
+//        */
+//       {
+//         _id: ObjectId('6640d1d325561194191d2f30'),
+//       },
+//   },
+//   {
+//     $project:
+//       /**
+//        * specifications: The fields to
+//        *   include or exclude.
+//        */
+//       {
+//         _id: 0,
+//         members: {
+//           $filter: {
+//             input: '$members',
+//             as: 'member',
+//             cond: {
+//               $eq: ['$$member.id', ObjectId('66463f84a705dd67309f4a10')],
+//             },
+//           },
+//         },
+//       },
+//   },
+// ];

@@ -9,7 +9,17 @@ const memberActions = apiInterceptor.injectEndpoints({
         body,
       }),
     }),
+    removeMember: builder.mutation({
+      query: (body) => {
+        return {
+          url: `/members/${body?.id}`,
+          method: 'DELETE',
+          body,
+        };
+      },
+      invalidatesTags: ['getSingleGame'],
+    }),
   }),
 });
 
-export const { useAddMemberMutation } = memberActions;
+export const { useAddMemberMutation, useRemoveMemberMutation } = memberActions;

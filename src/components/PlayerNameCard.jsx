@@ -1,5 +1,6 @@
 'use client';
 
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Stack } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -9,7 +10,12 @@ import Typography from '@mui/material/Typography';
 
 import { isAllowToEditPlayersDetails } from '@/lib/utils/editPlayerDetails';
 
-export default function PlayerNameCard({ player, setIsEdit, session }) {
+export default function PlayerNameCard({
+  player,
+  setIsEdit,
+  session,
+  removeHandler,
+}) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <Stack direction={'row'}>
@@ -29,9 +35,14 @@ export default function PlayerNameCard({ player, setIsEdit, session }) {
         </CardContent>
         <CardActions>
           {isAllowToEditPlayersDetails(player, session?.data?.user?.id) && (
-            <Button size="small" onClick={() => setIsEdit(true)}>
-              Edit
-            </Button>
+            <>
+              <Button size="small" onClick={() => setIsEdit(true)}>
+                Edit
+              </Button>
+              <Button size="small" onClick={() => removeHandler(player)}>
+                <DeleteIcon color="error" />
+              </Button>
+            </>
           )}
         </CardActions>
       </Stack>

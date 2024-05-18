@@ -1,5 +1,10 @@
 import { apiInterceptor } from '../apiInterceptor';
 
+//To enhance endpoint to use this in other file.for invalidate tag
+apiInterceptor.enhanceEndpoints({
+  addTagTypes: ['getSingleGame'],
+});
+
 export const gameActions = apiInterceptor.injectEndpoints({
   endpoints: (builder) => ({
     getAllGames: builder.query({
