@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import schedule from 'node-schedule';
 
 const gameSchema = new mongoose.Schema(
   {
@@ -41,6 +42,11 @@ const gameSchema = new mongoose.Schema(
     totalHours: {
       type: Number,
     },
+    gameStatus: {
+      type: String,
+      enum: ['pending', 'expired'],
+      default: 'pending',
+    },
     members: [
       {
         _id: false,
@@ -58,6 +64,57 @@ const gameSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+//TTL index
+// Example
+// gameSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
+
+// console.log('indexes', gameSchema.indexes());
+
+//Define CRON
+// cron.schedule('* 1 * * * *', () => {
+//   console.log('call on every second on server', new Date());
+// });
+
+//Define Schedule
+const scheduleDeletionJob = (game) => {
+  const endtime = game.endTime;
+  const now = new Date();
+  if (endtime > now) {
+    schedule.scheduleJob(endtime, async () => {
+      try {
+        await Game.findByIdAndDelete(game._id);
+      } catch (error) {
+        console.log('Schedule error', error);
+      }
+    });
+  } else {
+    //If the game setted past date then it should be deleted immedietely
+    Game.findByIdAndDelete(game._id)
+      .then(() => {
+        console.log(`Deleted game: ${game._id}`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting game: ${game._id}`, error);
+      });
+  }
+};
+
+// When a new game is created or updated, schedule its deletion
+gameSchema.post('save', function (doc) {
+  scheduleDeletionJob(doc);
+});
+
+// Function to reschedule all pending deletions on startup of server and start db after restart server
+// rescheduleAllDeletions queries for all game documents with future endTime and reschedules their deletion jobs. This function is called when the server starts to ensure that no pending deletions are missed due to server restarts or deployment.
+export const rescheduleAllDeletions = async () => {
+  try {
+    const games = await Game.find({ endTime: { $gt: new Date() } });
+    games.forEach(scheduleDeletionJob);
+  } catch (error) {
+    console.error('Error rescheduling deletions:', error);
+  }
+};
 
 //Set default property
 gameSchema.path('members').default([]);

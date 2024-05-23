@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import { rescheduleAllDeletions } from './models/gameSchema';
+
 let isConnected = false;
 
 export const connectToDB = async () => {
@@ -11,6 +13,7 @@ export const connectToDB = async () => {
     const db = mongoose.connection;
     db.on('open', () => {
       console.log('Connected to DB!');
+      rescheduleAllDeletions();
     });
     mongoose.connect(process.env.DB_URI);
     isConnected = true;
