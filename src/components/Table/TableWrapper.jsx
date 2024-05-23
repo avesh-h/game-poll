@@ -8,7 +8,7 @@ import {
   TableCell,
 } from '@mui/material';
 
-import TableHeadCustom from '../table/TableHeadCustom';
+import TableHeadCustom from '../Table/TableHeadCustom';
 
 // const useDisableStyles = makeStyles({
 //   disabled: {
