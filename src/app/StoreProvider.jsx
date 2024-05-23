@@ -1,8 +1,10 @@
-"use client";
+'use client';
 
-import { makeStore } from "@/lib/store";
-import { useRef } from "react";
-import { Provider } from "react-redux";
+import { useRef } from 'react';
+
+import { Provider } from 'react-redux';
+
+import { makeStore } from '@/lib/store';
 
 const StoreProvider = ({ children }) => {
   const storeRef = useRef();
