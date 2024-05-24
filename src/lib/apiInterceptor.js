@@ -1,9 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import AppConfig from './utils/app-config';
 import { errorHandler } from './utils/errorHandler';
 
+const environment = process.env.NODE_ENV || 'development';
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.NEXTAUTH_URL}/api`,
+  baseUrl: `${AppConfig[environment]}/api`,
+  // baseUrl:'http://localhost:3000/api',
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
