@@ -2,5 +2,13 @@ Complete first this:
 
 - Complete proper error handling from the front end side includes adding snackbar validation of form fields.
 - global error handling.
-- Set proper token for every request
+- Set proper token for every request.[d]
 - handle unauthorized routes.
+- Proper complete the authentication flow for member and organizer of game.[d]
+- Show game list according to the game organizer.[d]
+- DB indexing.
+- Seperate routes for the organizer and members.
+- create card design for showing the game details in player form page which is operate with button.
+- also add buttons for share the list on email or through whatsapp or copy full list.
+- solve deployment error on vercel
+- add logger for the backend

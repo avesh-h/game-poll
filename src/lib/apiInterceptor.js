@@ -6,7 +6,7 @@ import { errorHandler } from './utils/errorHandler';
 const environment = process.env.NODE_ENV || 'development';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${AppConfig[environment]}/api`,
+  baseUrl: `${AppConfig[environment]?.apiUrl}/api`,
   // baseUrl:'http://localhost:3000/api',
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('accessToken');
