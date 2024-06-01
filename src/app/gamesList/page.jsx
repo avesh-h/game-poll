@@ -74,6 +74,16 @@ const GamesList = () => {
           title: 'Players List',
           key: 'playersList',
         },
+        {
+          event: () => {
+            //navigate to game info page
+            router.push(`/gamesList/${row?._id}`);
+            handleCloseMenu();
+          },
+          getLink: () => {},
+          title: 'Show Details',
+          key: 'showDetails',
+        },
       ];
 
       return actions;
