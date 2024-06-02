@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
@@ -14,25 +12,35 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 
+import ElementsTooltip from '../ElementTooltip';
+import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
+
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
   const handleCopyClipboard = () => {
     const gameDetails =
       `*Name* : ${gameInfo?.gameName || 'N/A'}\n\n` +
       `*Date* : ${dayjs(gameInfo?.gameDate)?.format('DD-MMM') || 'N/A'}\n\n` +
-      `*Game Type* : ${
+      `*Game type* : ${
         gameInfo?.gameType === 'team' ? 'Team wise' : 'All'
       }\n\n` +
+      `*Organized by* : ${
+        findOrganizerOfGame(gameInfo?.members)?.playerName || 'N/A'
+      }\n\n` +
       `*Venue* : ${gameInfo?.nameOfVenue || 'N/A'}\n\n` +
-      `*Start Time* : ${
+      `*Start time* : ${
         dayjs(gameInfo?.startTime)?.format('h:mm A') || 'N/A'
       }\n\n` +
-      `*End Time* : ${
+      `*End time* : ${
         dayjs(gameInfo?.endTime)?.format('h:mm A') || 'N/A'
       }\n\n` +
-      `*Game Hours* : ${gameInfo?.totalHours || 'N/A'}\n\n` +
-      `*No. of Players* : ${gameInfo?.noOfPlayers || 'N/A'}\n\n` +
-      `*Booking Cost* : ${gameInfo?.totalAmount || 'N/A'}`;
+      `*Game duration* : ${gameInfo?.totalHours + ' hrs' || 'N/A'}\n\n` +
+      `*No. of players* : ${gameInfo?.noOfPlayers || 'N/A'}\n\n` +
+      `*Booking cost* : ${gameInfo?.totalAmount || 'N/A'}\n\n` +
+      `*Note* : ${gameInfo?.note || 'N/A'}\n\n` +
+      '*-----------Register Link--------------*\n\n' +
+      `Register Here : ${gameInfo?.registerLink}`;
 
+    //Navigator browser API
     navigator.clipboard.writeText(gameDetails?.trim());
   };
   return (
@@ -110,6 +118,15 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
               Booking Cost :
             </Typography>
             <Typography>{gameInfo?.totalAmount || 'N/A'}</Typography>
+          </Stack>
+          <Stack {...cardRowStyle}>
+            <Typography sx={{ fontSize: 15 }} color="text.secondary">
+              Register Link :
+            </Typography>
+            <ElementsTooltip
+              upperElement={gameInfo?.registerLink}
+              maxLengthOfUpperElement={25}
+            />
           </Stack>
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>

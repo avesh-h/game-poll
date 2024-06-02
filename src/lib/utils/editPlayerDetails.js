@@ -33,3 +33,7 @@ export const validateLoggedInUserByID = (player, sessionId) =>
 export const findLoggedInMember = (membersArr) => {
   return membersArr?.find((m) => m?.id === localMember()?.memberId);
 };
+
+export const findOrganizerOfGame = (membersArr) => {
+  return membersArr?.find((m) => m?.role === GAME_ORGANIZER);
+};
