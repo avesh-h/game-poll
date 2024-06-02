@@ -42,7 +42,7 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
       `*Booking cost* : ${gameInfo?.totalAmount || 'N/A'}\n\n` +
       `*Note* : ${gameInfo?.note || 'N/A'}\n\n` +
       '*-----------Register Link--------------*\n\n' +
-      `Register Here : ${gameInfo?.registerLink}`
+      `*Register Here* : ${gameInfo?.registerLink}`
     );
   }, [
     gameInfo?.endTime,
