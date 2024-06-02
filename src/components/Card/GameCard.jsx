@@ -1,9 +1,10 @@
 'use client';
 
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useCallback, useMemo } from 'react';
+
+import MailIcon from '@mui/icons-material/Mail';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -11,13 +12,16 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { EmailShareButton, WhatsappShareButton } from 'react-share';
 
+import ClipBoardButton from '../Buttons/ClipBoardButton';
 import ElementsTooltip from '../ElementTooltip';
 import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
 
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
-  const handleCopyClipboard = () => {
-    const gameDetails =
+  //Clipboard text
+  const copyText = useMemo(() => {
+    return (
       `*Name* : ${gameInfo?.gameName || 'N/A'}\n\n` +
       `*Date* : ${dayjs(gameInfo?.gameDate)?.format('DD-MMM') || 'N/A'}\n\n` +
       `*Game type* : ${
@@ -38,11 +42,54 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
       `*Booking cost* : ${gameInfo?.totalAmount || 'N/A'}\n\n` +
       `*Note* : ${gameInfo?.note || 'N/A'}\n\n` +
       '*-----------Register Link--------------*\n\n' +
-      `Register Here : ${gameInfo?.registerLink}`;
+      `Register Here : ${gameInfo?.registerLink}`
+    );
+  }, [
+    gameInfo?.endTime,
+    gameInfo?.gameDate,
+    gameInfo?.gameName,
+    gameInfo?.gameType,
+    gameInfo?.members,
+    gameInfo?.nameOfVenue,
+    gameInfo?.noOfPlayers,
+    gameInfo?.note,
+    gameInfo?.registerLink,
+    gameInfo?.startTime,
+    gameInfo?.totalAmount,
+    gameInfo?.totalHours,
+  ]);
 
-    //Navigator browser API
-    navigator.clipboard.writeText(gameDetails?.trim());
-  };
+  //Social shares
+  const socialShareLinks = useCallback(() => {
+    const link = gameInfo?.registerLink;
+    if (link) {
+      return (
+        <>
+          <EmailShareButton
+            subject="Game Timing"
+            body={copyText}
+            url={''}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <MailIcon sx={{ pr: 0.5 }} />
+            Share via Mail
+          </EmailShareButton>
+          <WhatsappShareButton
+            url={copyText}
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            <WhatsAppIcon sx={{ pr: 0.5 }} />
+            Share on WhatsApp
+          </WhatsappShareButton>
+        </>
+      );
+    }
+    return null;
+  }, [copyText, gameInfo?.registerLink]);
+
   return (
     <Stack
       justifyContent="center"
@@ -53,7 +100,11 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
         overflow: 'hidden',
       }}
     >
-      <Card>
+      <Card sx={{ my: 2 }}>
+        <ClipBoardButton
+          buttonStyle={buttonStyle}
+          copyText={copyText?.trim()}
+        />
         <CardContent>
           <Stack {...cardRowStyle}>
             <Typography sx={{ fontSize: 15 }} color="text.secondary">
@@ -130,14 +181,13 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
           </Stack>
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button size="small" sx={buttonStyle}>
-            <WhatsAppIcon />
-            Share
-          </Button>
-          <Button size="small" sx={buttonStyle} onClick={handleCopyClipboard}>
-            <ContentCopyIcon />
-            Copy
-          </Button>
+          <Stack
+            direction={'row'}
+            width={'100%'}
+            justifyContent="space-between"
+          >
+            {socialShareLinks()}
+          </Stack>
         </CardActions>
       </Card>
     </Stack>
