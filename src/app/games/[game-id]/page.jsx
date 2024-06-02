@@ -10,7 +10,10 @@ const GameFormPage = () => {
   //For client side
   const params = useParams();
   const gameId = params?.['game-id'];
-  const { data, isLoading } = useGetSingleGameQuery(gameId);
+  //Refetch everytime when user come to page it will not get data from the cache for this API
+  const { data, isLoading } = useGetSingleGameQuery(gameId, {
+    refetchOnMountOrArgChange: true,
+  });
 
   if (isLoading) {
     return <LoadingScreen />;

@@ -100,12 +100,12 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
         overflow: 'hidden',
       }}
     >
-      <Card sx={{ my: 2 }}>
+      <Card sx={{ my: 1 }}>
         <ClipBoardButton
           buttonStyle={buttonStyle}
           copyText={copyText?.trim()}
         />
-        <CardContent>
+        <CardContent sx={{ pt: 0 }}>
           <Stack {...cardRowStyle}>
             <Typography sx={{ fontSize: 15 }} color="text.secondary">
               Game name :
