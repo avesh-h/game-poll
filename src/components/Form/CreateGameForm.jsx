@@ -72,6 +72,7 @@ const CreateGameForm = ({ content, gameData }) => {
       gameDate: dayjs(gameData?.gameDate).format('YYYY-MM-DD') || '',
       gamePassword: gameData?.gamePassword || '',
       totalAmount: gameData?.totalAmount || '',
+      note: gameData?.note || '',
     },
     resolver: yupResolver(gameSchema),
   });
@@ -271,12 +272,23 @@ const CreateGameForm = ({ content, gameData }) => {
                 </Box>
                 <Box>
                   <MuiTextField
+                    label="Add any note for the game..."
+                    name="note"
+                    register={register}
+                    id="outlined-multiline-static"
+                    multiline
+                    rows={1.5}
+                    sx={{ mt: 2 }}
+                  />
+                </Box>
+                <Box>
+                  <MuiTextField
                     label={'Set Password'}
                     name="gamePassword"
                     register={register}
                   />
-                  <Typography sx={{ fontSize: '12px', pt: 1 }}>
-                    Note: The form is only accessible with the password you set.
+                  <Typography sx={{ fontSize: '14px', color: 'red', pt: 1 }}>
+                    Note: Your players access this game with password you set.
                   </Typography>
                 </Box>
                 <Box>

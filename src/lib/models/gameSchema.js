@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import schedule from 'node-schedule';
 
+import AppConfig from '../utils/app-config';
+
 const gameSchema = new mongoose.Schema(
   {
     gameType: {
@@ -47,6 +49,7 @@ const gameSchema = new mongoose.Schema(
       enum: ['pending', 'expired'],
       default: 'pending',
     },
+    note: { type: String },
     members: [
       {
         _id: false,
@@ -99,6 +102,19 @@ const scheduleDeletionJob = (game) => {
       });
   }
 };
+
+//Adding property in document virtually
+// The virtual property will be not available in the db but it will be present in the doc
+
+gameSchema.virtual('registerLink').get(function () {
+  return `${AppConfig?.[process.env.NODE_ENV]?.apiUrl}/members/${this?._id}`;
+});
+
+//By default the virtual property will be not sent to the front end so in below we make sure it should send.
+gameSchema.set('toJSON', { virtuals: true });
+
+//If we want to mongoose document convert into the plain javascript object and we want to include this virtual property into the object then set 'toObject' setter useful.
+gameSchema.set('toObject', { virtuals: true });
 
 // When a new game is created or updated, schedule its deletion
 gameSchema.post('save', function (doc) {

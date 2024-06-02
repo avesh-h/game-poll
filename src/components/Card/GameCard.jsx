@@ -15,6 +15,26 @@ import {
 import dayjs from 'dayjs';
 
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
+  const handleCopyClipboard = () => {
+    const gameDetails =
+      `*Name* : ${gameInfo?.gameName || 'N/A'}\n\n` +
+      `*Date* : ${dayjs(gameInfo?.gameDate)?.format('DD-MMM') || 'N/A'}\n\n` +
+      `*Game Type* : ${
+        gameInfo?.gameType === 'team' ? 'Team wise' : 'All'
+      }\n\n` +
+      `*Venue* : ${gameInfo?.nameOfVenue || 'N/A'}\n\n` +
+      `*Start Time* : ${
+        dayjs(gameInfo?.startTime)?.format('h:mm A') || 'N/A'
+      }\n\n` +
+      `*End Time* : ${
+        dayjs(gameInfo?.endTime)?.format('h:mm A') || 'N/A'
+      }\n\n` +
+      `*Game Hours* : ${gameInfo?.totalHours || 'N/A'}\n\n` +
+      `*No. of Players* : ${gameInfo?.noOfPlayers || 'N/A'}\n\n` +
+      `*Booking Cost* : ${gameInfo?.totalAmount || 'N/A'}`;
+
+    navigator.clipboard.writeText(gameDetails?.trim());
+  };
   return (
     <Stack
       justifyContent="center"
@@ -97,7 +117,7 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
             <WhatsAppIcon />
             Share
           </Button>
-          <Button size="small" sx={buttonStyle}>
+          <Button size="small" sx={buttonStyle} onClick={handleCopyClipboard}>
             <ContentCopyIcon />
             Copy
           </Button>

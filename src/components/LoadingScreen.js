@@ -6,11 +6,11 @@ import { styled } from '@mui/material/styles';
 const RootStyle = styled('div')(() => ({
   zIndex: 99999,
   width: '100%',
-  height: '100%',
+  minHeight: 'calc(100vh - 70px)', // Assuming the navbar height is 70px, adjust as necessary
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   overflow: 'hidden',
+  justifyContent: 'center',
+  alignItems: 'center',
 }));
 
 function LoadingScreen({ ...other }) {
