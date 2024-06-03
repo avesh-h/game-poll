@@ -42,50 +42,27 @@ const GameForm = ({ formData }) => {
   }, [formData]);
 
   const copyText = () => {
-    // const membersText = formData?.members
-    //   ?.map((p, i) => {
-    //     return p?.playerName
-    //       ? `${formData?.gameType === 'team' && i === 0 ? '*Team A* :\n' : ''}${
-    //           i + 1
-    //         }) ${p.playerName} - ${p.position || '-'}${
-    //           formData?.gameType === 'team' &&
-    //           i > Math.ceil(formData?.noOfPlayers / 2)
-    //             ? '\n\n*Team B* :\n'
-    //             : ''
-    //         }`
-    //       : `${i + 1}) -`;
-    //   })
-    //   ?.join(' \n');
+    const allMembers = [];
+    const membersOfTeamA = [];
+    const membersOfTeamB = [];
 
-    const allMembers = formData?.members
-      ?.map((p, i) =>
-        p?.playerName
-          ? `${i + 1}) ${p.playerName} - ${p.position || '-'}`
-          : `${i + 1}) -`
-      )
-      ?.join(' \n');
+    formData?.members?.forEach((p) => {
+      const memberText = p?.playerName
+        ? `${p?.playerIndex + 1}) ${p.playerName} - ${p.position || '-'}`
+        : `${p?.playerIndex + 1}) -`;
 
-    const membersOfA = formData?.members
-      ?.map((p, i) =>
-        p?.team === 'teamA' && p?.playerName
-          ? `${i + 1}) ${p.playerName} - ${p.position || '-'}`
-          : i < Math.ceil(formData?.noOfPlayers / 2)
-          ? `${i + 1}) -`
-          : ''
-      )
-      ?.join(' \n')
-      ?.trim();
+      if (p?.team === 'teamA') {
+        membersOfTeamA.push(memberText);
+      } else if (p?.team === 'teamB') {
+        membersOfTeamB.push(memberText);
+      } else {
+        allMembers.push(memberText);
+      }
+    });
 
-    const membersOfB = formData?.members
-      ?.map((p, i) =>
-        p?.team === 'teamB' && p?.playerName
-          ? `${i + 1}) ${p.playerName} - ${p.position || '-'}`
-          : i < Math.ceil(formData?.noOfPlayers / 2)
-          ? `${i + 1}) -`
-          : ''
-      )
-      ?.join(' \n')
-      ?.trim();
+    const allMembersText = allMembers.join(' \n');
+    const membersOfAText = membersOfTeamA.join(' \n').trim();
+    const membersOfBText = membersOfTeamB.join(' \n').trim();
 
     const fullText =
       `*Date* : ${dayjs(formData?.gameDate)?.format('DD-MMM') || 'N/A'}\n` +
@@ -98,10 +75,12 @@ const GameForm = ({ formData }) => {
       `${formData?.gameType === 'all' ? '\n*Players list* :' : ''}\n` +
       `${
         formData?.gameType === 'team'
-          ? '*Team A* :\n' + membersOfA + '\n\n*Team B* :\n' + membersOfB
-          : allMembers
+          ? '*Team A* :\n' +
+            membersOfAText +
+            '\n\n*Team B* :\n' +
+            membersOfBText
+          : allMembersText
       }\n\n` +
-      // `${membersText}\n\n` +
       `*Register Here* : ${formData?.registerLink}`;
 
     return fullText;
