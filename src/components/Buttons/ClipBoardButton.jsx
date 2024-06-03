@@ -6,6 +6,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { Button } from '@mui/material';
 
+import { copyTextToClipboard } from '@/lib/utils/copyToClipboard';
+
 const buttonStyle = {
   width: '100%',
   justifyContent: 'flex-end',
@@ -17,7 +19,7 @@ const ClipBoardButton = ({ copyText }) => {
   const handleCopyClipboard = () => {
     //Navigator browser API
     setIsCopied(true);
-    navigator.clipboard.writeText(copyText);
+    copyTextToClipboard(copyText);
     setTimeout(() => {
       setIsCopied(false);
     }, 3000);

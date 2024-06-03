@@ -1,9 +1,7 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import MailIcon from '@mui/icons-material/Mail';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
   Card,
   CardActions,
@@ -12,17 +10,17 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { EmailShareButton, WhatsappShareButton } from 'react-share';
 
 import ClipBoardButton from '../Buttons/ClipBoardButton';
 import ElementsTooltip from '../ElementTooltip';
 import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
+import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
   //Clipboard text
   const copyText = useMemo(() => {
     return (
-      `*Name* : ${gameInfo?.gameName || 'N/A'}\n\n` +
+      `*Game* : ${gameInfo?.gameName || 'N/A'}\n\n` +
       `*Date* : ${dayjs(gameInfo?.gameDate)?.format('DD-MMM') || 'N/A'}\n\n` +
       `*Game type* : ${
         gameInfo?.gameType === 'team' ? 'Team wise' : 'All'
@@ -58,37 +56,6 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
     gameInfo?.totalAmount,
     gameInfo?.totalHours,
   ]);
-
-  //Social shares
-  const socialShareLinks = useCallback(() => {
-    const link = gameInfo?.registerLink;
-    if (link) {
-      return (
-        <>
-          <EmailShareButton
-            subject="Game Timing"
-            body={copyText}
-            url={''}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <MailIcon sx={{ pr: 0.5 }} />
-            Share via Mail
-          </EmailShareButton>
-          <WhatsappShareButton
-            url={copyText}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
-            <WhatsAppIcon sx={{ pr: 0.5 }} />
-            Share on WhatsApp
-          </WhatsappShareButton>
-        </>
-      );
-    }
-    return null;
-  }, [copyText, gameInfo?.registerLink]);
 
   return (
     <Stack
@@ -186,7 +153,10 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
             width={'100%'}
             justifyContent="space-between"
           >
-            {socialShareLinks()}
+            {socialShareLinks(copyText, {
+              emailBtnText: 'Share via email',
+              whatsappBtnText: 'Share on whatsapp',
+            })}
           </Stack>
         </CardActions>
       </Card>
