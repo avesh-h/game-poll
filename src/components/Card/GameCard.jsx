@@ -17,7 +17,6 @@ import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
-  console.log('gameInfo', gameInfo);
   //Clipboard text
   const copyText = useMemo(() => {
     return (

@@ -12,3 +12,13 @@ Complete first this:
 - also add buttons for share the list on email or through whatsapp or copy full list.
 - solve deployment error on vercel
 - add logger for the backend
+- Create the card component for to sending in the group for game details and form link by clipboard functionality. [d]
+- Copy card details should show register link properyly when paste in whatsapp
+- Add whatsapp direct share and email share game details.[d]
+- If any game time expired then show the 404 not found page or game is finished!
+- bcrypt implementation of the game password.
+
+MAJOR functionality
+
+- Required proper resposive of the website for all screen.
+- Create PWA for the current application
