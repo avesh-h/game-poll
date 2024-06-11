@@ -17,6 +17,7 @@ import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
 const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
+  console.log('gameInfo', gameInfo);
   //Clipboard text
   const copyText = useMemo(() => {
     return (
@@ -38,14 +39,19 @@ const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
       `*Game duration* : ${gameInfo?.totalHours + ' hrs' || 'N/A'}\n\n` +
       `*No. of players* : ${gameInfo?.noOfPlayers || 'N/A'}\n\n` +
       `*Booking cost* : ${gameInfo?.totalAmount || 'N/A'}\n\n` +
+      `*Player cost* : ${
+        Math.ceil(gameInfo?.totalAmount / gameInfo?.noOfPlayers) || 'N/A'
+      }\n\n` +
       `*Note* : ${gameInfo?.note || 'N/A'}\n\n` +
       '*-----------Register Link--------------*\n\n' +
-      `*Register Here* : ${gameInfo?.registerLink}`
+      `*Register Here* : ${gameInfo?.registerLink}\n` +
+      `*Game Password* : ${gameInfo?.gamePassword}`
     );
   }, [
     gameInfo?.endTime,
     gameInfo?.gameDate,
     gameInfo?.gameName,
+    gameInfo?.gamePassword,
     gameInfo?.gameType,
     gameInfo?.members,
     gameInfo?.nameOfVenue,
