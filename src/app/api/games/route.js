@@ -4,6 +4,8 @@ import gameDao from '@/lib/daos/gameDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
+import { sendMail } from '@/lib/oAuth2';
+import { gameDetails } from '@/lib/utils/common';
 
 export const POST = async (req) => {
   const requestBody = await req.json();
@@ -22,6 +24,14 @@ export const POST = async (req) => {
       requestBody.organizerId =
         gameOrganizer?.user?.id || gameOrganizer?.token?.userId;
       const createdGame = await gameDao.createGame(requestBody, organizer);
+      if (createdGame) {
+        //Mail service
+        await sendMail({
+          mailTo: gameOrganizer?.user?.email,
+          subject: 'Created Game Successfully!',
+          text: gameDetails({ session: gameOrganizer, gameInfo: createdGame }),
+        });
+      }
       return NextResponse.json(
         { message: 'Succssfully Created!', createdGame, status: 'success' },
         { status: 201 }

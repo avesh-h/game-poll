@@ -81,7 +81,8 @@ const GameForm = ({ formData }) => {
             membersOfBText
           : allMembersText
       }\n\n` +
-      `*Register Here* : ${formData?.registerLink}`;
+      `*Register Here* : ${formData?.registerLink}\n` +
+      `*Game Password* : ${formData?.gamePassword}`;
 
     return fullText;
   };

@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: [true, 'Password is required!'] },
   phone: { type: String }, //Optional
   photo: { type: String }, //Optional
+  isVerified: { type: Boolean, default: false },
 });
 
 //Also can check validate like this

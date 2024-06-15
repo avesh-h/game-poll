@@ -29,6 +29,7 @@ export const POST = async (req) => {
         photo,
       });
       await createUser.save();
+      //Send email process
       return NextResponse.json(
         { message: 'Successfully created!', status: 'success' },
         { status: 201 }
