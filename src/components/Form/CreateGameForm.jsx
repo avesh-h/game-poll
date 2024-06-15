@@ -91,8 +91,13 @@ const CreateGameForm = ({ content, gameData }) => {
 
   const onSubmit = async (data) => {
     if (data?.gameDate && data?.startTime && data?.endTime) {
-      data.startTime = dayjs(data.startTime).format('YYYY-MM-DD HH:mm:ss');
-      data.endTime = dayjs(data.endTime).format('YYYY-MM-DD HH:mm:ss');
+      const gameDate = dayjs(data.gameDate).format('YYYY-MM-DD');
+      data.startTime = dayjs(
+        `${gameDate} ${dayjs(data.startTime).format('HH:mm:ss')}`
+      ).format('YYYY-MM-DD HH:mm:ss');
+      data.endTime = dayjs(
+        `${gameDate} ${dayjs(data.endTime).format('HH:mm:ss')}`
+      ).format('YYYY-MM-DD HH:mm:ss');
       const dayJsStartTime = dayjs(data.startTime);
       const dayJsEndTime = dayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
@@ -138,8 +143,8 @@ const CreateGameForm = ({ content, gameData }) => {
           members[i] = { playerIndex: i };
         }
       }
-      data.members = members;
-      if (data?.members?.length) {
+      if (members?.length) {
+        data.members = members;
         res = await createGame(data);
         if (res?.data?.message) {
           enqueueSnackbar(res?.data?.message, { variant: 'success' });
