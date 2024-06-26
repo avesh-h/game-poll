@@ -1,10 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { enqueueSnackbar } from 'notistack';
+import { useDispatch } from 'react-redux';
 
 import Signup from '@/components/Form/Signup';
+import { authActions } from '@/lib/redux/authSlice';
 
 const content = {
   title: 'Login',
@@ -13,10 +15,7 @@ const content = {
 
 const Login = () => {
   const router = useRouter();
-  const session = useSession();
-
-  console.log('session', session);
-  // const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
     const res = await signIn('credentials', {
@@ -26,13 +25,13 @@ const Login = () => {
     if (res?.error) {
       enqueueSnackbar(res?.error, { variant: 'error' });
     } else {
-      router.push('/dashboard');
+      router.push('/create-game');
+      dispatch(authActions.login());
     }
   };
   return (
     <div>
       <Signup content={content} onSubmit={onSubmit} login />
-      <button onClick={() => signOut()}>Sign out</button>
     </div>
   );
 };

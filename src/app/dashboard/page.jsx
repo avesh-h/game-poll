@@ -1,12 +1,8 @@
 'use client';
 
-import MuiButton from '@/components/Buttons/Button';
 import { useRouter } from 'next/navigation';
 
-const content = {
-  title: 'Create Game',
-  buttonText: 'Create',
-};
+import MuiButton from '@/components/Buttons/Button';
 
 //TODO:Need to design user profile dashboard page.
 const Dashboard = () => {

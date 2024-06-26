@@ -182,11 +182,14 @@ const CreateGameForm = ({ content, gameData }) => {
           <Button>Share</Button>
         </Stack>
       ) : null}
-      <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
+      <Stack direction={'row'} justifyContent={'center'} my={4}>
         <Card
           sx={{
             width: '40%',
-            minWidth: '280px',
+            minWidth: (theme) => ({
+              minWidth: '300px',
+              [theme.breakpoints.down('sm')]: { minWidth: '80%' },
+            }),
             p: 2,
           }}
         >

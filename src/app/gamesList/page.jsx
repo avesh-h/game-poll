@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 
+import Loader from '@/components/Loader/loader';
 import TableMoreMenu from '@/components/Table/TableMoreMenu';
 import TableWrapper from '@/components/Table/TableWrapper';
 import {
@@ -104,6 +105,7 @@ const GamesList = () => {
       {
         field: 'Date',
         headerName: 'date',
+        sx: { '& .MuiTypography-root': { width: 'max-content' } },
         render: (row) => {
           return (
             <Typography>
@@ -115,6 +117,7 @@ const GamesList = () => {
       {
         field: 'Start',
         headerName: 'start',
+        sx: { '& .MuiTypography-root': { width: 'max-content' } },
         render: (row) => {
           return (
             <Typography>{dayjs(row?.startTime)?.format('h:mm A')}</Typography>
@@ -124,6 +127,7 @@ const GamesList = () => {
       {
         field: 'End',
         headerName: 'end',
+        sx: { '& .MuiTypography-root': { width: 'max-content' } },
         render: (row) => {
           return (
             <Typography>{dayjs(row?.endTime)?.format('h:mm A')}</Typography>
@@ -188,7 +192,7 @@ const GamesList = () => {
   return (
     <div>
       {isLoading || isDeleting || (isFetching && !games?.games?.length) ? (
-        <>Loading...</>
+        <Loader />
       ) : (
         <TableWrapper
           columns={tableHeaderArray}

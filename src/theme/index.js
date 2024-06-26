@@ -7,13 +7,17 @@ import {
   createTheme,
 } from '@mui/material';
 
+import { components } from './component';
 import palette from './palette';
+import { typography } from './typography';
 
 const MuiThemeProvider = ({ children }) => {
   //Extra option we can add typography,breakpoint etc..
   const themOptions = useMemo(() => {
     return {
       palette,
+      typography,
+      components,
     };
   }, []);
 

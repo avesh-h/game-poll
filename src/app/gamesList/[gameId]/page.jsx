@@ -1,7 +1,7 @@
 'use client';
 
 import GameCard from '@/components/Card/GameCard';
-import LoadingScreen from '@/components/LoadingScreen';
+import Loader from '@/components/Loader/loader';
 import { useGetSingleGameQuery } from '@/lib/actions/gameActions';
 
 const cardRowStyle = {
@@ -25,7 +25,7 @@ const GameInfoPage = ({ params }) => {
   );
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <Loader />;
   }
   return (
     <GameCard

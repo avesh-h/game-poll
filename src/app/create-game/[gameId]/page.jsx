@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 
 import CreateGameForm from '@/components/Form/CreateGameForm';
-import LoadingScreen from '@/components/LoadingScreen';
+import Loader from '@/components/Loader/loader';
 import { useGetSingleGameQuery } from '@/lib/actions/gameActions';
 
 const content = {
@@ -21,7 +21,7 @@ const EditGamePage = () => {
   } = useGetSingleGameQuery(param?.gameId);
 
   if (isFetching || isLoading) {
-    return <LoadingScreen />;
+    return <Loader />;
   }
 
   return (

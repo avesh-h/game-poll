@@ -15,10 +15,12 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 
 import MuiTextField from '../mui/MuiTextField';
 import { API_STATUS } from '@/constants/apiStatuses';
 import { useAddMemberMutation } from '@/lib/actions/memberActions';
+import { authActions } from '@/lib/redux/authSlice';
 
 const MemberForm = () => {
   const methods = useForm({ email: '', name: '', gamePassword: '' });
@@ -27,6 +29,7 @@ const MemberForm = () => {
   const { handleSubmit, register, reset } = methods;
   const router = useRouter();
   const [isNewMember, setIsNewMember] = useState(true);
+  const dispatch = useDispatch();
 
   //Submit
   const onSubmit = async (memberData) => {
@@ -57,6 +60,7 @@ const MemberForm = () => {
           })
         );
         reset();
+        dispatch(authActions.login());
         router.push(`/games/${gameId}`);
       }
     }

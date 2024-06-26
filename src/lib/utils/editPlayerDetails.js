@@ -1,3 +1,5 @@
+import { getSession } from 'next-auth/react';
+
 import { GAME_MEMBER, GAME_ORGANIZER } from '@/constants/role';
 
 export const isAllowToEditPlayersDetails = (player, sessionId) => {
@@ -37,3 +39,13 @@ export const findLoggedInMember = (membersArr) => {
 export const findOrganizerOfGame = (membersArr) => {
   return membersArr?.find((m) => m?.role === GAME_ORGANIZER);
 };
+
+export async function getAuthSession() {
+  const sessionObj = {};
+  const session = await getSession();
+  if (session || localStorage.getItem('session-user')) {
+    sessionObj['session'] = session || localStorage.getItem('session-user');
+    sessionObj['auth'] = true;
+  }
+  return sessionObj;
+}

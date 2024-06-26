@@ -35,7 +35,7 @@ const playingPositions = [
   'LB',
 ];
 
-const PlayerForm = ({ player, ind, existPlayer, team }) => {
+const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -130,7 +130,10 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
 
   return (
     <FormProvider {...methods}>
-      <form style={{ width: '80%' }} onSubmit={handleSubmit(onSubmit)}>
+      <form
+        style={{ width: !isSmallScreen ? '80%' : '100%' }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Stack direction={'row'} alignItems={'center'} pt={2}>
           <Typography pr={2}>{ind + 1}</Typography>
           {!isEdit &&
@@ -145,7 +148,7 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
             />
           ) : (
             <Grid container spacing={2} mt={1}>
-              <Grid item xs={4}>
+              <Grid item xs={5}>
                 <MuiTextField
                   label="Enter your name"
                   name="playerName"
@@ -172,7 +175,7 @@ const PlayerForm = ({ player, ind, existPlayer, team }) => {
                   }
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 <Button
                   type="submit"
                   disabled={isLoading || !(playerName && position)}

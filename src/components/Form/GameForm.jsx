@@ -4,20 +4,16 @@ import { useCallback } from 'react';
 
 import { Box, Container, FormLabel, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
-import Cookies from 'js-cookie';
-import { useParams, useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
 
 import PlayerForm from './PlayerForm';
+import { useResponsive } from '@/hooks/useResponsive';
 import { findLoggedInMember } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
 const GameForm = ({ formData }) => {
   //TODO:Form Data Means the game Details change name
-  const router = useRouter();
-  const session = useSession();
-  const params = useParams();
-  const isAuth = Cookies.get('accessToken');
+
+  const isSmallScreen = useResponsive('down', 'md');
 
   const getAllPlayers = useCallback(() => {
     let addedPlayers = [];
@@ -115,11 +111,12 @@ const GameForm = ({ formData }) => {
                 ind={ind}
                 key={`${player?.playerName}-${ind}`}
                 existPlayer={findLoggedInMember(arr)}
+                isSmallScreen={isSmallScreen}
               />
             );
           })
         ) : (
-          <Stack direction={'row'} width={'100%'}>
+          <Stack direction={!isSmallScreen ? 'row' : 'column'} width={'100%'}>
             <Box width={'100%'}>
               <Typography>Team A</Typography>
               {getAllPlayers()?.teamA?.map((player, ind, arr) => {
@@ -130,6 +127,7 @@ const GameForm = ({ formData }) => {
                     key={`${player?.playerName}-${ind}`}
                     existPlayer={findLoggedInMember(arr)}
                     team={'teamA'}
+                    isSmallScreen={isSmallScreen}
                   />
                 );
               })}
@@ -144,6 +142,7 @@ const GameForm = ({ formData }) => {
                     key={`${player?.playerName}-${ind}`}
                     existPlayer={findLoggedInMember(arr)}
                     team={'teamB'}
+                    isSmallScreen={isSmallScreen}
                   />
                 );
               })}
@@ -151,27 +150,6 @@ const GameForm = ({ formData }) => {
           </Stack>
         )}
       </Stack>
-      {/* Temporary logout without design */}
-      <button
-        onClick={() => {
-          if (session?.data?.user?.id) {
-            //session logout for organizer
-            signOut();
-            //redirect to login
-            router.push('/login');
-          } else {
-            //member logout
-            if (isAuth) {
-              localStorage.removeItem('session-user');
-              Cookies.remove('accessToken');
-            }
-            //redirect to member login
-            router.push(`/members/${params?.['game-id']}`);
-          }
-        }}
-      >
-        Logout
-      </button>
     </Container>
   );
 };
