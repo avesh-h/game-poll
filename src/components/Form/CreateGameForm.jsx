@@ -13,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -37,6 +39,10 @@ const gameTypeValues = [
 
 const CreateGameForm = ({ content, gameData }) => {
   const router = useRouter();
+
+  //To make sure utc of indian time zone
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
 
   //Validation
   const gameSchema = Yup.object().shape({
@@ -94,10 +100,14 @@ const CreateGameForm = ({ content, gameData }) => {
       const gameDate = dayjs(data.gameDate).format('YYYY-MM-DD');
       data.startTime = dayjs(
         `${gameDate} ${dayjs(data.startTime).format('HH:mm:ss')}`
-      ).format('YYYY-MM-DD HH:mm:ss');
+      )
+        .utc()
+        .format();
       data.endTime = dayjs(
         `${gameDate} ${dayjs(data.endTime).format('HH:mm:ss')}`
-      ).format('YYYY-MM-DD HH:mm:ss');
+      )
+        .utc()
+        .format();
       const dayJsStartTime = dayjs(data.startTime);
       const dayJsEndTime = dayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
@@ -145,7 +155,12 @@ const CreateGameForm = ({ content, gameData }) => {
       }
       if (members?.length) {
         data.members = members;
+        console.log('data', data);
         res = await createGame(data);
+        console.log('format', {
+          end: dayjs(data.endTime).format('h:mm A'),
+          start: dayjs(data.startTime).format('h:mm A'),
+        });
         if (res?.data?.message) {
           enqueueSnackbar(res?.data?.message, { variant: 'success' });
           reset();
