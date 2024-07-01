@@ -155,12 +155,7 @@ const CreateGameForm = ({ content, gameData }) => {
       }
       if (members?.length) {
         data.members = members;
-        console.log('data', data);
         res = await createGame(data);
-        console.log('format', {
-          end: dayjs(data.endTime).format('h:mm A'),
-          start: dayjs(data.startTime).format('h:mm A'),
-        });
         if (res?.data?.message) {
           enqueueSnackbar(res?.data?.message, { variant: 'success' });
           reset();
