@@ -1,8 +1,8 @@
 //This file execution will be done by the cron-job.org which delete the game after end time passed
 // app/api/execute-cron/route.js
-import { Game } from '@/lib/models/gameSchema';
+import { NextResponse } from 'next/server';
 
-console.log('file executed');
+import { Game } from '@/lib/models/gameSchema';
 
 export async function POST(request) {
   console.log('call executed************************===================>');
@@ -17,9 +17,12 @@ export async function POST(request) {
     const game = await Game.findById(gameId);
 
     if (!game) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-      });
+      return NextResponse.json(
+        { error: 'Game not found' },
+        {
+          status: 404,
+        }
+      );
     }
 
     const endtime = game.endTime;
@@ -32,9 +35,12 @@ export async function POST(request) {
         console.log(`Deleted game: ${game._id}`);
       } catch (error) {
         console.error(`Error deleting game: ${game._id}`, error);
-        return new Response(JSON.stringify({ error: 'Error deleting game' }), {
-          status: 500,
-        });
+        return NextResponse.json(
+          { error: 'Error deleting game' },
+          {
+            status: 500,
+          }
+        );
       }
     } else {
       // If the game's endTime is in the past, delete the game immediately
@@ -43,22 +49,28 @@ export async function POST(request) {
         console.log(`Deleted game: ${game._id}`);
       } catch (error) {
         console.error(`Error deleting game: ${game._id}`, error);
-        return new Response(JSON.stringify({ error: 'Error deleting game' }), {
-          status: 500,
-        });
+        return NextResponse.json(
+          { error: 'Error deleting game' },
+          {
+            status: 500,
+          }
+        );
       }
     }
 
-    return new Response(
-      JSON.stringify({ message: 'Game deleted successfully' }),
+    return NextResponse.json(
+      { message: 'Game deleted successfully' },
       {
         status: 200,
       }
     );
   } catch (error) {
     console.error('Error executing cron job:', error);
-    return new Response(JSON.stringify({ error: 'Error executing cron job' }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      { error: 'Error executing cron job' },
+      {
+        status: 500,
+      }
+    );
   }
 }

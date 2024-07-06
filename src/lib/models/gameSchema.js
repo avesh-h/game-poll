@@ -152,7 +152,7 @@ gameSchema.post('save', async function (doc) {
   // https://b780-103-240-76-116.ngrok-free.app
 
   // Create a new cron job on cron-job.org
-  const response = await axios.put(
+  await axios.put(
     'https://api.cron-job.org/jobs',
     {
       job: {
