@@ -23,3 +23,5 @@ MAJOR functionality
 - Required proper resposive of the website for all screen.
 - Create PWA for the current application
 - Adde set reminder email notification functinality
+
+.env
