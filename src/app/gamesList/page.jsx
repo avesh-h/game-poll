@@ -55,11 +55,11 @@ const GamesList = () => {
         {
           event: async () => {
             //delete game form
+            handleCloseMenu();
             const res = await deleteGame(row?._id);
             if (res?.data?.message) {
               enqueueSnackbar(res?.data?.message, { variant: 'success' });
             }
-            handleCloseMenu();
           },
           getLink: () => {},
           title: 'Delete Game',
@@ -201,7 +201,7 @@ const GamesList = () => {
           onRowClick={handleRowClick}
         />
       )}
-      {!isLoading && !games?.games?.length ? <>No Game is Booked!</> : null}
+      {!isLoading && !games?.games?.length ? <>No Game is Booked yet!</> : null}
       {/* MORE MENU */}
       <TableMoreMenu
         loader={rowLoader}

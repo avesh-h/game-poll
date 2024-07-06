@@ -1,7 +1,14 @@
+import axios from 'axios';
 import mongoose from 'mongoose';
-import schedule from 'node-schedule';
+// import cron from 'node-cron';
+// import schedule from 'node-schedule';
 
 import AppConfig from '../utils/app-config';
+// import {
+//   // getDateIntoCronExpression,
+//   getDateIntoCronRestExpression,
+// } from '../utils/common';
+// import { getDateIntoCronExpression } from '../utils/common';
 
 const gameSchema = new mongoose.Schema(
   {
@@ -75,33 +82,37 @@ const gameSchema = new mongoose.Schema(
 // console.log('indexes', gameSchema.indexes());
 
 //Define CRON
-// cron.schedule('* 1 * * * *', () => {
-//   console.log('call on every second on server', new Date());
-// });
+// const cronScheduleJob = (doc) => {
+//   const endDate = getDateIntoCronExpression(doc.endTime);
+//   console.log('expression', endDate);
+//   cron.schedule(endDate, () => {
+//     console.log('cron-job===========================>', endDate);
+//   });
+// };
 
 //Define Schedule
-const scheduleDeletionJob = (game) => {
-  const endtime = game.endTime;
-  const now = new Date();
-  if (endtime > now) {
-    schedule.scheduleJob(endtime, async () => {
-      try {
-        await Game.findByIdAndDelete(game._id);
-      } catch (error) {
-        console.log('Schedule error', error);
-      }
-    });
-  } else {
-    //If the game setted past date then it should be deleted immedietely
-    Game.findByIdAndDelete(game._id)
-      .then(() => {
-        console.log(`Deleted game: ${game._id}`);
-      })
-      .catch((error) => {
-        console.error(`Error deleting game: ${game._id}`, error);
-      });
-  }
-};
+// const scheduleDeletionJob = (game) => {
+//   const endtime = game.endTime;
+//   const now = new Date();
+//   if (endtime > now) {
+//     schedule.scheduleJob(endtime, async () => {
+//       try {
+//         await Game.findByIdAndDelete(game._id);
+//       } catch (error) {
+//         console.log('Schedule error', error);
+//       }
+//     });
+//   } else {
+//     //If the game setted past date then it should be deleted immedietely
+//     Game.findByIdAndDelete(game._id)
+//       .then(() => {
+//         console.log(`Deleted game: ${game._id}`);
+//       })
+//       .catch((error) => {
+//         console.error(`Error deleting game: ${game._id}`, error);
+//       });
+//   }
+// };
 
 //Adding property in document virtually
 // The virtual property will be not available in the db but it will be present in the doc
@@ -117,20 +128,70 @@ gameSchema.set('toJSON', { virtuals: true });
 gameSchema.set('toObject', { virtuals: true });
 
 // When a new game is created or updated, schedule its deletion
-gameSchema.post('save', function (doc) {
-  scheduleDeletionJob(doc);
+// gameSchema.post('save', function (doc) {
+//   scheduleDeletionJob(doc);
+//   // cronScheduleJob(doc);
+// });
+
+// cron-job.org implementation
+gameSchema.post('save', async function (doc) {
+  const endTime = new Date(doc.endTime);
+  const gameId = doc._id.toString();
+
+  // Convert the endTime to a cron expression
+  // const cronExpression = getDateIntoCronRestExpression(endTime);
+
+  // console.log({
+  //   endTime,
+  //   gameId,
+  //   cronExpression,
+  //   env: process.env.CRON_JOB_KEY,
+  // });
+
+  //NGROK URL
+  // https://b780-103-240-76-116.ngrok-free.app
+
+  // Create a new cron job on cron-job.org
+  const response = await axios.put(
+    'https://api.cron-job.org/jobs',
+    {
+      job: {
+        url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
+        // url: `https://b780-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+        enabled: true,
+        saveResponses: true,
+        schedule: {
+          timezone: 'Asia/Kolkata',
+          expiresAt: Math.floor(endTime.getTime() / 1000),
+          minutes: [endTime.getMinutes()],
+          hours: [endTime.getHours()],
+          mdays: [endTime.getDate()],
+          months: [endTime.getMonth()],
+          wdays: [endTime.getDay() + 1],
+        },
+      },
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + process.env.CRON_JOB_KEY,
+      },
+    }
+  );
+  // https://api.cron-job.org
+  // console.log('cron-res', response);
 });
 
 // Function to reschedule all pending deletions on startup of server and start db after restart server
 // rescheduleAllDeletions queries for all game documents with future endTime and reschedules their deletion jobs. This function is called when the server starts to ensure that no pending deletions are missed due to server restarts or deployment.
-export const rescheduleAllDeletions = async () => {
-  try {
-    const games = await Game.find({ endTime: { $gt: new Date() } });
-    games.forEach(scheduleDeletionJob);
-  } catch (error) {
-    console.error('Error rescheduling deletions:', error);
-  }
-};
+// export const rescheduleAllDeletions = async () => {
+//   try {
+//     const games = await Game.find({ endTime: { $gt: new Date() } });
+//     games.forEach(scheduleDeletionJob);
+//   } catch (error) {
+//     console.error('Error rescheduling deletions:', error);
+//   }
+// };
 
 //Set default property
 gameSchema.path('members').default([]);

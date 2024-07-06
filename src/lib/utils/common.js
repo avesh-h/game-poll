@@ -29,3 +29,41 @@ export const gameDetails = ({ session, gameInfo }) => {
     `*Game Password* : ${gameInfo?.gamePassword}`
   );
 };
+
+// Function to convert user input date to cron expression
+export function getDateIntoCronExpression(endTime) {
+  // # ┌────────────── second (optional)
+  // # │ ┌──────────── minute
+  // # │ │ ┌────────── hour
+  // # │ │ │ ┌──────── day of month
+  // # │ │ │ │ ┌────── month
+  // # │ │ │ │ │ ┌──── day of week
+  // # │ │ │ │ │ │
+  // # │ │ │ │ │ │
+  // # * * * * * *
+  const date = new Date(endTime);
+  const minutes = date.getMinutes();
+  const hours = date.getHours();
+  const dayOfMonth = date.getDate();
+  const month = date.getMonth() + 1;
+  const dayOfWeek = date.getDay() + 1; // node-cron uses 1-7 for days of the week
+
+  return `${minutes} ${hours} ${dayOfMonth} ${month} ${dayOfWeek}`;
+}
+
+export function getDateIntoCronRestExpression(endTime) {
+  const date = new Date(endTime);
+  const minutes = date.getMinutes();
+  const hours = date.getHours();
+  const dayOfMonth = date.getDate();
+  const month = date.getMonth() + 1;
+  const dayOfWeek = date.getDay() + 1; // node-cron uses 1-7 for days of the week
+
+  return {
+    minutes: [minutes],
+    hours: [hours],
+    mdays: [dayOfMonth],
+    months: [month],
+    wdays: [dayOfWeek],
+  };
+}
