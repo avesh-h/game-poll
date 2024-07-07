@@ -37,12 +37,12 @@ const gameTypeValues = [
   { label: 'Team', value: 'team' },
 ];
 
+//To make sure utc of indian time zone
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 const CreateGameForm = ({ content, gameData }) => {
   const router = useRouter();
-
-  //To make sure utc of indian time zone
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
 
   //Validation
   const gameSchema = Yup.object().shape({
@@ -98,12 +98,24 @@ const CreateGameForm = ({ content, gameData }) => {
   const onSubmit = async (data) => {
     if (data?.gameDate && data?.startTime && data?.endTime) {
       const gameDate = dayjs(data.gameDate).format('YYYY-MM-DD');
-      data.startTime = dayjs(
+
+      // Construct start time and end time with the game date
+      const startTimeLocal = dayjs(
         `${gameDate} ${dayjs(data.startTime).format('HH:mm:ss')}`
-      );
-      data.endTime = dayjs(
+      ).tz('Asia/Kolkata');
+      const endTimeLocal = dayjs(
         `${gameDate} ${dayjs(data.endTime).format('HH:mm:ss')}`
-      );
+      ).tz('Asia/Kolkata');
+
+      // Convert to UTC
+      const startTimeUTC = startTimeLocal
+        .utc()
+        .format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTimeUTC = endTimeLocal.utc().format('YYYY-MM-DDTHH:mm:ss[Z]');
+
+      data.startTime = startTimeUTC;
+      data.endTime = endTimeUTC;
+
       const dayJsStartTime = dayjs(data.startTime);
       const dayJsEndTime = dayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);

@@ -140,7 +140,7 @@ gameSchema.post('save', async function (doc) {
   const gameId = doc._id.toString();
 
   //Expiry Cron
-  const cronExpiryTime = dayjs(doc.endTime);
+  const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
 
   // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
