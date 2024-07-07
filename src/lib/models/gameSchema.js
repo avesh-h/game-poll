@@ -146,6 +146,7 @@ gameSchema.post('save', async function (doc) {
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
   console.log('schedule', {
+    endTime,
     expiresAt,
     minutes: [endTime.getMinutes()],
     hours: [endTime.getHours()],
