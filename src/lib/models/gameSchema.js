@@ -148,26 +148,32 @@ gameSchema.post('save', async function (doc) {
   //   env: process.env.CRON_JOB_KEY,
   // });
 
-  //NGROK URL
-  // https://b780-103-240-76-116.ngrok-free.app
+  // console.log('setted', {
+  //   minutes: [endTime.getMinutes()],
+  //   hours: [endTime.getHours()],
+  //   mdays: [endTime.getDate()],
+  //   months: [endTime.getMonth() + 1],
+  //   wdays: [endTime.getDay()],
+  // });
 
   // Create a new cron job on cron-job.org
-  await axios.put(
+  const response = await axios.put(
     'https://api.cron-job.org/jobs',
     {
       job: {
         url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-        // url: `https://b780-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://e31d-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
         enabled: true,
         saveResponses: true,
         schedule: {
-          timezone: 'Asia/Kolkata',
+          timezone: 'UTC',
           expiresAt: Math.floor(endTime.getTime() / 1000),
           minutes: [endTime.getMinutes()],
           hours: [endTime.getHours()],
           mdays: [endTime.getDate()],
-          months: [endTime.getMonth()],
-          wdays: [endTime.getDay() + 1],
+          months: [endTime.getMonth() + 1],
+          wdays: [endTime.getDay()],
         },
       },
     },
