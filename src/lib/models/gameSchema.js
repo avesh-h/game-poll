@@ -145,6 +145,14 @@ gameSchema.post('save', async function (doc) {
   // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
+  console.log('schedule', {
+    expiresAt,
+    minutes: [endTime.getMinutes()],
+    hours: [endTime.getHours()],
+    mdays: [endTime.getDate()],
+    months: [endTime.getMonth() + 1],
+    wdays: [endTime.getDay()],
+  });
   // Create a new cron job on cron-job.org
   await axios.put(
     'https://api.cron-job.org/jobs',
