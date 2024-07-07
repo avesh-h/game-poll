@@ -136,8 +136,11 @@ gameSchema.set('toObject', { virtuals: true });
 
 // cron-job.org implementation
 gameSchema.post('save', async function (doc) {
-  const endTime = new Date(doc.endTime);
+  const endTimeUTC = new Date(doc.endTime);
   const gameId = doc._id.toString();
+
+  // Convert endTime to Asia/Kolkata timezone
+  const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
 
   //Expiry Cron
   const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
@@ -145,14 +148,21 @@ gameSchema.post('save', async function (doc) {
   // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
+  // Extract the correct local time components
+  const minutes = endTimeLocal.minute();
+  const hours = endTimeLocal.hour();
+  const mdays = endTimeLocal.date();
+  const months = endTimeLocal.month() + 1; // Day.js months are 0-indexed
+  const wdays = endTimeLocal.day();
+
   console.log('schedule', {
-    endTime,
+    endTimeLocal,
     expiresAt,
-    minutes: [endTime.getMinutes()],
-    hours: [endTime.getHours()],
-    mdays: [endTime.getDate()],
-    months: [endTime.getMonth() + 1],
-    wdays: [endTime.getDay()],
+    minutes: [minutes],
+    hours: [hours],
+    mdays: [mdays],
+    months: [months],
+    wdays: [wdays],
   });
   // Create a new cron job on cron-job.org
   await axios.put(
@@ -167,11 +177,11 @@ gameSchema.post('save', async function (doc) {
         schedule: {
           timezone: 'Asia/Kolkata',
           expiresAt,
-          minutes: [endTime.getMinutes()],
-          hours: [endTime.getHours()],
-          mdays: [endTime.getDate()],
-          months: [endTime.getMonth() + 1],
-          wdays: [endTime.getDay()],
+          minutes: [minutes],
+          hours: [hours],
+          mdays: [mdays],
+          months: [months],
+          wdays: [wdays],
         },
       },
     },
