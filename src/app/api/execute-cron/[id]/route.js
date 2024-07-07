@@ -2,16 +2,9 @@
 // app/api/execute-cron/route.js
 import { Game } from '@/lib/models/gameSchema';
 
-console.log('file executed');
-
 export async function GET(req, { params }) {
-  console.log('call executed************************===================>');
   try {
     const gameId = params?.['id'];
-    console.log(
-      'call executed************************===================>',
-      gameId
-    );
 
     // Find the game by the provided gameId
     const game = await Game.findById(gameId);
@@ -29,7 +22,6 @@ export async function GET(req, { params }) {
       // If the game's endTime is in the future, schedule the deletion
       try {
         await Game.findByIdAndDelete(game._id);
-        console.log(`Deleted game: ${game._id}`);
       } catch (error) {
         console.error(`Error deleting game: ${game._id}`, error);
         return new Response(JSON.stringify({ error: 'Error deleting game' }), {
@@ -40,7 +32,6 @@ export async function GET(req, { params }) {
       // If the game's endTime is in the past, delete the game immediately
       try {
         await Game.findByIdAndDelete(game._id);
-        console.log(`Deleted game: ${game._id}`);
       } catch (error) {
         console.error(`Error deleting game: ${game._id}`, error);
         return new Response(JSON.stringify({ error: 'Error deleting game' }), {
@@ -56,7 +47,6 @@ export async function GET(req, { params }) {
       }
     );
   } catch (error) {
-    console.error('Error executing cron job:', error);
     return new Response(JSON.stringify({ error: 'Error executing cron job' }), {
       status: 500,
     });

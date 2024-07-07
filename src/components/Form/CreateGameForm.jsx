@@ -100,14 +100,10 @@ const CreateGameForm = ({ content, gameData }) => {
       const gameDate = dayjs(data.gameDate).format('YYYY-MM-DD');
       data.startTime = dayjs(
         `${gameDate} ${dayjs(data.startTime).format('HH:mm:ss')}`
-      )
-        .utc()
-        .format();
+      );
       data.endTime = dayjs(
         `${gameDate} ${dayjs(data.endTime).format('HH:mm:ss')}`
-      )
-        .utc()
-        .format();
+      );
       const dayJsStartTime = dayjs(data.startTime);
       const dayJsEndTime = dayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);

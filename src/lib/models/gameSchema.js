@@ -1,14 +1,15 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import mongoose from 'mongoose';
 // import cron from 'node-cron';
 // import schedule from 'node-schedule';
 
 import AppConfig from '../utils/app-config';
-// import {
-//   // getDateIntoCronExpression,
-//   getDateIntoCronRestExpression,
-// } from '../utils/common';
-// import { getDateIntoCronExpression } from '../utils/common';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const gameSchema = new mongoose.Schema(
   {
@@ -138,37 +139,25 @@ gameSchema.post('save', async function (doc) {
   const endTime = new Date(doc.endTime);
   const gameId = doc._id.toString();
 
-  // Convert the endTime to a cron expression
-  // const cronExpression = getDateIntoCronRestExpression(endTime);
+  //Expiry Cron
+  const cronExpiryTime = dayjs(doc.endTime);
 
-  // console.log({
-  //   endTime,
-  //   gameId,
-  //   cronExpression,
-  //   env: process.env.CRON_JOB_KEY,
-  // });
-
-  // console.log('setted', {
-  //   minutes: [endTime.getMinutes()],
-  //   hours: [endTime.getHours()],
-  //   mdays: [endTime.getDate()],
-  //   months: [endTime.getMonth() + 1],
-  //   wdays: [endTime.getDay()],
-  // });
+  // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
+  const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
   // Create a new cron job on cron-job.org
-  const response = await axios.put(
+  await axios.put(
     'https://api.cron-job.org/jobs',
     {
       job: {
         url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-        // url: `https://e31d-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://9fa8-2402-a00-172-d9f4-28f8-3099-58fb-6e7d.ngrok-free.app/api/execute-cron/${gameId}`,
         // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
         enabled: true,
         saveResponses: true,
         schedule: {
-          timezone: 'UTC',
-          expiresAt: Math.floor(endTime.getTime() / 1000),
+          timezone: 'Asia/Kolkata',
+          expiresAt,
           minutes: [endTime.getMinutes()],
           hours: [endTime.getHours()],
           mdays: [endTime.getDate()],
@@ -185,7 +174,6 @@ gameSchema.post('save', async function (doc) {
     }
   );
   // https://api.cron-job.org
-  // console.log('cron-res', response);
 });
 
 // Function to reschedule all pending deletions on startup of server and start db after restart server
