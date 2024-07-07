@@ -1,6 +1,11 @@
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const gameDetails = ({ session, gameInfo }) => {
   return (
@@ -14,9 +19,11 @@ export const gameDetails = ({ session, gameInfo }) => {
     }\n\n` +
     `*Venue* : ${gameInfo?.nameOfVenue || 'N/A'}\n\n` +
     `*Start time* : ${
-      dayjs(gameInfo?.startTime)?.format('h:mm A') || 'N/A'
+      dayjs(gameInfo?.startTime)?.tz('Asia/Kolkata')?.format('h:mm A') || 'N/A'
     }\n\n` +
-    `*End time* : ${dayjs(gameInfo?.endTime)?.format('h:mm A') || 'N/A'}\n\n` +
+    `*End time* : ${
+      dayjs(gameInfo?.endTime)?.tz('Asia/Kolkata')?.format('h:mm A') || 'N/A'
+    }\n\n` +
     `*Game duration* : ${gameInfo?.totalHours + ' hrs' || 'N/A'}\n\n` +
     `*No. of players* : ${gameInfo?.noOfPlayers || 'N/A'}\n\n` +
     `*Booking cost* : ${gameInfo?.totalAmount || 'N/A'}\n\n` +
