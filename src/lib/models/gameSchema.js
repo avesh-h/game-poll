@@ -1,15 +1,10 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import mongoose from 'mongoose';
 // import cron from 'node-cron';
 // import schedule from 'node-schedule';
 
 import AppConfig from '../utils/app-config';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import customDayjs from '../utils/customDayjs';
 
 const gameSchema = new mongoose.Schema(
   {
@@ -140,10 +135,10 @@ gameSchema.post('save', async function (doc) {
   const gameId = doc._id.toString();
 
   // Convert endTime to Asia/Kolkata timezone
-  const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
+  const endTimeLocal = customDayjs(endTimeUTC).tz('Asia/Kolkata');
 
   //Expiry Cron
-  const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
+  const cronExpiryTime = customDayjs(doc.endTime).tz('Asia/Kolkata');
 
   // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
@@ -170,7 +165,7 @@ gameSchema.post('save', async function (doc) {
     {
       job: {
         url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-        // url: `https://9fa8-2402-a00-172-d9f4-28f8-3099-58fb-6e7d.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://df3f-2402-a00-172-d9f4-2492-a2e3-cba8-75ac.ngrok-free.app/api/execute-cron/${gameId}`,
         // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
         enabled: true,
         saveResponses: true,

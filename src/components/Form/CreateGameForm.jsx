@@ -13,8 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -29,6 +27,7 @@ import {
   useCreateGameMutation,
   useUpdateGameMutation,
 } from '@/lib/actions/gameActions';
+import customDayjs from '@/lib/utils/customDayjs';
 import { fnPressNumberKey } from '@/lib/utils/inputFunctions';
 import { errorMessages } from '@/lib/utils/validationMessage';
 
@@ -36,10 +35,6 @@ const gameTypeValues = [
   { label: 'All', value: 'all' },
   { label: 'Team', value: 'team' },
 ];
-
-//To make sure utc of indian time zone
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 const CreateGameForm = ({ content, gameData }) => {
   const router = useRouter();
@@ -70,12 +65,12 @@ const CreateGameForm = ({ content, gameData }) => {
       gameType: gameData?.gameType || 'all',
       nameOfVenue: gameData?.nameOfVenue || '',
       startTime:
-        dayjs(gameData?.startTime).format('YYYY-MM-DD HH:mm:ss') ||
-        dayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
+        customDayjs(gameData?.startTime).format('YYYY-MM-DD HH:mm:ss') ||
+        customDayjs().format('YYYY-MM-DD HH:mm:ss'), //current time as default
       endTime:
-        dayjs(gameData?.endTime).format('YYYY-MM-DD HH:mm:ss') ||
-        dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      gameDate: dayjs(gameData?.gameDate).format('YYYY-MM-DD') || '',
+        customDayjs(gameData?.endTime).format('YYYY-MM-DD HH:mm:ss') ||
+        customDayjs().format('YYYY-MM-DD HH:mm:ss'),
+      gameDate: customDayjs(gameData?.gameDate).format('YYYY-MM-DD') || '',
       gamePassword: gameData?.gamePassword || '',
       totalAmount: gameData?.totalAmount || '',
       note: gameData?.note || '',
@@ -97,14 +92,15 @@ const CreateGameForm = ({ content, gameData }) => {
 
   const onSubmit = async (data) => {
     if (data?.gameDate && data?.startTime && data?.endTime) {
-      const gameDate = dayjs(data.gameDate).format('YYYY-MM-DD');
+      // UTC FOrmat
+      const gameDate = customDayjs(data.gameDate).format('YYYY-MM-DD');
 
       // Construct start time and end time with the game date
-      const startTimeLocal = dayjs(
-        `${gameDate} ${dayjs(data.startTime).format('HH:mm:ss')}`
+      const startTimeLocal = customDayjs(
+        `${gameDate} ${customDayjs(data.startTime).format('HH:mm:ss')}`
       ).tz('Asia/Kolkata');
-      const endTimeLocal = dayjs(
-        `${gameDate} ${dayjs(data.endTime).format('HH:mm:ss')}`
+      const endTimeLocal = customDayjs(
+        `${gameDate} ${customDayjs(data.endTime).format('HH:mm:ss')}`
       ).tz('Asia/Kolkata');
 
       // Convert to UTC
@@ -116,8 +112,8 @@ const CreateGameForm = ({ content, gameData }) => {
       data.startTime = startTimeUTC;
       data.endTime = endTimeUTC;
 
-      const dayJsStartTime = dayjs(data.startTime);
-      const dayJsEndTime = dayjs(data.endTime);
+      const dayJsStartTime = customDayjs(data.startTime);
+      const dayJsEndTime = customDayjs(data.endTime);
       data.totalHours = dayJsEndTime.diff(dayJsStartTime, 'h', true);
     }
     //API
@@ -175,7 +171,7 @@ const CreateGameForm = ({ content, gameData }) => {
 
   //Disable all past time
   const disableTime = () => {
-    if (selectedDate && dayjs(selectedDate).isAfter(dayjs())) {
+    if (selectedDate && customDayjs(selectedDate).isAfter(customDayjs())) {
       return false;
     }
     return true;
@@ -269,11 +265,11 @@ const CreateGameForm = ({ content, gameData }) => {
                     onChange={() => {
                       setValue(
                         'startTime',
-                        dayjs().format('YYYY-MM-DD HH:mm:ss')
+                        customDayjs().format('YYYY-MM-DD HH:mm:ss')
                       );
                       setValue(
                         'endTime',
-                        dayjs().format('YYYY-MM-DD HH:mm:ss')
+                        customDayjs().format('YYYY-MM-DD HH:mm:ss')
                       );
                     }}
                     disablePast={disableTime()}
