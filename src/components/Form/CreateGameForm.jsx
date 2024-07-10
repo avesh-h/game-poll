@@ -13,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -35,6 +37,10 @@ const gameTypeValues = [
   { label: 'All', value: 'all' },
   { label: 'Team', value: 'team' },
 ];
+
+//To make sure utc of indian time zone
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const CreateGameForm = ({ content, gameData }) => {
   const router = useRouter();
@@ -96,10 +102,10 @@ const CreateGameForm = ({ content, gameData }) => {
       const gameDate = customDayjs(data.gameDate).format('YYYY-MM-DD');
 
       // Construct start time and end time with the game date
-      const startTimeLocal = customDayjs(
+      const startTimeLocal = dayjs(
         `${gameDate} ${customDayjs(data.startTime).format('HH:mm:ss')}`
       ).tz('Asia/Kolkata');
-      const endTimeLocal = customDayjs(
+      const endTimeLocal = dayjs(
         `${gameDate} ${customDayjs(data.endTime).format('HH:mm:ss')}`
       ).tz('Asia/Kolkata');
 

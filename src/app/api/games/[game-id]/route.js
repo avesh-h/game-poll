@@ -100,6 +100,7 @@ const updateGame = async (req, context) => {
       { status: httpStatusCode.OK }
     );
   } catch (error) {
+    // console.log('error::::::::::::::::::', error);
     return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
   }
 };

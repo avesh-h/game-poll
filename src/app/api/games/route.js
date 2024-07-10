@@ -38,6 +38,7 @@ export const POST = async (req) => {
       );
     }
   } catch (error) {
+    // console.log('error', error);
     return NextResponse.json({ error }, { status: httpStatusCode.FORBIDDEN });
   }
 };

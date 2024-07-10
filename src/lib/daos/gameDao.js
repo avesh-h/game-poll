@@ -34,14 +34,14 @@ class gameDao {
   }
 
   async updateGame(id, updateGame) {
-    const updatedGame = await Game.findByIdAndUpdate(id, updateGame, {
+    const updatedGame = await Game.findOneAndUpdate({ _id: id }, updateGame, {
       new: true,
     });
     return updatedGame;
   }
 
   async deleteGameById(id) {
-    return await Game.findByIdAndDelete(id);
+    return await Game.findOneAndDelete({ _id: id });
   }
 
   async findMemberWithEmailOrName(gameId, playerEmail, playerName) {

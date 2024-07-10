@@ -1,10 +1,15 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import mongoose from 'mongoose';
 // import cron from 'node-cron';
 // import schedule from 'node-schedule';
 
 import AppConfig from '../utils/app-config';
-import customDayjs from '../utils/customDayjs';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const gameSchema = new mongoose.Schema(
   {
@@ -67,6 +72,10 @@ const gameSchema = new mongoose.Schema(
         memberIndex: { type: Number }, //Only for the main array index UI position
       },
     ],
+    jobId: {
+      type: Number,
+      default: null,
+    },
   },
   { timestamps: true }
 );
@@ -130,15 +139,73 @@ gameSchema.set('toObject', { virtuals: true });
 // });
 
 // cron-job.org implementation
+
+//Create cron task
 gameSchema.post('save', async function (doc) {
+  if (!doc?.jobId) {
+    const endTimeUTC = new Date(doc.endTime);
+    const gameId = doc._id.toString();
+
+    // Convert endTime to Asia/Kolkata timezone
+    const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
+
+    //Expiry Cron
+    const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
+
+    // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
+    const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
+
+    // Extract the correct local time components
+    const minutes = endTimeLocal.minute();
+    const hours = endTimeLocal.hour();
+    const mdays = endTimeLocal.date();
+    const months = endTimeLocal.month() + 1; // Day.js months are 0-indexed
+    const wdays = endTimeLocal.day();
+
+    // Create a new cron job on cron-job.org
+    const response = await axios.put(
+      'https://api.cron-job.org/jobs',
+      {
+        job: {
+          url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
+          // url: `https://e10b-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+          // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
+          enabled: true,
+          saveResponses: true,
+          schedule: {
+            timezone: 'Asia/Kolkata',
+            expiresAt,
+            minutes: [minutes],
+            hours: [hours],
+            mdays: [mdays],
+            months: [months],
+            wdays: [wdays],
+          },
+        },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + process.env.CRON_JOB_KEY,
+        },
+      }
+    );
+
+    //Add virtual property
+    doc.jobId = response?.data?.jobId;
+    await doc.save(); // Save the updated document with jobId
+  }
+});
+
+//Update cron task
+gameSchema.post('findOneAndUpdate', async function (doc) {
   const endTimeUTC = new Date(doc.endTime);
-  const gameId = doc._id.toString();
 
   // Convert endTime to Asia/Kolkata timezone
-  const endTimeLocal = customDayjs(endTimeUTC).tz('Asia/Kolkata');
+  const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
 
   //Expiry Cron
-  const cronExpiryTime = customDayjs(doc.endTime).tz('Asia/Kolkata');
+  const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
 
   // Format expiresAt in the required format YYYYMMDDHHmmss in Interger
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
@@ -150,25 +217,17 @@ gameSchema.post('save', async function (doc) {
   const months = endTimeLocal.month() + 1; // Day.js months are 0-indexed
   const wdays = endTimeLocal.day();
 
-  console.log('schedule', {
-    endTimeLocal,
-    expiresAt,
-    minutes: [minutes],
-    hours: [hours],
-    mdays: [mdays],
-    months: [months],
-    wdays: [wdays],
-  });
-  // Create a new cron job on cron-job.org
-  await axios.put(
-    'https://api.cron-job.org/jobs',
+  const gameId = doc?._id?.toString();
+  const jobId = doc?.jobId;
+
+  await axios.patch(
+    `https://api.cron-job.org/jobs/${jobId}`,
     {
       job: {
         url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-        // url: `https://df3f-2402-a00-172-d9f4-2492-a2e3-cba8-75ac.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://e10b-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
         // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
         enabled: true,
-        saveResponses: true,
         schedule: {
           timezone: 'Asia/Kolkata',
           expiresAt,
@@ -187,7 +246,22 @@ gameSchema.post('save', async function (doc) {
       },
     }
   );
-  // https://api.cron-job.org
+});
+
+//Update cron task
+gameSchema.post('findOneAndDelete', async function (doc) {
+  const jobId = doc?.jobId;
+
+  await axios.delete(
+    `https://api.cron-job.org/jobs/${jobId}`,
+
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + process.env.CRON_JOB_KEY,
+      },
+    }
+  );
 });
 
 // Function to reschedule all pending deletions on startup of server and start db after restart server
