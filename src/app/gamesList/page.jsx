@@ -201,7 +201,18 @@ const GamesList = () => {
           onRowClick={handleRowClick}
         />
       )}
-      {!isLoading && !games?.games?.length ? <>No Game is Booked yet!</> : null}
+      {!isLoading && !games?.games?.length ? (
+        <div
+          style={{
+            width: 'inherit',
+            minHeight: 'calc(100vh - 130px)',
+            display: 'grid',
+            placeItems: 'center',
+          }}
+        >
+          <h3>No Game is Booked yet!</h3>
+        </div>
+      ) : null}
       {/* MORE MENU */}
       <TableMoreMenu
         loader={rowLoader}

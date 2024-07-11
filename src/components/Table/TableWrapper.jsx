@@ -48,7 +48,7 @@ const TableWrapper = ({
           onSort={onSort}
         />
         <TableBody>
-          {rowsData?.length &&
+          {!!rowsData?.length &&
             rowsData?.map((row, index) => {
               return (
                 <TableRow

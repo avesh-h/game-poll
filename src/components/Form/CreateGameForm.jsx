@@ -128,6 +128,7 @@ const CreateGameForm = ({ content, gameData }) => {
       data.gameId = gameData?._id;
       res = await updateGame(data);
       if (res?.data?.status === API_STATUS.success) {
+        router.push(`/gamesList/${res?.data?.updatedGame?._id}`);
         enqueueSnackbar('Successfully Updated!', { variant: 'success' });
       }
     } else {
@@ -195,141 +196,133 @@ const CreateGameForm = ({ content, gameData }) => {
   );
 
   return (
-    <>
-      {gameData ? (
-        <Stack direction={'row'} justifyContent={'center'}>
-          <Button>Copy Game Details</Button>
-          <Button>Share</Button>
-        </Stack>
-      ) : null}
-      <Stack direction={'row'} justifyContent={'center'} my={4}>
-        <Card
-          sx={{
-            width: '40%',
-            minWidth: (theme) => ({
-              minWidth: '300px',
-              [theme.breakpoints.down('sm')]: { minWidth: '80%' },
-            }),
-            p: 2,
-          }}
-        >
-          <Typography variant="h5" textAlign={'center'} paddingBottom={3}>
-            {content.title}
-          </Typography>
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <FormControl fullWidth sx={{ gap: 3 }}>
-                <Stack gap={3}>
-                  <MuiRadioGroup
-                    defaultValue={'all'}
-                    name={'gameType'}
-                    values={gameTypeValues}
-                  />
-                  <Box>
-                    <MuiTextField
-                      label="Name of game"
-                      name="gameName"
-                      register={register}
-                    />
-                  </Box>
-                  <Box>
-                    <MuiTextField
-                      label="No. of players"
-                      name="noOfPlayers"
-                      register={register}
-                      onKeyPress={fnPressNumberKey}
-                    />
-                  </Box>
-                  <Box>
-                    <MuiTextField
-                      label="Total cost"
-                      name="totalAmount"
-                      register={register}
-                      onKeyPress={fnPressNumberKey}
-                    />
-                  </Box>
-                </Stack>
-                {/* Game Timing */}
+    <Stack direction={'row'} justifyContent={'center'} my={4}>
+      <Card
+        sx={{
+          width: '40%',
+          minWidth: (theme) => ({
+            minWidth: '300px',
+            [theme.breakpoints.down('sm')]: { minWidth: '80%' },
+          }),
+          p: 2,
+        }}
+      >
+        <Typography variant="h5" textAlign={'center'} paddingBottom={3}>
+          {content.title}
+        </Typography>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormControl fullWidth sx={{ gap: 3 }}>
+              <Stack gap={3}>
+                <MuiRadioGroup
+                  defaultValue={'all'}
+                  name={'gameType'}
+                  values={gameTypeValues}
+                />
                 <Box>
-                  <FormLabel id="demo-radio-buttons-group-label">
-                    Game Timing:
-                  </FormLabel>
                   <MuiTextField
-                    label="Game Venue"
-                    name="nameOfVenue"
+                    label="Name of game"
+                    name="gameName"
                     register={register}
-                    id="outlined-multiline-static"
-                    multiline
-                    rows={1.5}
-                    sx={{ mt: 2 }}
-                  />
-                </Box>
-                <Box>
-                  <MuiDatePicker
-                    label={'Select Date'}
-                    name="gameDate"
-                    onChange={() => {
-                      setValue(
-                        'startTime',
-                        customDayjs().format('YYYY-MM-DD HH:mm:ss')
-                      );
-                      setValue(
-                        'endTime',
-                        customDayjs().format('YYYY-MM-DD HH:mm:ss')
-                      );
-                    }}
-                    disablePast={disableTime()}
-                  />
-                </Box>
-                <Box>
-                  <MuiTimePicker
-                    label={'Start time'}
-                    name="startTime"
-                    disabled={!selectedDate}
-                    disablePast={disableTime()}
-                  />
-                </Box>
-                <Box>
-                  <MuiTimePicker
-                    label={'End time'}
-                    name="endTime"
-                    disabled={!selectedDate}
-                    shouldDisableTime={disableEndTimebeforeStartTime}
-                    disablePast={disableTime()}
                   />
                 </Box>
                 <Box>
                   <MuiTextField
-                    label="Add any note for the game..."
-                    name="note"
+                    label="No. of players"
+                    name="noOfPlayers"
                     register={register}
-                    id="outlined-multiline-static"
-                    multiline
-                    rows={1.5}
-                    sx={{ mt: 2 }}
+                    onKeyPress={fnPressNumberKey}
                   />
                 </Box>
                 <Box>
                   <MuiTextField
-                    label={'Set Password'}
-                    name="gamePassword"
+                    label="Total cost"
+                    name="totalAmount"
                     register={register}
+                    onKeyPress={fnPressNumberKey}
                   />
-                  <Typography sx={{ fontSize: '14px', color: 'red', pt: 1 }}>
-                    Note: Your players access this game with password you set.
-                  </Typography>
                 </Box>
-                <Box>
-                  <Button type="submit" disabled={isLoading || isUpdating}>
-                    {content.buttonText}
-                  </Button>
-                </Box>
-              </FormControl>
-            </form>
-          </FormProvider>
-        </Card>
-      </Stack>
-    </>
+              </Stack>
+              {/* Game Timing */}
+              <Box>
+                <FormLabel id="demo-radio-buttons-group-label">
+                  Game Timing:
+                </FormLabel>
+                <MuiTextField
+                  label="Game Venue"
+                  name="nameOfVenue"
+                  register={register}
+                  id="outlined-multiline-static"
+                  multiline
+                  rows={1.5}
+                  sx={{ mt: 2 }}
+                />
+              </Box>
+              <Box>
+                <MuiDatePicker
+                  label={'Select Date'}
+                  name="gameDate"
+                  onChange={() => {
+                    setValue(
+                      'startTime',
+                      customDayjs().format('YYYY-MM-DD HH:mm:ss')
+                    );
+                    setValue(
+                      'endTime',
+                      customDayjs().format('YYYY-MM-DD HH:mm:ss')
+                    );
+                  }}
+                  disablePast={disableTime()}
+                />
+              </Box>
+              <Box>
+                <MuiTimePicker
+                  label={'Start time'}
+                  name="startTime"
+                  disabled={!selectedDate}
+                  disablePast={disableTime()}
+                />
+              </Box>
+              <Box>
+                <MuiTimePicker
+                  label={'End time'}
+                  name="endTime"
+                  disabled={!selectedDate}
+                  shouldDisableTime={disableEndTimebeforeStartTime}
+                  disablePast={disableTime()}
+                />
+              </Box>
+              <Box>
+                <MuiTextField
+                  label="Add any note for the game..."
+                  name="note"
+                  register={register}
+                  id="outlined-multiline-static"
+                  multiline
+                  rows={1.5}
+                  sx={{ mt: 2 }}
+                />
+              </Box>
+              <Box>
+                <MuiTextField
+                  label={'Set Password'}
+                  name="gamePassword"
+                  register={register}
+                />
+                <Typography sx={{ fontSize: '14px', color: 'red', pt: 1 }}>
+                  Note: Your players access this game with password you set.
+                </Typography>
+              </Box>
+              <Box>
+                <Button type="submit" disabled={isLoading || isUpdating}>
+                  {content.buttonText}
+                </Button>
+              </Box>
+            </FormControl>
+          </form>
+        </FormProvider>
+      </Card>
+    </Stack>
   );
 };
 

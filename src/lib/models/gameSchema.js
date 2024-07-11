@@ -248,7 +248,7 @@ gameSchema.post('findOneAndUpdate', async function (doc) {
   );
 });
 
-//Update cron task
+//delete cron task
 gameSchema.post('findOneAndDelete', async function (doc) {
   const jobId = doc?.jobId;
 
