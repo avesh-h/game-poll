@@ -95,30 +95,6 @@ const gameSchema = new mongoose.Schema(
 //   });
 // };
 
-//Define Schedule
-// const scheduleDeletionJob = (game) => {
-//   const endtime = game.endTime;
-//   const now = new Date();
-//   if (endtime > now) {
-//     schedule.scheduleJob(endtime, async () => {
-//       try {
-//         await Game.findByIdAndDelete(game._id);
-//       } catch (error) {
-//         console.log('Schedule error', error);
-//       }
-//     });
-//   } else {
-//     //If the game setted past date then it should be deleted immedietely
-//     Game.findByIdAndDelete(game._id)
-//       .then(() => {
-//         console.log(`Deleted game: ${game._id}`);
-//       })
-//       .catch((error) => {
-//         console.error(`Error deleting game: ${game._id}`, error);
-//       });
-//   }
-// };
-
 //Adding property in document virtually
 // The virtual property will be not available in the db but it will be present in the doc
 
@@ -143,11 +119,7 @@ gameSchema.set('toObject', { virtuals: true });
 //Create cron task
 gameSchema.post('save', async function (doc) {
   if (!doc?.jobId) {
-    const endTimeUTC = new Date(doc.endTime);
     const gameId = doc._id.toString();
-
-    // Convert endTime to Asia/Kolkata timezone
-    const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
 
     //Expiry Cron
     const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
@@ -156,11 +128,11 @@ gameSchema.post('save', async function (doc) {
     const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
     // Extract the correct local time components
-    const minutes = endTimeLocal.minute();
-    const hours = endTimeLocal.hour();
-    const mdays = endTimeLocal.date();
-    const months = endTimeLocal.month() + 1; // Day.js months are 0-indexed
-    const wdays = endTimeLocal.day();
+    const minutes = cronExpiryTime.minute();
+    const hours = cronExpiryTime.hour();
+    const mdays = cronExpiryTime.date();
+    const months = cronExpiryTime.month() + 1; // Day.js months are 0-indexed
+    const wdays = cronExpiryTime.day();
 
     // Create a new cron job on cron-job.org
     const response = await axios.put(
@@ -199,11 +171,6 @@ gameSchema.post('save', async function (doc) {
 
 //Update cron task
 gameSchema.post('findOneAndUpdate', async function (doc) {
-  const endTimeUTC = new Date(doc.endTime);
-
-  // Convert endTime to Asia/Kolkata timezone
-  const endTimeLocal = dayjs(endTimeUTC).tz('Asia/Kolkata');
-
   //Expiry Cron
   const cronExpiryTime = dayjs(doc.endTime).tz('Asia/Kolkata');
 
@@ -211,11 +178,11 @@ gameSchema.post('findOneAndUpdate', async function (doc) {
   const expiresAt = Number(cronExpiryTime?.format('YYYYMMDDHHmmss'));
 
   // Extract the correct local time components
-  const minutes = endTimeLocal.minute();
-  const hours = endTimeLocal.hour();
-  const mdays = endTimeLocal.date();
-  const months = endTimeLocal.month() + 1; // Day.js months are 0-indexed
-  const wdays = endTimeLocal.day();
+  const minutes = cronExpiryTime.minute();
+  const hours = cronExpiryTime.hour();
+  const mdays = cronExpiryTime.date();
+  const months = cronExpiryTime.month() + 1; // Day.js months are 0-indexed
+  const wdays = cronExpiryTime.day();
 
   const gameId = doc?._id?.toString();
   const jobId = doc?.jobId;
@@ -266,14 +233,21 @@ gameSchema.post('findOneAndDelete', async function (doc) {
 
 // Function to reschedule all pending deletions on startup of server and start db after restart server
 // rescheduleAllDeletions queries for all game documents with future endTime and reschedules their deletion jobs. This function is called when the server starts to ensure that no pending deletions are missed due to server restarts or deployment.
-// export const rescheduleAllDeletions = async () => {
-//   try {
-//     const games = await Game.find({ endTime: { $gt: new Date() } });
-//     games.forEach(scheduleDeletionJob);
-//   } catch (error) {
-//     console.error('Error rescheduling deletions:', error);
-//   }
-// };
+export const deletesExpiredGames = async () => {
+  try {
+    const games = await Game.find({ endTime: { $lt: new Date() } });
+    //Delete expired games one by one in loop from db
+    games.forEach(async (game) => {
+      try {
+        await Game.findByIdAndDelete(game._id);
+      } catch (error) {
+        console.log('Schedule error', error);
+      }
+    });
+  } catch (error) {
+    console.error('Error rescheduling deletions:', error);
+  }
+};
 
 //Set default property
 gameSchema.path('members').default([]);

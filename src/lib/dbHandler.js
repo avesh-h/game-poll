@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// import { rescheduleAllDeletions } from './models/gameSchema';
+import { deletesExpiredGames } from './models/gameSchema';
 
 let isConnected = false;
 
@@ -13,7 +13,8 @@ export const connectToDB = async () => {
     const db = mongoose.connection;
     db.on('open', () => {
       console.log('Connected to DB!');
-      // rescheduleAllDeletions();
+      //When the db connects it will check expired games and deleted from db.
+      deletesExpiredGames();
     });
     mongoose.connect(process.env.DB_URI);
     isConnected = true;
