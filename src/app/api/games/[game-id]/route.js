@@ -122,7 +122,26 @@ const deleteGame = async (req, ctx) => {
         { status: httpStatusCode.NOT_FOUND }
       );
     }
+
+    //For delete each member from the db
+    const getAllMembersOfCurrentGame = findGame?.members?.filter(
+      (member) => member?.role === GAME_MEMBER
+    );
+
+    if (getAllMembersOfCurrentGame?.length) {
+      for (const member of getAllMembersOfCurrentGame) {
+        try {
+          await memberDao.deleteMember(member?.id);
+        } catch (error) {
+          return NextResponse.json(
+            { error },
+            { status: httpStatusCode.FORBIDDEN }
+          );
+        }
+      }
+    }
     await gameDao.deleteGameById(gameId);
+    //Also delete all the members related to the game except the organizer
     return NextResponse.json(
       { message: 'Successfully removed!', status: 'success' },
       { status: httpStatusCode.OK }

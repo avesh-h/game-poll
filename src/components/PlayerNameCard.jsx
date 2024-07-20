@@ -15,7 +15,7 @@ export default function PlayerNameCard({
   setIsEdit,
   session,
   removeHandler,
-  isDeleting,
+  isDeleting = false,
 }) {
   return (
     <Card sx={{ maxWidth: 345 }}>

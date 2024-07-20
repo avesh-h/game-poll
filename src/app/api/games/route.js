@@ -19,7 +19,7 @@ export const POST = async (req) => {
         role: 'organizer',
         playerName: gameOrganizer?.user?.name || gameOrganizer?.token?.name,
         playerIndex: 0,
-        ...(requestBody?.gameType === 'team' && { team: 'teamA' }),
+        ...(requestBody?.gameType === 'team' ? { team: 'teamA' } : {}),
       };
       requestBody.organizerId =
         gameOrganizer?.user?.id || gameOrganizer?.token?.userId;

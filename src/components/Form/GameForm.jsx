@@ -138,7 +138,6 @@ const GameForm = ({ formData }) => {
                   key={`${player?.playerName}-${ind}`}
                   existPlayer={findLoggedInMember(arr)}
                   isSmallScreen={isSmallScreen}
-                  gameDetails={formData}
                 />
               );
             })
@@ -155,7 +154,6 @@ const GameForm = ({ formData }) => {
                       existPlayer={findLoggedInMember(arr)}
                       team={'teamA'}
                       isSmallScreen={isSmallScreen}
-                      gameDetails={formData}
                     />
                   );
                 })}
@@ -171,7 +169,6 @@ const GameForm = ({ formData }) => {
                       existPlayer={findLoggedInMember(arr)}
                       team={'teamB'}
                       isSmallScreen={isSmallScreen}
-                      gameDetails={formData}
                     />
                   );
                 })}

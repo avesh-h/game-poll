@@ -16,7 +16,10 @@ import PlayerNameCard from '../PlayerNameCard';
 import { API_STATUS } from '@/constants/apiStatuses';
 import { Images } from '@/constants/images';
 import { GAME_MEMBER } from '@/constants/role';
-import { useAddPlayerMutation } from '@/lib/actions/gameActions';
+import {
+  useAddPlayerMutation,
+  useGetSingleGameQuery,
+} from '@/lib/actions/gameActions';
 import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
 
@@ -35,14 +38,7 @@ const playingPositions = [
   'LB',
 ];
 
-const PlayerForm = ({
-  player,
-  ind,
-  existPlayer,
-  team,
-  isSmallScreen,
-  gameDetails, //Getting game details from parent
-}) => {
+const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -50,7 +46,9 @@ const PlayerForm = ({
     position: player?.position || '',
   });
   const { register, handleSubmit, watch, setValue } = methods;
+  const [deletePlayer, setDeletePlayer] = useState(false);
   const params = useParams();
+  const { data: gameDetails } = useGetSingleGameQuery(params?.['game-id']);
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
   const [removeMember, { isLoading: isDeleting }] = useRemoveMemberMutation();
   const [confirmationDelete, setConfirmationDelete] = useState({
@@ -135,6 +133,7 @@ const PlayerForm = ({
         submitButtonColor: 'primary',
         submitButtonVariant: 'contained',
         submitButtonAction: async () => {
+          setDeletePlayer(true);
           if (playerDetails) {
             const response = await removeMember({
               id: playerDetails?.id,
@@ -176,7 +175,7 @@ const PlayerForm = ({
                 setIsEdit={setIsEdit}
                 session={session}
                 removeHandler={handleRemovePlayer}
-                isDeleting={isDeleting}
+                isDeleting={deletePlayer}
               />
             ) : (
               <Grid container spacing={2} mt={1}>

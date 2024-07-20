@@ -16,6 +16,15 @@ class memberDao {
       return error;
     }
   }
+
+  //Delete member
+  async deleteMember(id) {
+    try {
+      await Member.findOneAndDelete({ _id: id });
+    } catch (error) {
+      return error;
+    }
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

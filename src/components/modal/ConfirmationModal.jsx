@@ -14,7 +14,7 @@ const ConfirmationModal = (props) => {
 
   return (
     <ModalWrapper
-      clearIcon={true}
+      // clearIcon={true}
       onClose={() => {
         data?.cancelButtonAction();
       }}

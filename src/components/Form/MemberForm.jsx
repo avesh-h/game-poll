@@ -108,7 +108,11 @@ const MemberForm = () => {
                 />
               </Box>
               <Box>
-                <MuiButton type="submit" isLoading={isLoading}>
+                <MuiButton
+                  type="submit"
+                  isLoading={isLoading}
+                  variant={'contained'}
+                >
                   Submit
                 </MuiButton>
               </Box>
