@@ -1,22 +1,22 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Button, Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import ConfirmationModal from '../modal/ConfirmationModal';
+import MuiButton from '../mui/MuiButton';
 import MuiSelect from '../mui/MuiSelect';
 import MuiTextField from '../mui/MuiTextField';
 import PlayerNameCard from '../PlayerNameCard';
 import { API_STATUS } from '@/constants/apiStatuses';
+import { Images } from '@/constants/images';
 import { GAME_MEMBER } from '@/constants/role';
-import {
-  useAddPlayerMutation,
-  useGetSingleGameQuery,
-} from '@/lib/actions/gameActions';
+import { useAddPlayerMutation } from '@/lib/actions/gameActions';
 import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
 
@@ -35,7 +35,14 @@ const playingPositions = [
   'LB',
 ];
 
-const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
+const PlayerForm = ({
+  player,
+  ind,
+  existPlayer,
+  team,
+  isSmallScreen,
+  gameDetails, //Getting game details from parent
+}) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -44,9 +51,12 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
   });
   const { register, handleSubmit, watch, setValue } = methods;
   const params = useParams();
-  const { data: gameDetails } = useGetSingleGameQuery(params?.['game-id']);
   const [addPlayer, { isLoading }] = useAddPlayerMutation();
   const [removeMember, { isLoading: isDeleting }] = useRemoveMemberMutation();
+  const [confirmationDelete, setConfirmationDelete] = useState({
+    open: false,
+    data: {},
+  });
 
   //Existed Member In Game
   const existedMemberInGame = useMemo(() => {
@@ -112,82 +122,113 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
     }
   };
 
-  //TODO: Before this add modal for are you sure you want to remove this player
-  const handleRemovePlayer = useCallback(
-    async (playerDetails) => {
-      if (playerDetails) {
-        const response = await removeMember({
-          id: playerDetails?.id,
-          gameId: playerDetails?.gameId,
-        });
-        if (response?.data?.status === API_STATUS?.success) {
-          enqueueSnackbar(response?.data?.message, { variant: 'success' });
-        }
-      }
-    },
-    [removeMember]
-  );
+  const handleRemovePlayer = (playerDetails) => {
+    setConfirmationDelete((prevState) => ({
+      ...prevState,
+      open: true,
+      data: {
+        title: 'Remove Player',
+        image: Images?.deleteIcon?.filename,
+        bodyText: 'Are you sure you want to remove this player?',
+        submitButtonTitle: 'Confirm',
+        cancelButtonTitle: 'Cancel',
+        submitButtonColor: 'primary',
+        submitButtonVariant: 'contained',
+        submitButtonAction: async () => {
+          if (playerDetails) {
+            const response = await removeMember({
+              id: playerDetails?.id,
+              gameId: playerDetails?.gameId,
+            });
+            if (response?.data?.status === API_STATUS?.success) {
+              enqueueSnackbar(response?.data?.message, { variant: 'success' });
+            }
+          }
+          setConfirmationDelete((prevState) => ({
+            ...prevState,
+            open: false,
+          }));
+        },
+        cancelButtonAction: () =>
+          setConfirmationDelete((prevState) => ({
+            ...prevState,
+            open: false,
+          })),
+      },
+    }));
+  };
 
   return (
-    <FormProvider {...methods}>
-      <form
-        style={{ width: !isSmallScreen ? '80%' : '100%' }}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Stack direction={'row'} alignItems={'center'} pt={2}>
-          <Typography pr={2}>{ind + 1}</Typography>
-          {!isEdit &&
-          Object?.values(player)?.length &&
-          'position' in player &&
-          'playerName' in player ? (
-            <PlayerNameCard
-              player={player}
-              setIsEdit={setIsEdit}
-              session={session}
-              removeHandler={handleRemovePlayer}
-            />
-          ) : (
-            <Grid container spacing={2} mt={1}>
-              <Grid item xs={5}>
-                <MuiTextField
-                  label="Enter your name"
-                  name="playerName"
-                  register={register}
-                  disabled={
-                    (!session?.data &&
-                      (existPlayer?.id !== player?.id ||
-                        existedMemberInGame?.id !== player?.id)) ||
-                    isLoading
-                  }
-                />
+    <>
+      <FormProvider {...methods}>
+        <form
+          style={{ width: !isSmallScreen ? '80%' : '100%' }}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Stack direction={'row'} alignItems={'center'} pt={2}>
+            <Typography pr={2}>{ind + 1}</Typography>
+            {!isEdit &&
+            Object?.values(player)?.length &&
+            'position' in player &&
+            'playerName' in player ? (
+              <PlayerNameCard
+                player={player}
+                setIsEdit={setIsEdit}
+                session={session}
+                removeHandler={handleRemovePlayer}
+                isDeleting={isDeleting}
+              />
+            ) : (
+              <Grid container spacing={2} mt={1}>
+                <Grid item xs={5}>
+                  <MuiTextField
+                    label="Enter your name"
+                    name="playerName"
+                    register={register}
+                    disabled={
+                      (!session?.data &&
+                        (existPlayer?.id !== player?.id ||
+                          existedMemberInGame?.id !== player?.id)) ||
+                      isLoading
+                    }
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <MuiSelect
+                    title={'Position'}
+                    options={playingPositions}
+                    name="position"
+                    register={register}
+                    disabled={
+                      (!session?.data &&
+                        (existPlayer?.id !== player?.id ||
+                          existedMemberInGame?.id !== player?.id)) ||
+                      isLoading
+                    }
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <MuiButton
+                    type="submit"
+                    isLoading={isLoading}
+                    disabled={!(playerName && position)}
+                    variant={'contained'}
+                  >
+                    Submit
+                  </MuiButton>
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <MuiSelect
-                  title={'Position'}
-                  options={playingPositions}
-                  name="position"
-                  register={register}
-                  disabled={
-                    (!session?.data &&
-                      (existPlayer?.id !== player?.id ||
-                        existedMemberInGame?.id !== player?.id)) ||
-                    isLoading
-                  }
-                />
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  type="submit"
-                  disabled={isLoading || !(playerName && position)}
-                >
-                  Submit
-                </Button>
-              </Grid>
-            </Grid>
-          )}
-        </Stack>
-      </form>
-    </FormProvider>
+            )}
+          </Stack>
+        </form>
+      </FormProvider>
+      <ConfirmationModal
+        open={confirmationDelete?.open}
+        data={confirmationDelete?.data}
+        sx={{ zIndex: 9999 }}
+        loading={isDeleting}
+      />
+    </>
   );
 };
 

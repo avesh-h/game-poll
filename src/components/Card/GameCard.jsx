@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { usePathname } from 'next/navigation';
 
 import ClipBoardButton from '../Buttons/ClipBoardButton';
 import ElementsTooltip from '../ElementTooltip';
@@ -31,6 +32,9 @@ const buttonStyle = {
 };
 
 const GameCard = ({ gameInfo }) => {
+  const location = usePathname();
+  const isDetailPage = location?.includes('gamesList');
+
   //Clipboard text
   const copyText = useMemo(() => {
     return (
@@ -81,12 +85,12 @@ const GameCard = ({ gameInfo }) => {
       justifyContent="center"
       alignItems="center"
       sx={{
-        minHeight: 'calc(100vh - 70px)', // Assuming the navbar height is 70px, adjust as necessary
+        ...(isDetailPage ? { minHeight: 'calc(100vh - 70px)' } : {}), // Assuming the navbar height is 70px, adjust as necessary
         display: 'flex',
         overflow: 'hidden',
       }}
     >
-      <Card sx={{ my: 1 }}>
+      <Card>
         <ClipBoardButton
           buttonStyle={buttonStyle}
           copyText={copyText?.trim()}

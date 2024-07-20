@@ -108,7 +108,12 @@ const GameForm = ({ formData }) => {
             After making the change in below list you can share updated list in
             whatsapp or via mail.
           </Typography>
-          <Stack direction={'row'} gap={2} pt={2} justifyContent={'center'}>
+          <Stack
+            direction={isSmallScreen ? 'column' : 'row'}
+            gap={2}
+            pt={2}
+            justifyContent={'center'}
+          >
             {socialShareLinks(copyText(), {
               emailBtnText: 'Share Player list',
               whatsappBtnText: 'Share Player list',
@@ -133,6 +138,7 @@ const GameForm = ({ formData }) => {
                   key={`${player?.playerName}-${ind}`}
                   existPlayer={findLoggedInMember(arr)}
                   isSmallScreen={isSmallScreen}
+                  gameDetails={formData}
                 />
               );
             })
@@ -149,6 +155,7 @@ const GameForm = ({ formData }) => {
                       existPlayer={findLoggedInMember(arr)}
                       team={'teamA'}
                       isSmallScreen={isSmallScreen}
+                      gameDetails={formData}
                     />
                   );
                 })}
@@ -164,6 +171,7 @@ const GameForm = ({ formData }) => {
                       existPlayer={findLoggedInMember(arr)}
                       team={'teamB'}
                       isSmallScreen={isSmallScreen}
+                      gameDetails={formData}
                     />
                   );
                 })}

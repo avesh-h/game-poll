@@ -15,10 +15,11 @@ export default function PlayerNameCard({
   setIsEdit,
   session,
   removeHandler,
+  isDeleting,
 }) {
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <Stack direction={'row'}>
+      <Stack direction={'row'} sx={{ opacity: isDeleting ? 0.5 : 1 }}>
         <CardContent sx={{ display: 'flex', gap: 3 }}>
           <Box>
             <Typography variant="body2" color="text.secondary" component="div">

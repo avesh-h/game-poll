@@ -10,6 +10,7 @@ import { enqueueSnackbar } from 'notistack';
 
 import Loader from '@/components/Loader/loader';
 import ConfirmationModal from '@/components/modal/ConfirmationModal';
+import MuiButton from '@/components/mui/MuiButton';
 import TableMoreMenu from '@/components/Table/TableMoreMenu';
 import TableWrapper from '@/components/Table/TableWrapper';
 import { Images } from '@/constants/images';
@@ -234,13 +235,21 @@ const GamesList = () => {
       {!isLoading && !games?.games?.length ? (
         <div
           style={{
-            width: 'inherit',
-            minHeight: 'calc(100vh - 130px)',
-            display: 'grid',
-            placeItems: 'center',
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%,-50%)',
+            textAlign: 'center',
           }}
         >
           <h3>No Game is Booked yet!</h3>
+          <MuiButton
+            variant={'contained'}
+            onClick={() => router.push('/create-game')}
+            sx={{ mt: 2 }}
+          >
+            Create Game
+          </MuiButton>
         </div>
       ) : null}
       {/* MORE MENU */}

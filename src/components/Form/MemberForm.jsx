@@ -17,6 +17,7 @@ import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
+import MuiButton from '../mui/MuiButton';
 import MuiTextField from '../mui/MuiTextField';
 import { API_STATUS } from '@/constants/apiStatuses';
 import { useAddMemberMutation } from '@/lib/actions/memberActions';
@@ -107,9 +108,9 @@ const MemberForm = () => {
                 />
               </Box>
               <Box>
-                <Button type="submit" disabled={isLoading}>
+                <MuiButton type="submit" isLoading={isLoading}>
                   Submit
-                </Button>
+                </MuiButton>
               </Box>
               <Divider />
               <Typography variant="h6" textAlign={'center'}>
