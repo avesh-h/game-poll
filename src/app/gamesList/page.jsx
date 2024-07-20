@@ -9,8 +9,10 @@ import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 
 import Loader from '@/components/Loader/loader';
+import ConfirmationModal from '@/components/modal/ConfirmationModal';
 import TableMoreMenu from '@/components/Table/TableMoreMenu';
 import TableWrapper from '@/components/Table/TableWrapper';
+import { Images } from '@/constants/images';
 import {
   useDeleteGameMutation,
   useGetAllGamesQuery,
@@ -23,6 +25,10 @@ const GamesList = () => {
   const [openMenu, setOpenMenuActions] = useState(null);
   const [rowData, setRowData] = useState();
   const router = useRouter();
+  const [confirmationDelete, setConfirmationDelete] = useState({
+    open: false,
+    data: {},
+  });
 
   //Action Button
   const actionButtonIcon = useCallback((row) => {
@@ -55,11 +61,35 @@ const GamesList = () => {
         {
           event: async () => {
             //delete game form
-            handleCloseMenu();
-            const res = await deleteGame(row?._id);
-            if (res?.data?.message) {
-              enqueueSnackbar(res?.data?.message, { variant: 'success' });
-            }
+            setConfirmationDelete((prevState) => ({
+              ...prevState,
+              open: true,
+              data: {
+                title: 'Delete Game',
+                image: Images?.deleteIcon?.filename,
+                bodyText: 'Are you sure you want to delete this game?',
+                submitButtonTitle: 'Confirm',
+                cancelButtonTitle: 'Cancel',
+                submitButtonColor: 'primary',
+                submitButtonVariant: 'contained',
+                submitButtonAction: async () => {
+                  handleCloseMenu();
+                  const res = await deleteGame(row?._id);
+                  if (res?.data?.message) {
+                    enqueueSnackbar(res?.data?.message, { variant: 'success' });
+                  }
+                  setConfirmationDelete((prevState) => ({
+                    ...prevState,
+                    open: false,
+                  }));
+                },
+                cancelButtonAction: () =>
+                  setConfirmationDelete((prevState) => ({
+                    ...prevState,
+                    open: false,
+                  })),
+              },
+            }));
           },
           getLink: () => {},
           title: 'Delete Game',
@@ -191,7 +221,7 @@ const GamesList = () => {
 
   return (
     <div>
-      {isLoading || isDeleting || (isFetching && !games?.games?.length) ? (
+      {isLoading || (isFetching && !games?.games?.length) ? (
         <Loader />
       ) : (
         <TableWrapper
@@ -220,6 +250,12 @@ const GamesList = () => {
         open={openMenu}
         onClose={handleCloseMenu}
         actions={moreMenuActions(rowData)}
+      />
+      <ConfirmationModal
+        open={confirmationDelete?.open}
+        data={confirmationDelete?.data}
+        sx={{ zIndex: 9999 }}
+        loading={isDeleting}
       />
     </div>
   );

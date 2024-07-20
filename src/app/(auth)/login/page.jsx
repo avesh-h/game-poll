@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { enqueueSnackbar } from 'notistack';
@@ -16,8 +18,10 @@ const content = {
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
+    setLoading(true);
     const res = await signIn('credentials', {
       ...data,
       redirect: false,
@@ -26,12 +30,13 @@ const Login = () => {
       enqueueSnackbar(res?.error, { variant: 'error' });
     } else {
       router.push('/create-game');
+      setLoading(false);
       dispatch(authActions.login());
     }
   };
   return (
     <div>
-      <Signup content={content} onSubmit={onSubmit} login />
+      <Signup content={content} onSubmit={onSubmit} loading={loading} login />
     </div>
   );
 };

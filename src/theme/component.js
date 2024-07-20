@@ -26,7 +26,7 @@ export const components = {
   MuiCard: {
     styleOverrides: {
       root: {
-        boxShadow: '0px 2px 10px 0 #d4d4d4',
+        // boxShadow: '0px 2px 10px 0 #d4d4d4',
       },
     },
   },

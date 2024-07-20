@@ -18,7 +18,7 @@ const SignupPage = () => {
   const router = useRouter();
   const [signup, { isLoading }] = useSignupMutation();
 
-  const onSubmit = async (data, e) => {
+  const onSubmit = async (data) => {
     const res = await signup(data);
     if (res.status === 'success') {
       router.push('/login');
@@ -26,7 +26,7 @@ const SignupPage = () => {
   };
   return (
     <div>
-      <Signup content={content} onSubmit={onSubmit} />
+      <Signup content={content} onSubmit={onSubmit} loading={isLoading} />
     </div>
   );
 };

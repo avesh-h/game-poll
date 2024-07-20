@@ -16,7 +16,21 @@ import ElementsTooltip from '../ElementTooltip';
 import { findOrganizerOfGame } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
-const GameCard = ({ gameInfo, cardRowStyle, buttonStyle }) => {
+const cardRowStyle = {
+  direction: 'row',
+  alignItems: 'center',
+  gap: 2,
+  py: 1.5,
+};
+
+const buttonStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 0.5,
+};
+
+const GameCard = ({ gameInfo }) => {
   //Clipboard text
   const copyText = useMemo(() => {
     return (

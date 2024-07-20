@@ -1,17 +1,34 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
-import { Box, Container, FormLabel, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  FormLabel,
+  Stack,
+  Typography,
+} from '@mui/material';
 import dayjs from 'dayjs';
 
 import PlayerForm from './PlayerForm';
+import GameCard from '../Card/GameCard';
+import ModalWrapper from '../modal/ModalWrapper';
 import { useResponsive } from '@/hooks/useResponsive';
 import { findLoggedInMember } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
 
 const GameForm = ({ formData }) => {
   //TODO:Form Data Means the game Details change name
+
+  const [modalState, setModalState] = useState({
+    open: false,
+    data: {},
+  });
+
+  const handleOpen = () => setModalState((prev) => ({ ...prev, open: true }));
+  const handleClose = () => setModalState((prev) => ({ ...prev, open: false }));
 
   const isSmallScreen = useResponsive('down', 'md');
 
@@ -84,73 +101,81 @@ const GameForm = ({ formData }) => {
   };
 
   return (
-    <Container>
-      <Box>
-        <Typography textAlign={'center'}>
-          After making the change in below list you can share updated list in
-          whatsapp or via mail.
-        </Typography>
-        <Stack direction={'row'} gap={2} pt={2}>
-          {socialShareLinks(copyText(), {
-            emailBtnText: 'Share via email',
-            whatsappBtnText: 'Share on whatsapp',
-          })}
-        </Stack>
-      </Box>
-
-      <Stack alignItems={'center'} pt={2}>
-        <FormLabel id="demo-radio-buttons-group-label">
-          Select Your Seat:
-        </FormLabel>
-
-        {formData && formData?.gameType === 'all' ? (
-          getAllPlayers()?.map((player, ind, arr) => {
-            return (
-              <PlayerForm
-                player={player}
-                ind={ind}
-                key={`${player?.playerName}-${ind}`}
-                existPlayer={findLoggedInMember(arr)}
-                isSmallScreen={isSmallScreen}
-              />
-            );
-          })
-        ) : (
-          <Stack direction={!isSmallScreen ? 'row' : 'column'} width={'100%'}>
-            <Box width={'100%'}>
-              <Typography>Team A</Typography>
-              {getAllPlayers()?.teamA?.map((player, ind, arr) => {
-                return (
-                  <PlayerForm
-                    player={player}
-                    ind={ind}
-                    key={`${player?.playerName}-${ind}`}
-                    existPlayer={findLoggedInMember(arr)}
-                    team={'teamA'}
-                    isSmallScreen={isSmallScreen}
-                  />
-                );
-              })}
-            </Box>
-            <Box width={'100%'}>
-              <Typography>Team B</Typography>
-              {getAllPlayers()?.teamB?.map((player, ind, arr) => {
-                return (
-                  <PlayerForm
-                    player={player}
-                    ind={ind}
-                    key={`${player?.playerName}-${ind}`}
-                    existPlayer={findLoggedInMember(arr)}
-                    team={'teamB'}
-                    isSmallScreen={isSmallScreen}
-                  />
-                );
-              })}
-            </Box>
+    <>
+      <Container>
+        <Stack>
+          <Typography textAlign={'center'}>
+            After making the change in below list you can share updated list in
+            whatsapp or via mail.
+          </Typography>
+          <Stack direction={'row'} gap={2} pt={2} justifyContent={'center'}>
+            {socialShareLinks(copyText(), {
+              emailBtnText: 'Share Player list',
+              whatsappBtnText: 'Share Player list',
+            })}
+            <Button variant="contained" onClick={handleOpen}>
+              Share Game Details
+            </Button>
           </Stack>
-        )}
-      </Stack>
-    </Container>
+        </Stack>
+
+        <Stack alignItems={'center'} pt={2}>
+          <FormLabel id="demo-radio-buttons-group-label">
+            Select Your Seat:
+          </FormLabel>
+
+          {formData && formData?.gameType === 'all' ? (
+            getAllPlayers()?.map((player, ind, arr) => {
+              return (
+                <PlayerForm
+                  player={player}
+                  ind={ind}
+                  key={`${player?.playerName}-${ind}`}
+                  existPlayer={findLoggedInMember(arr)}
+                  isSmallScreen={isSmallScreen}
+                />
+              );
+            })
+          ) : (
+            <Stack direction={!isSmallScreen ? 'row' : 'column'} width={'100%'}>
+              <Box width={'100%'}>
+                <Typography>Team A</Typography>
+                {getAllPlayers()?.teamA?.map((player, ind, arr) => {
+                  return (
+                    <PlayerForm
+                      player={player}
+                      ind={ind}
+                      key={`${player?.playerName}-${ind}`}
+                      existPlayer={findLoggedInMember(arr)}
+                      team={'teamA'}
+                      isSmallScreen={isSmallScreen}
+                    />
+                  );
+                })}
+              </Box>
+              <Box width={'100%'}>
+                <Typography>Team B</Typography>
+                {getAllPlayers()?.teamB?.map((player, ind, arr) => {
+                  return (
+                    <PlayerForm
+                      player={player}
+                      ind={ind}
+                      key={`${player?.playerName}-${ind}`}
+                      existPlayer={findLoggedInMember(arr)}
+                      team={'teamB'}
+                      isSmallScreen={isSmallScreen}
+                    />
+                  );
+                })}
+              </Box>
+            </Stack>
+          )}
+        </Stack>
+      </Container>
+      <ModalWrapper open={modalState?.open} handleClose={handleClose}>
+        <GameCard gameInfo={formData} />
+      </ModalWrapper>
+    </>
   );
 };
 

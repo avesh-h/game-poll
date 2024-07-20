@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Box,
-  Button,
   Card,
   FormControl,
   FormLabel,
@@ -24,6 +23,7 @@ import MuiDatePicker from '../mui/MuiDatePicker';
 import MuiRadioGroup from '../mui/MuiRadioGroup';
 import MuiTextField from '../mui/MuiTextField';
 import MuiTimePicker from '../mui/MuiTimePicker';
+import MuiButton from '@/components/mui/MuiButton';
 import { API_STATUS } from '@/constants/apiStatuses';
 import {
   useCreateGameMutation,
@@ -314,9 +314,13 @@ const CreateGameForm = ({ content, gameData }) => {
                 </Typography>
               </Box>
               <Box>
-                <Button type="submit" disabled={isLoading || isUpdating}>
+                <MuiButton
+                  type="submit"
+                  variant={'contained'}
+                  isLoading={isLoading || isUpdating}
+                >
                   {content.buttonText}
-                </Button>
+                </MuiButton>
               </Box>
             </FormControl>
           </form>

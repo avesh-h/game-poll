@@ -1,20 +1,14 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Card,
-  FormControl,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import MuiButton from '../mui/MuiButton';
 import MuiTextField from '../mui/MuiTextField';
 
 //Add validation zod
 
-const Signup = ({ content, login, onSubmit }) => {
+const Signup = ({ content, login, onSubmit, loading }) => {
   const methods = useForm({
     defaultValues: {
       firstName: '',
@@ -78,7 +72,13 @@ const Signup = ({ content, login, onSubmit }) => {
                 />
               </Box>
               <Box>
-                <Button type="submit">{content.buttonText}</Button>
+                <MuiButton
+                  type="submit"
+                  variant={'contained'}
+                  isLoading={loading}
+                >
+                  {content.buttonText}
+                </MuiButton>
               </Box>
             </FormControl>
           </form>
