@@ -2,10 +2,9 @@
 // app/api/execute-cron/route.js
 import { NextResponse } from 'next/server';
 
-import { GAME_MEMBER } from '@/constants/role';
 import gameDao from '@/lib/daos/gameDao';
-import memberDao from '@/lib/daos/memberDao';
 import { httpStatusCode } from '@/lib/httpStatusCode';
+import memberServices from '@/lib/services/memberServices';
 
 export async function GET(req, { params }) {
   try {
@@ -20,62 +19,19 @@ export async function GET(req, { params }) {
       });
     }
 
-    const endtime = game.endTime;
-    const now = new Date();
-
     //Need to optimize the if else logic
-    if (endtime > now) {
-      try {
-        //For delete each member from the db
-        const getAllMembersOfCurrentGame = game?.members?.filter(
-          (member) => member?.role === GAME_MEMBER
-        );
-
-        if (getAllMembersOfCurrentGame?.length) {
-          for (const member of getAllMembersOfCurrentGame) {
-            try {
-              await memberDao.deleteMember(member?.id);
-            } catch (error) {
-              return NextResponse.json(
-                { error },
-                { status: httpStatusCode.FORBIDDEN }
-              );
-            }
-          }
+    try {
+      //For delete each member from the db
+      await memberServices.removeMembersFromGame(game);
+      await gameDao.deleteGameById(game._id);
+    } catch (error) {
+      console.error(`Error deleting game: ${game._id}`, error);
+      return NextResponse.json(
+        { error },
+        {
+          status: httpStatusCode.FORBIDDEN,
         }
-        await gameDao.deleteGameById(game._id);
-      } catch (error) {
-        console.error(`Error deleting game: ${game._id}`, error);
-        return new Response(JSON.stringify({ error: 'Error deleting game' }), {
-          status: 500,
-        });
-      }
-    } else {
-      // If the game's endTime is in the past, delete the game immediately
-      try {
-        const getAllMembersOfCurrentGame = game?.members?.filter(
-          (member) => member?.role === GAME_MEMBER
-        );
-
-        if (getAllMembersOfCurrentGame?.length) {
-          for (const member of getAllMembersOfCurrentGame) {
-            try {
-              await memberDao.deleteMember(member?.id);
-            } catch (error) {
-              return NextResponse.json(
-                { error },
-                { status: httpStatusCode.FORBIDDEN }
-              );
-            }
-          }
-        }
-        await gameDao.deleteGameById(game._id);
-      } catch (error) {
-        console.error(`Error deleting game: ${game._id}`, error);
-        return new Response(JSON.stringify({ error: 'Error deleting game' }), {
-          status: 500,
-        });
-      }
+      );
     }
 
     return new Response(

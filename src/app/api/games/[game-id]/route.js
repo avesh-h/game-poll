@@ -6,6 +6,7 @@ import memberDao from '@/lib/daos/memberDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
+import memberServices from '@/lib/services/memberServices';
 
 //We can also directly use the server action of next 14 instad of create the new api here.
 export const GET = async (request, { params }) => {
@@ -124,22 +125,8 @@ const deleteGame = async (req, ctx) => {
     }
 
     //For delete each member from the db
-    const getAllMembersOfCurrentGame = findGame?.members?.filter(
-      (member) => member?.role === GAME_MEMBER
-    );
 
-    if (getAllMembersOfCurrentGame?.length) {
-      for (const member of getAllMembersOfCurrentGame) {
-        try {
-          await memberDao.deleteMember(member?.id);
-        } catch (error) {
-          return NextResponse.json(
-            { error },
-            { status: httpStatusCode.FORBIDDEN }
-          );
-        }
-      }
-    }
+    await memberServices.removeMembersFromGame(findGame);
     await gameDao.deleteGameById(gameId);
     //Also delete all the members related to the game except the organizer
     return NextResponse.json(

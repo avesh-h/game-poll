@@ -1,3 +1,4 @@
+/* global Promise */
 import axios from 'axios';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -6,6 +7,8 @@ import mongoose from 'mongoose';
 // import cron from 'node-cron';
 // import schedule from 'node-schedule';
 
+import gameDao from '../daos/gameDao';
+import memberServices from '../services/memberServices';
 import AppConfig from '../utils/app-config';
 
 dayjs.extend(utc);
@@ -140,7 +143,7 @@ gameSchema.post('save', async function (doc) {
       {
         job: {
           url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-          // url: `https://e10b-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+          // url: `https://2578-2402-a00-172-d9f4-dc1c-6c1d-2fb5-fdc5.ngrok-free.app/api/execute-cron/${gameId}`,
           // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
           enabled: true,
           saveResponses: true,
@@ -192,7 +195,7 @@ gameSchema.post('findOneAndUpdate', async function (doc) {
     {
       job: {
         url: `${process.env.NEXTAUTH_URL}/api/execute-cron/${gameId}`,
-        // url: `https://e10b-103-240-76-116.ngrok-free.app/api/execute-cron/${gameId}`,
+        // url: `https://2578-2402-a00-172-d9f4-dc1c-6c1d-2fb5-fdc5.ngrok-free.app/api/execute-cron/${gameId}`,
         // url: `https://play-o-time.onrender.com/api/execute-cron/${gameId}`,
         enabled: true,
         schedule: {
@@ -237,13 +240,15 @@ export const deletesExpiredGames = async () => {
   try {
     const games = await Game.find({ endTime: { $lt: new Date() } });
     //Delete expired games one by one in loop from db
-    games.forEach(async (game) => {
+    const deletionPromises = games.map(async (game) => {
       try {
-        await Game.findByIdAndDelete(game._id);
+        await memberServices.removeMembersFromGame(game);
+        await gameDao.deleteGameById(game._id);
       } catch (error) {
-        console.log('Schedule error', error);
+        console.error(`Error deleting game ${game._id}:`, error);
       }
     });
+    await Promise.all(deletionPromises);
   } catch (error) {
     console.error('Error rescheduling deletions:', error);
   }
