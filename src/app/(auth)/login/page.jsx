@@ -29,7 +29,7 @@ const Login = () => {
     if (res?.error) {
       enqueueSnackbar(res?.error, { variant: 'error' });
     } else {
-      router.push('/create-game');
+      router.push('/gamesList');
       setLoading(false);
       dispatch(authActions.login());
     }

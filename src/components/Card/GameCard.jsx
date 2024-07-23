@@ -25,10 +25,9 @@ const cardRowStyle = {
 };
 
 const buttonStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 0.5,
+  position: 'absolute',
+  right: 0,
+  padding: 1,
 };
 
 const GameCard = ({ gameInfo }) => {
@@ -90,7 +89,7 @@ const GameCard = ({ gameInfo }) => {
         overflow: 'hidden',
       }}
     >
-      <Card>
+      <Card sx={{ position: 'relative' }}>
         <ClipBoardButton
           buttonStyle={buttonStyle}
           copyText={copyText?.trim()}

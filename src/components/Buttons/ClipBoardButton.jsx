@@ -8,13 +8,14 @@ import { Button } from '@mui/material';
 
 import { copyTextToClipboard } from '@/lib/utils/copyToClipboard';
 
-const buttonStyle = {
-  width: '100%',
+const btnStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 0.5,
   justifyContent: 'flex-end',
-  p: 2,
 };
 
-const ClipBoardButton = ({ copyText }) => {
+const ClipBoardButton = ({ copyText, buttonText, buttonStyle, ...other }) => {
   const [isCopied, setIsCopied] = useState(false);
   const handleCopyClipboard = () => {
     //Navigator browser API
@@ -28,14 +29,19 @@ const ClipBoardButton = ({ copyText }) => {
   return (
     <>
       {isCopied ? (
-        <Button sx={buttonStyle}>
+        <Button sx={{ ...btnStyle, ...buttonStyle }} {...other}>
           <DoneAllIcon />
           Copied!
         </Button>
       ) : (
-        <Button size="small" sx={buttonStyle} onClick={handleCopyClipboard}>
+        <Button
+          size="small"
+          sx={{ ...btnStyle, ...buttonStyle }}
+          onClick={handleCopyClipboard}
+          {...other}
+        >
           <ContentCopyIcon />
-          Copy
+          {buttonText || 'Copy'}
         </Button>
       )}
     </>

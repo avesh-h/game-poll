@@ -2,19 +2,14 @@
 
 import { useCallback, useState } from 'react';
 
-import {
-  Box,
-  Button,
-  Container,
-  FormLabel,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Container, FormLabel, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
 import PlayerForm from './PlayerForm';
+import ClipBoardButton from '../Buttons/ClipBoardButton';
 import GameCard from '../Card/GameCard';
 import ModalWrapper from '../modal/ModalWrapper';
+import MuiButton from '../mui/MuiButton';
 import { useResponsive } from '@/hooks/useResponsive';
 import { findLoggedInMember } from '@/lib/utils/editPlayerDetails';
 import { socialShareLinks } from '@/lib/utils/socialShareLinks';
@@ -103,25 +98,28 @@ const GameForm = ({ formData }) => {
   return (
     <>
       <Container>
-        <Stack>
-          <Typography textAlign={'center'}>
-            After making the change in below list you can share updated list in
-            whatsapp or via mail.
-          </Typography>
-          <Stack
-            direction={isSmallScreen ? 'column' : 'row'}
-            gap={2}
-            pt={2}
-            justifyContent={'center'}
-          >
-            {socialShareLinks(copyText(), {
-              emailBtnText: 'Share Player list',
-              whatsappBtnText: 'Share Player list',
-            })}
-            <Button variant="contained" onClick={handleOpen}>
-              Share Game Details
-            </Button>
-          </Stack>
+        <Typography textAlign={'center'}>
+          After making the change in below list you can share updated list in
+          whatsapp or via mail.
+        </Typography>
+        <Stack
+          direction={isSmallScreen ? 'column' : 'row'}
+          gap={2}
+          pt={2}
+          justifyContent={'center'}
+        >
+          {socialShareLinks(copyText(), {
+            emailBtnText: 'Share Player list',
+            whatsappBtnText: 'Share Player list',
+          })}
+          <ClipBoardButton
+            buttonText={'Copy List'}
+            copyText={copyText()?.trim()}
+            variant={'contained'}
+          />
+          <MuiButton variant="contained" onClick={handleOpen}>
+            Share Game Details
+          </MuiButton>
         </Stack>
 
         <Stack alignItems={'center'} pt={2}>
