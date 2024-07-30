@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useMemo, useState } from 'react';
 
 import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -34,16 +34,22 @@ const pages = [
     value: 'gamesList',
   },
 ];
-const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const session = useSession();
   const isAuth = Cookies.get('accessToken');
   const params = useParams();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.auth);
+
+  const settings = useMemo(() => {
+    if (session?.data) {
+      return ['Profile', 'Logout'];
+    }
+    return ['Logout'];
+  }, [session]);
 
   const router = useRouter();
 
@@ -88,7 +94,7 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-  const headerPages = React.useMemo(() => {
+  const headerPages = useMemo(() => {
     if (isLoggedIn) {
       if (isMemberLoggedIn()) {
         return [];

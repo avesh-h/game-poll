@@ -10,6 +10,7 @@ export default function BasicModal({
   modalStyle,
   style,
   handleClose,
+  isLoading,
   ...other
 }) {
   return (
@@ -27,13 +28,8 @@ export default function BasicModal({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            // width: 'inherit',
-            // height: 'inherit',
             bgcolor: 'background.paper',
             borderRadius: '15px',
-            // border: '2px solid #000',
-            // boxShadow: 0,
-            // p: 4,
             ...style,
           }}
         >

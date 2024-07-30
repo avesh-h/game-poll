@@ -17,8 +17,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Providers>
+          {/* <AuthGuard> */}
           <Header />
           {children}
+          {/* </AuthGuard> */}
         </Providers>
       </body>
     </html>
