@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 // eslint-disable-next-line import/no-unresolved
 import Signup from '@/components/Form/Signup';
 // eslint-disable-next-line import/no-unresolved
+import { API_STATUS } from '@/constants/apiStatuses';
 import { useSignupMutation } from '@/lib/actions/authActions';
 
 const content = {
@@ -20,7 +21,7 @@ const SignupPage = () => {
 
   const onSubmit = async (data) => {
     const res = await signup(data);
-    if (res.status === 'success') {
+    if (res?.data?.status === API_STATUS.success) {
       router.push('/login');
     }
   };

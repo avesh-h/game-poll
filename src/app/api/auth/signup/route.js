@@ -29,7 +29,7 @@ export const POST = async (req) => {
         photo,
       });
       await createUser.save();
-      //Send email process
+      //Send email process for the verification
       return NextResponse.json(
         { message: 'Successfully created!', status: 'success' },
         { status: 201 }

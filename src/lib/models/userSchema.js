@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String }, //Optional
   photo: { type: String }, //Optional
   isVerified: { type: Boolean, default: false },
+  games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Game' }],
 });
 
 //Also can check validate like this

@@ -30,9 +30,9 @@ const Login = () => {
       enqueueSnackbar(res?.error, { variant: 'error' });
     } else {
       router.push('/gamesList');
-      setLoading(false);
       dispatch(authActions.login());
     }
+    setLoading(false);
   };
   return (
     <div>

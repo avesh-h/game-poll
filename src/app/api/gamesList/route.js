@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import gameDao from '@/lib/daos/gameDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
+import { User } from '@/lib/models/userSchema';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
 
 const getAllGames = async () => {
@@ -10,11 +10,16 @@ const getAllGames = async () => {
   try {
     await connectToDB();
     if (gameOrganizer) {
-      const games = await gameDao?.findGamesByOrganizerId(
-        gameOrganizer?.user?.id
-      );
+      //Now we getting games directly from users instead of all games from game schema.
+      const userGames = await User.findOne(
+        {
+          _id: gameOrganizer?.user?.id,
+        },
+        { games: 1, _id: 0 }
+      ).populate('games');
+
       return NextResponse.json(
-        { games, message: 'success' },
+        { games: userGames?.games, message: 'success' },
         { status: httpStatusCode.OK }
       );
     } else {
