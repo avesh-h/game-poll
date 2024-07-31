@@ -90,6 +90,7 @@ function ResponsiveAppBar() {
       dispatch(authActions.logout());
     } else {
       //Redirect to profile page
+      router.push('/profile');
     }
     setAnchorElUser(null);
   };

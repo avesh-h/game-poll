@@ -20,7 +20,12 @@ export const middleware = async (req) => {
       req,
       secret: process.env.NEXTAUTH_SECRET,
     })) || cookies().get('accessToken');
+  // If token is not present, redirect to login
   if (!token) {
+    // If the current page is /login or /register, allow access
+    if (unAuthRoutes.some((path) => req.nextUrl.pathname.startsWith(path))) {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
   } else {
     try {
