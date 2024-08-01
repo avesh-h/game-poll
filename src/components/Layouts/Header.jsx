@@ -88,7 +88,7 @@ function ResponsiveAppBar() {
         router.push(`/members/${params?.['game-id']}`);
       }
       dispatch(authActions.logout());
-    } else {
+    } else if (menu === settings?.[0]) {
       //Redirect to profile page
       router.push('/profile');
     }
