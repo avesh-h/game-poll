@@ -12,7 +12,6 @@ const btnStyle = {
   display: 'flex',
   alignItems: 'center',
   gap: 0.5,
-  justifyContent: 'flex-end',
 };
 
 const ClipBoardButton = ({ copyText, buttonText, buttonStyle, ...other }) => {
