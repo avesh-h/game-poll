@@ -73,6 +73,7 @@ const GameForm = ({ formData }) => {
     const membersOfBText = membersOfTeamB.join(' \n').trim();
 
     const fullText =
+      `*Game* : ${formData?.gameName}\n` +
       `*Date* : ${dayjs(formData?.gameDate)?.format('DD-MMM') || 'N/A'}\n` +
       `*Venue* : ${formData?.nameOfVenue || 'N/A'}\n` +
       `*Game time* : ${

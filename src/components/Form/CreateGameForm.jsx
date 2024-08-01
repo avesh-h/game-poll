@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 
 import MuiDatePicker from '../mui/MuiDatePicker';
 import MuiRadioGroup from '../mui/MuiRadioGroup';
+import MuiSelect from '../mui/MuiSelect';
 import MuiTextField from '../mui/MuiTextField';
 import MuiTimePicker from '../mui/MuiTimePicker';
 import MuiButton from '@/components/mui/MuiButton';
@@ -37,6 +38,8 @@ const gameTypeValues = [
   { label: 'All', value: 'all' },
   { label: 'Team', value: 'team' },
 ];
+
+const gamesOptions = ['Cricket', 'Football'];
 
 //To make sure utc of indian time zone
 dayjs.extend(utc);
@@ -220,8 +223,9 @@ const CreateGameForm = ({ content, gameData }) => {
                   values={gameTypeValues}
                 />
                 <Box>
-                  <MuiTextField
-                    label="Name of game"
+                  <MuiSelect
+                    title={'Name of game'}
+                    options={gamesOptions}
                     name="gameName"
                     register={register}
                   />

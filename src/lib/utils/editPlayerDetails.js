@@ -12,6 +12,17 @@ export const isAllowToEditPlayersDetails = (player, sessionId) => {
   return !!flag;
 };
 
+export const isAllowToDeletePlayerDetails = (player, sessionId) => {
+  //Organizer cannot delete himself
+  const flag =
+    ((sessionId && player?.role !== GAME_ORGANIZER) ||
+      (player?.role === GAME_MEMBER &&
+        player?.id === localMember()?.memberId)) &&
+    player?.playerName &&
+    player?.position;
+  return !!flag;
+};
+
 export const currentLoggedInUserRole = () => {
   const isMember = localStorage.getItem('session-user');
 

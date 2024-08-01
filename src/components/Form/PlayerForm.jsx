@@ -23,21 +23,6 @@ import {
 import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
 
-const playingPositions = [
-  'ST',
-  'GK',
-  'LW',
-  'RW',
-  'CAM',
-  'CDM',
-  'CM',
-  'RM',
-  'LM',
-  'CB',
-  'RB',
-  'LB',
-];
-
 const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
@@ -55,6 +40,27 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
     open: false,
     data: {},
   });
+  //Playing Positions
+  const playingPositions = useMemo(() => {
+    if (gameDetails?.selectedGame?.gameName?.toLowerCase() === 'cricket') {
+      return ['WK', 'Batsman', 'Bowler', 'All-rounder', 'Fielder', 'Others'];
+    } else {
+      return [
+        'ST',
+        'GK',
+        'LW',
+        'RW',
+        'CAM',
+        'CDM',
+        'CM',
+        'RM',
+        'LM',
+        'CB',
+        'RB',
+        'LB',
+      ];
+    }
+  }, [gameDetails?.selectedGame?.gameName]);
 
   //Existed Member In Game
   const existedMemberInGame = useMemo(() => {
@@ -176,6 +182,7 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
                 session={session}
                 removeHandler={handleRemovePlayer}
                 isDeleting={deletePlayer}
+                gameName={gameDetails?.selectedGame?.gameName}
               />
             ) : (
               <Grid container spacing={2} mt={1}>
@@ -194,7 +201,11 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
                 </Grid>
                 <Grid item xs={4}>
                   <MuiSelect
-                    title={'Position'}
+                    title={
+                      gameDetails?.selectedGame?.gameName === 'Cricket'
+                        ? 'Role'
+                        : 'Position'
+                    }
                     options={playingPositions}
                     name="position"
                     register={register}
