@@ -71,7 +71,7 @@ function ResponsiveAppBar() {
   const handleCloseNavMenu = () => setAnchorElNav(null);
 
   const handleCloseUserMenu = (menu) => {
-    if (menu === settings?.[1]) {
+    if (menu === 'Logout') {
       //logout
       if (session?.data?.user?.id) {
         //session logout for organizer
@@ -88,7 +88,7 @@ function ResponsiveAppBar() {
         router.push(`/members/${params?.['game-id']}`);
       }
       dispatch(authActions.logout());
-    } else if (menu === settings?.[0]) {
+    } else if (menu === 'Profile') {
       //Redirect to profile page
       router.push('/profile');
     }
