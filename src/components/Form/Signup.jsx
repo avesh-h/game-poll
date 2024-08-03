@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
+import Link from 'next/link';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import MuiButton from '../mui/MuiButton';
@@ -80,6 +81,24 @@ const Signup = ({ content, login, onSubmit, loading }) => {
                   {content.buttonText}
                 </MuiButton>
               </Box>
+              {!login ? (
+                <p>
+                  Already have account?{' '}
+                  <Link href="/login" style={{ textDecoration: 'underline' }}>
+                    Sign in
+                  </Link>
+                </p>
+              ) : (
+                <p>
+                  {"Don't have an account?"}{' '}
+                  <Link
+                    href="/register"
+                    style={{ textDecoration: 'underline' }}
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              )}
             </FormControl>
           </form>
         </FormProvider>
