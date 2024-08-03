@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
 import { NextResponse } from 'next/server';
 
 import { connectToDB } from '@/lib/dbHandler';

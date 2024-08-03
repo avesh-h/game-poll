@@ -19,11 +19,18 @@ const getAllGames = async () => {
       ).populate('games');
 
       return NextResponse.json(
-        { games: userGames?.games, message: 'success' },
+        { games: userGames?.games, status: 'success' },
         { status: httpStatusCode.OK }
       );
     } else {
       //User unauthorized!
+      return NextResponse.json(
+        {
+          error: 'User is unauthorized!',
+          status: 'failed',
+        },
+        { status: httpStatusCode.FORBIDDEN }
+      );
     }
   } catch (error) {
     console.log('error', error);

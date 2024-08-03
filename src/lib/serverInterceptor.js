@@ -6,8 +6,7 @@ import { errorHandler } from './utils/errorHandler';
 const environment = process.env.NODE_ENV || 'development';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${AppConfig[environment]?.apiUrl}/api`,
-  // baseUrl:'http://localhost:3000/api',
+  baseUrl: `${AppConfig[environment]?.delegateServerUrl}/api`,
   prepareHeaders: (headers) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -20,6 +19,7 @@ const baseQuery = fetchBaseQuery({
 //For in case access token expire
 const baseQueryWithReAuth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
+  //Not applied refresh token error for now...
   if (result.error && result.error.status === 401) {
     //Refresh token
     const refreshResult = await baseQuery('/token', api, extraOptions);
@@ -36,8 +36,8 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 };
 
 // Interceptor
-export const apiInterceptor = createApi({
-  reducerPath: 'api',
+export const serverInterceptor = createApi({
+  reducerPath: 'server',
   baseQuery: baseQueryWithReAuth,
   endpoints: () => ({}),
 });

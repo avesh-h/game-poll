@@ -17,7 +17,7 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: oAuthRefreshToken });
 
 //we can send subject of email and body
-export async function sendMail({ mailTo, subject, text }) {
+export async function sendMail({ mailTo, subject, text, verificationLink }) {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -35,11 +35,13 @@ export async function sendMail({ mailTo, subject, text }) {
 
     //Email object
     const mailOptions = {
-      from: 'aveshraza010+game.poll@gmail.com',
+      from: 'PLAY-O-TIME SUPPORT TEAM',
       to: mailTo || 'aveshraza010@gmail.com',
       subject: subject || 'Game poll service',
-      text,
-      //   html: '<h1>Hello user we are back</h1>',
+      ...(text ? text : {}),
+      ...(!!verificationLink && {
+        html: `<h5>Click here to verification Link : ${verificationLink}</h5>`,
+      }),
     };
 
     const result = await transporter.sendMail(mailOptions);
