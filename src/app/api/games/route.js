@@ -5,7 +5,8 @@ import userDao from '@/lib/daos/userDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
-import { sendMail } from '@/lib/oAuth2';
+// import { sendMail } from '@/lib/oAuth2';
+import client from '@/lib/redisConfig';
 import { gameDetails } from '@/lib/utils/common';
 
 export const POST = async (req) => {
@@ -28,11 +29,38 @@ export const POST = async (req) => {
       const createdGame = await gameDao.createGame(requestBody, organizer);
       if (createdGame) {
         //Mail service
-        await sendMail({
-          mailTo: gameOrganizer?.user?.email,
-          subject: 'Created Game Successfully!',
-          text: gameDetails({ session: gameOrganizer, gameInfo: createdGame }),
-        });
+        // await sendMail({
+        //   mailTo: gameOrganizer?.user?.email,
+        //   subject: 'Created Game Successfully!',
+        //   text: gameDetails({ session: gameOrganizer, gameInfo: createdGame }),
+        // });
+
+        //Queue
+        await client.lPush(
+          'gameEmailQueue',
+          JSON.stringify({
+            mailTo: gameOrganizer?.user?.email,
+            subject: 'Created Game Successfully!',
+            text: gameDetails({
+              session: gameOrganizer,
+              gameInfo: createdGame,
+            }),
+          })
+        );
+
+        //PUB/SUB
+        // await client.publish(
+        //   'gameEmailQueue',
+        //   JSON.stringify({
+        //     mailTo: gameOrganizer?.user?.email,
+        //     subject: 'Created Game Successfully!',
+        //     text: gameDetails({
+        //       session: gameOrganizer,
+        //       gameInfo: createdGame,
+        //     }),
+        //   })
+        // );
+
         //Update the user games array
         await userDao.addGameIntoUserById(gameOrganizerId, createdGame?._id);
       }
