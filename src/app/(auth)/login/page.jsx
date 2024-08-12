@@ -27,7 +27,11 @@ const Login = () => {
       redirect: false,
     });
     if (res?.error) {
-      enqueueSnackbar(res?.error, { variant: 'error' });
+      if (res?.error?.includes('not verified')) {
+        enqueueSnackbar(res?.error, { variant: 'info', persist: true });
+      } else {
+        enqueueSnackbar(res?.error, { variant: 'error' });
+      }
     } else {
       router.push('/gamesList');
       dispatch(authActions.login());

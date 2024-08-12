@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import clientPromise from '../mongoAdapter/mongoAdapter';
+import { sendMail } from '../oAuth2';
 import { generateToken } from '../utils/generateToken';
 import userDao from '@/lib/daos/userDao';
 import { connectToDB } from '@/lib/dbHandler';
@@ -27,6 +28,33 @@ export const authOptions = {
             //User not exist
             throw new Error('User does not Exist!');
           } else {
+            //Also check is user is verified account or not
+            if (!existedUser?.isVerified) {
+              //Generate token for verify
+              const verificationToken = await generateToken(
+                {
+                  email: existedUser?.email,
+                  userId: existedUser?._id,
+                },
+                { secret: process.env.VERIFY_SECRET, duration: '30m' }
+              );
+
+              // verification link
+              const verificationLink =
+                process.env.SERVER_URL + '/verify-email/' + verificationToken;
+
+              //Send email for verify the user
+              const mailOptions = {
+                mailTo: existedUser?.email,
+                subject: 'User verification.',
+                verificationLink,
+                // html: `<h5> Click to Verification Link : ${verificationLink}</h5>`,
+              };
+              await sendMail(mailOptions);
+              throw new Error(
+                'Your account is not verified yet! We send you the mail, Please click on the link and verify the email.'
+              );
+            }
             //Compare password
             const isPasswordCorrect = await bcrypt.compare(
               password,

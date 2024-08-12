@@ -35,7 +35,7 @@ export async function sendMail({ mailTo, subject, text, verificationLink }) {
 
     //Email object
     const mailOptions = {
-      from: 'PLAY-O-TIME SUPPORT TEAM',
+      from: 'PLAY-O-TIME SUPPORT TEAM <aveshraza010+game.poll@gmail.com>',
       to: mailTo || 'aveshraza010@gmail.com',
       subject: subject || 'Game poll service',
       ...(text ? text : {}),
