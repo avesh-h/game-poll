@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 import gameDao from '@/lib/daos/gameDao';
 import { httpStatusCode } from '@/lib/httpStatusCode';
+import { User } from '@/lib/models/userSchema';
 import memberServices from '@/lib/services/memberServices';
 
 export async function GET(req, { params }) {
@@ -23,6 +24,12 @@ export async function GET(req, { params }) {
     try {
       //For delete each member from the db
       await memberServices.removeMembersFromGame(game);
+      //Also need to delete the game ID from the user games array
+      await User.updateOne(
+        { _id: game?.organizerId },
+        { $pull: { games: game?._id } }
+      );
+      //Then delete the game
       await gameDao.deleteGameById(game._id);
     } catch (error) {
       console.error(`Error deleting game: ${game._id}`, error);

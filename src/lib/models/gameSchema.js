@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 // import cron from 'node-cron';
 // import schedule from 'node-schedule';
 
+import { User } from './userSchema';
 import gameDao from '../daos/gameDao';
 import memberServices from '../services/memberServices';
 import AppConfig from '../utils/app-config';
@@ -242,7 +243,14 @@ export const deletesExpiredGames = async () => {
     //Delete expired games one by one in loop from db
     const deletionPromises = games.map(async (game) => {
       try {
+        //First delete all member related to that game
         await memberServices.removeMembersFromGame(game);
+        //Also need to delete the game ID from the user games array
+        await User.updateOne(
+          { _id: game?.organizerId },
+          { $pull: { games: game._id } }
+        );
+        //Then delete the game
         await gameDao.deleteGameById(game._id);
       } catch (error) {
         console.error(`Error deleting game ${game._id}:`, error);

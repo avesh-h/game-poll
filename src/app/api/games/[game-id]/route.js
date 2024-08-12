@@ -5,6 +5,7 @@ import gameDao from '@/lib/daos/gameDao';
 import memberDao from '@/lib/daos/memberDao';
 import { connectToDB } from '@/lib/dbHandler';
 import { httpStatusCode } from '@/lib/httpStatusCode';
+import { User } from '@/lib/models/userSchema';
 import { getCurrentSession } from '@/lib/nextAuth/auth';
 import memberServices from '@/lib/services/memberServices';
 
@@ -124,11 +125,16 @@ const deleteGame = async (req, ctx) => {
       );
     }
 
-    //For delete each member from the db
-
-    await memberServices.removeMembersFromGame(findGame);
-    await gameDao.deleteGameById(gameId);
     //Also delete all the members related to the game except the organizer
+    await memberServices.removeMembersFromGame(findGame);
+    //Also need to delete the game ID from the user games array
+    await User.updateOne(
+      { _id: findGame?.organizerId },
+      { $pull: { games: gameId } }
+    );
+    //Then delete the game
+    await gameDao.deleteGameById(gameId);
+
     return NextResponse.json(
       { message: 'Successfully removed!', status: 'success' },
       { status: httpStatusCode.OK }
