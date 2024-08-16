@@ -8,6 +8,7 @@ import { getCurrentSession } from '@/lib/nextAuth/auth';
 // import { sendMail } from '@/lib/oAuth2';
 import client from '@/lib/redisConfig';
 import { gameDetails } from '@/lib/utils/common';
+// import { sendMessageToQueue } from '@/lib/queue';
 
 export const POST = async (req) => {
   const requestBody = await req.json();
@@ -60,6 +61,16 @@ export const POST = async (req) => {
         //     }),
         //   })
         // );
+
+        //With rabbit mq
+        // await sendMessageToQueue('gameEmailQueue', {
+        //   mailTo: gameOrganizer?.user?.email,
+        //   subject: 'Created Game Successfully!',
+        //   text: gameDetails({
+        //     session: gameOrganizer,
+        //     gameInfo: createdGame,
+        //   }),
+        // });
 
         //Update the user games array
         await userDao.addGameIntoUserById(gameOrganizerId, createdGame?._id);
