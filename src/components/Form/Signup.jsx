@@ -97,12 +97,14 @@ const Signup = ({ content, login, onSubmit, loading }) => {
 
                   <OutlinedInput
                     id="outlined-adornment-password"
+                    name="password"
                     type={showPassword ? 'text' : 'password'}
                     sx={{
                       '.MuiInputBase-input.MuiOutlinedInput-input': {
                         padding: '12px 14px',
                       },
                     }}
+                    inputProps={{ ...register('password') }}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
