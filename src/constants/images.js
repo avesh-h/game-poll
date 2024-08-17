@@ -1,5 +1,6 @@
 import deleteIcon from '@/assets/deleteIcon.svg';
 import exclamationMark from '@/assets/exclamationMark.svg';
+import soccerKick from '@/assets/soccer-player.png';
 
 export const Images = {
   deleteIcon: {
@@ -9,5 +10,9 @@ export const Images = {
   exclationMarkIcon: {
     alt: 'Exclation mark icon',
     filename: exclamationMark,
+  },
+  soccerPlayer: {
+    alt: 'soccer-kick',
+    filename: soccerKick,
   },
 };

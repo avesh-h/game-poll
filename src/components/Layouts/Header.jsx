@@ -23,6 +23,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { authActions } from '@/lib/redux/authSlice';
 import { isMemberLoggedIn } from '@/lib/utils/editPlayerDetails';
+import { Images } from '@/constants/images';
+import Image from 'next/image';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const pages = [
   {
@@ -43,6 +46,7 @@ function ResponsiveAppBar() {
   const params = useParams();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.auth);
+  const isSmallScreen = useResponsive('down', 'md');
 
   const settings = useMemo(() => {
     if (session?.data) {
@@ -117,7 +121,16 @@ function ResponsiveAppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Stack direction={'row'} onClick={() => router.push('/dashboard')}>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <Image
+              src={Images?.soccerPlayer?.filename}
+              width={45}
+              height={40}
+              alt={Images?.soccerPlayer?.alt}
+              style={{
+                filter: 'invert(90%)',
+                display: isSmallScreen ? 'none' : 'block',
+              }}
+            />
             <Typography
               variant="h6"
               noWrap
@@ -183,7 +196,16 @@ function ResponsiveAppBar() {
             ) : null}
           </Box>
           {/* Project logo */}
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Image
+            src={Images?.soccerPlayer?.filename}
+            width={40}
+            height={40}
+            alt={Images?.soccerPlayer?.alt}
+            style={{
+              filter: 'invert(90%)',
+              display: isSmallScreen ? 'block' : 'none',
+            }}
+          />
           {/* Mobile */}
           <Typography
             variant="h5"

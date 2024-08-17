@@ -1,6 +1,20 @@
 'use client';
 
-import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
+import { useState } from 'react';
+
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {
+  Box,
+  Card,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Stack,
+  Typography,
+} from '@mui/material';
 import Link from 'next/link';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -10,6 +24,7 @@ import MuiTextField from '../mui/MuiTextField';
 //Add validation zod
 
 const Signup = ({ content, login, onSubmit, loading }) => {
+  const [showPassword, setShowPassword] = useState(false);
   const methods = useForm({
     defaultValues: {
       firstName: '',
@@ -21,6 +36,12 @@ const Signup = ({ content, login, onSubmit, loading }) => {
   });
 
   const { handleSubmit, register } = methods;
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   return (
     <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
@@ -66,11 +87,37 @@ const Signup = ({ content, login, onSubmit, loading }) => {
                 <MuiTextField label="Email" name="email" register={register} />
               </Box>
               <Box>
-                <MuiTextField
-                  label={login ? 'Password' : 'Set Password'}
-                  name="password"
-                  register={register}
-                />
+                <FormControl variant="outlined">
+                  <InputLabel
+                    htmlFor="outlined-adornment-password"
+                    sx={{ lineHeight: '1em' }}
+                  >
+                    Password
+                  </InputLabel>
+
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? 'text' : 'password'}
+                    sx={{
+                      '.MuiInputBase-input.MuiOutlinedInput-input': {
+                        padding: '12px 14px',
+                      },
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                  />
+                </FormControl>
               </Box>
               <Box>
                 <MuiButton
