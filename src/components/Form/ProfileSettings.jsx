@@ -1,39 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
   Box,
+  Stack,
   Card,
   FormControl,
-  IconButton,
-  InputAdornment,
   InputLabel,
   OutlinedInput,
-  Stack,
-  Typography,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
-import Link from 'next/link';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import MuiButton from '../mui/MuiButton';
 import MuiTextField from '../mui/MuiTextField';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-//Add validation zod
-
-const Signup = ({ content, login, onSubmit, loading }) => {
+const ProfileSettings = () => {
   const [showPassword, setShowPassword] = useState(false);
+
   const methods = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
       password: '',
     },
   });
+
+  const onSubmit = () => {};
 
   const { handleSubmit, register } = methods;
 
@@ -44,7 +42,7 @@ const Signup = ({ content, login, onSubmit, loading }) => {
   };
 
   return (
-    <Stack direction={'row'} justifyContent={'center'} marginTop={5}>
+    <Stack direction={'row'} justifyContent={'center'} my={4}>
       <Card
         sx={{
           width: '30%',
@@ -52,42 +50,37 @@ const Signup = ({ content, login, onSubmit, loading }) => {
           p: 2,
         }}
       >
-        <Typography variant="h5" textAlign={'center'} paddingBottom={3}>
-          {content.title}
-        </Typography>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth sx={{ gap: 3 }}>
-              {!login && (
-                <Stack gap={3}>
-                  <Box>
-                    <MuiTextField
-                      label="First name"
-                      name="firstName"
-                      register={register}
-                    />
-                  </Box>
-                  <Box>
-                    <MuiTextField
-                      label="Last name"
-                      name="lastName"
-                      register={register}
-                    />
-                  </Box>
-                  <Box>
-                    <MuiTextField
-                      label="Phone"
-                      name="phone"
-                      register={register}
-                    />
-                  </Box>
-                </Stack>
-              )}
+            <h3>Profile settings</h3>
+            <Stack gap={3} pt={2}>
               <Box>
-                <MuiTextField label="Email" name="email" register={register} />
+                <MuiTextField
+                  label="First name"
+                  name="firstName"
+                  register={register}
+                />
               </Box>
               <Box>
-                <FormControl variant="outlined" sx={{ width: '100%' }}>
+                <MuiTextField
+                  label="Last name"
+                  name="lastName"
+                  register={register}
+                />
+              </Box>
+              <Box>
+                <MuiTextField label="Phone" name="phone" register={register} />
+              </Box>
+              <Box>
+                <MuiTextField
+                  label="Email"
+                  name="email"
+                  register={register}
+                  disabled={true}
+                />
+              </Box>
+              <Box>
+                <FormControl variant="outlined">
                   <InputLabel
                     htmlFor="outlined-adornment-password"
                     sx={{ lineHeight: '1em' }}
@@ -125,30 +118,12 @@ const Signup = ({ content, login, onSubmit, loading }) => {
                 <MuiButton
                   type="submit"
                   variant={'contained'}
-                  isLoading={loading}
+                  // isLoading={loading}
                 >
-                  {content.buttonText}
+                  Update
                 </MuiButton>
               </Box>
-              {!login ? (
-                <p>
-                  Already have account?{' '}
-                  <Link href="/login" style={{ textDecoration: 'underline' }}>
-                    Sign in
-                  </Link>
-                </p>
-              ) : (
-                <p>
-                  {"Don't have an account?"}{' '}
-                  <Link
-                    href="/register"
-                    style={{ textDecoration: 'underline' }}
-                  >
-                    Sign up
-                  </Link>
-                </p>
-              )}
-            </FormControl>
+            </Stack>
           </form>
         </FormProvider>
       </Card>
@@ -156,4 +131,4 @@ const Signup = ({ content, login, onSubmit, loading }) => {
   );
 };
 
-export default Signup;
+export default ProfileSettings;
