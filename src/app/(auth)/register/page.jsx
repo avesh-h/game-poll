@@ -3,9 +3,12 @@
 // eslint-disable-next-line import/no-unresolved
 import React from 'react';
 
+// eslint-disable-next-line import/order
 import { useRouter } from 'next/navigation';
 
 // eslint-disable-next-line import/no-unresolved
+import { enqueueSnackbar } from 'notistack';
+
 import Signup from '@/components/Form/Signup';
 // eslint-disable-next-line import/no-unresolved
 import { API_STATUS } from '@/constants/apiStatuses';
@@ -22,6 +25,7 @@ const SignupPage = () => {
   const onSubmit = async (data) => {
     const res = await signup(data);
     if (res?.data?.status === API_STATUS.success) {
+      enqueueSnackbar(res?.data?.message, { variant: 'info', persist: true });
       router.push('/login');
     }
   };
