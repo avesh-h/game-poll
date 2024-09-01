@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -56,7 +56,9 @@ const Login = () => {
   };
   return (
     <div>
-      <Signup content={content} onSubmit={onSubmit} loading={loading} login />
+      <Suspense>
+        <Signup content={content} onSubmit={onSubmit} loading={loading} login />
+      </Suspense>
     </div>
   );
 };
