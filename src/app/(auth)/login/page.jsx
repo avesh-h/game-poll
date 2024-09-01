@@ -15,7 +15,7 @@ const content = {
   buttonText: 'Sign in',
 };
 
-const Login = () => {
+const LoginComponent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -56,10 +56,16 @@ const Login = () => {
   };
   return (
     <div>
-      <Suspense>
-        <Signup content={content} onSubmit={onSubmit} loading={loading} login />
-      </Suspense>
+      <Signup content={content} onSubmit={onSubmit} loading={loading} login />
     </div>
+  );
+};
+
+const Login = () => {
+  return (
+    <Suspense fallback={<h1>...Loading</h1>}>
+      <LoginComponent />
+    </Suspense>
   );
 };
 
