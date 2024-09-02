@@ -26,6 +26,7 @@ import { isMemberLoggedIn } from '@/lib/utils/editPlayerDetails';
 import { Images } from '@/constants/images';
 import Image from 'next/image';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useGetProfileDetailsQuery } from '@/lib/actions/profileActions';
 
 const pages = [
   {
@@ -47,6 +48,13 @@ function ResponsiveAppBar() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.auth);
   const isSmallScreen = useResponsive('down', 'md');
+
+  const { data, isLoading } = useGetProfileDetailsQuery(
+    session?.data?.user?.id,
+    {
+      skip: !session?.data,
+    }
+  );
 
   const settings = useMemo(() => {
     if (session?.data) {
@@ -243,7 +251,9 @@ function ResponsiveAppBar() {
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
                     alt={session?.data?.user?.name}
-                    src="/static/images/avatar/2.jpg"
+                    src={
+                      data?.profileData?.photo || '/static/images/avatar/2.jpg'
+                    }
                   />
                 </IconButton>
               </Tooltip>

@@ -21,6 +21,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import Loader from '../Loader/loader';
 import MuiButton from '../mui/MuiButton';
 import MuiTextField from '../mui/MuiTextField';
+import ProfilePicture from '../Profile/ProfilePicture';
 import { API_STATUS } from '@/constants/apiStatuses';
 import {
   useEditProfileMutation,
@@ -47,16 +48,16 @@ const ProfileSettings = () => {
       phone: data?.profileData?.phone || '',
       oldPassword: '',
       newPassword: '',
+      profileImage: data?.profileData?.phone || '',
     },
   });
 
   const onSubmit = async (payload) => {
     if (session?.data) {
-      const payloadObj = {
-        ...payload,
-        id: session?.data?.user?.id,
-      };
-      const res = await editProfile(payloadObj);
+      const formData = new FormData();
+      formData.append('profileImage', payload?.profileImage);
+      formData.append('payloadObj', JSON.stringify({ ...payload }));
+      const res = await editProfile({ formData, id: session?.data?.user?.id });
       if (res?.data?.status === API_STATUS.success) {
         enqueueSnackbar(res?.data?.message, { variant: 'success' });
         reset();
@@ -66,7 +67,7 @@ const ProfileSettings = () => {
     }
   };
 
-  const { handleSubmit, register, reset } = methods;
+  const { handleSubmit, register, reset, setValue } = methods;
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -83,6 +84,7 @@ const ProfileSettings = () => {
         email: data?.profileData?.email || '',
         oldPassword: '',
         newPassword: '',
+        profileImage: data?.profileData?.photo || '',
       });
     }
   }, [data?.profileData, reset]);
@@ -100,6 +102,11 @@ const ProfileSettings = () => {
           p: 2,
         }}
       >
+        <ProfilePicture
+          setValue={setValue}
+          profilePicture={data?.profileData?.photo}
+        />
+
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <h3>Profile settings</h3>

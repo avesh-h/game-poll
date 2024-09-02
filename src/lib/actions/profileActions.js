@@ -12,11 +12,13 @@ const profileActions = serverInterceptor.injectEndpoints({
       providesTags: ['getProfileDetails'],
     }),
     editProfile: builder.mutation({
-      query: (body) => ({
-        url: `/profile/${body?.id}`,
-        body,
-        method: 'PUT',
-      }),
+      query: ({ formData, id }) => {
+        return {
+          url: `/profile/${id}`,
+          body: formData,
+          method: 'PUT',
+        };
+      },
       invalidatesTags: ['getProfileDetails'],
     }),
   }),
