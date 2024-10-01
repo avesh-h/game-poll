@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 import { User } from './userSchema';
 import gameDao from '../daos/gameDao';
 import memberServices from '../services/memberServices';
-import AppConfig from '../utils/app-config';
+import { AppConfig } from '../utils/app-config';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

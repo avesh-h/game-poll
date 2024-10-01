@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import AppConfig from './utils/app-config';
+import { AppConfig, config } from './utils/app-config';
 import { errorHandler } from './utils/errorHandler';
 
-const environment = process.env.NODE_ENV || 'development';
+const environment = config.NEXT_PUBLIC_NODE_ENV || 'development';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${AppConfig[environment]?.apiUrl}/api`,
