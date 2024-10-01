@@ -7,8 +7,8 @@ const AppConfig = {
   production: {
     //Vercel is off for now
     // apiUrl: 'https://game-poll.vercel.app',
-    apiUrl: 'https://play-o-time.onrender.com',
-    delegateServerUrl: 'https://game-poll-server.onrender.com',
+    apiUrl: process.env.NEXTAUTH_URL,
+    delegateServerUrl: process.env.SERVER_URL,
   },
 };
 
