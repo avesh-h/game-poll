@@ -101,6 +101,31 @@ const CreateGameForm = ({ content, gameData }) => {
   //Update game api
   const [updateGame, { isLoading: isUpdating }] = useUpdateGameMutation();
 
+  //create member object
+  const createMemberObject = (member, index, team, startIndex) => {
+    const baseMember = {
+      ...(member?.id
+        ? {
+            ...(member?.email ? { email: member.email } : {}),
+            playerName: member.playerName,
+            position: member.position,
+            role: member.role,
+            id: member.id,
+            gameId: member.gameId,
+          }
+        : {}),
+      playerIndex: startIndex || index,
+    };
+
+    // Only add `team` if it's not null
+    if (team) {
+      baseMember.team = team;
+      baseMember.memberIndex = index;
+    }
+
+    return baseMember;
+  };
+
   const onSubmit = async (data) => {
     if (data?.gameDate && data?.startTime && data?.endTime) {
       // UTC FOrmat
@@ -138,85 +163,32 @@ const CreateGameForm = ({ content, gameData }) => {
     let startIndex = 0;
     let startFromZero = false;
     for (let i = 0; i < data?.noOfPlayers; i++) {
+      const isTeamB = i > Math.ceil(data?.noOfPlayers / 2) - 1;
+      const team = isTeamB ? 'teamB' : 'teamA';
+
       if (data?.gameType === 'team') {
-        //Gametype = "team"
-        if (i > Math.ceil(data?.noOfPlayers / 2) - 1) {
-          if (!startFromZero) {
-            startIndex = 0;
-            members[i] = {
-              ...(data?.members?.[i]?.id
-                ? {
-                    ...(data?.members?.[i]?.email
-                      ? { email: data?.members?.[i]?.email }
-                      : {}),
-                    playerName: data?.members?.[i]?.playerName,
-                    position: data?.members?.[i]?.position,
-                    role: data?.members?.[i]?.role,
-                    id: data?.members?.[i]?.id,
-                    gameId: data?.members?.[i]?.gameId,
-                  }
-                : {}),
-              playerIndex: startIndex,
-              team: data?.members?.[i]?.team || 'teamB',
-              memberIndex: i,
-            };
-            startFromZero = true;
-          } else {
-            startIndex++;
-            members[i] = {
-              ...(data?.members?.[i]?.id
-                ? {
-                    ...(data?.members?.[i]?.email
-                      ? { email: data?.members?.[i]?.email }
-                      : {}),
-                    playerName: data?.members?.[i]?.playerName,
-                    position: data?.members?.[i]?.position,
-                    role: data?.members?.[i]?.role,
-                    id: data?.members?.[i]?.id,
-                    gameId: data?.members?.[i]?.gameId,
-                  }
-                : {}),
-              playerIndex: startIndex,
-              team: data?.members?.[i]?.team || 'teamB',
-              memberIndex: i,
-            };
-          }
-        } else {
-          members[i] = {
-            ...(data?.members?.[i]?.id
-              ? {
-                  ...(data?.members?.[i]?.email
-                    ? { email: data?.members?.[i]?.email }
-                    : {}),
-                  playerName: data?.members?.[i]?.playerName,
-                  position: data?.members?.[i]?.position,
-                  role: data?.members?.[i]?.role,
-                  id: data?.members?.[i]?.id,
-                  gameId: data?.members?.[i]?.gameId,
-                }
-              : {}),
-            playerIndex: i,
-            team: data?.members?.[i]?.team || 'teamA',
-            memberIndex: i,
-          };
+        if (isTeamB && !startFromZero) {
+          startIndex = 0;
+          startFromZero = true;
+        } else if (isTeamB) {
+          startIndex++;
         }
+        members[i] = createMemberObject(
+          data?.members?.[i],
+          i,
+          team,
+          startIndex,
+          'team'
+        );
       } else {
-        //Gametype = "all"
-        members[i] = {
-          ...(data?.members?.[i]?.id
-            ? {
-                ...(data?.members?.[i]?.email
-                  ? { email: data?.members?.[i]?.email }
-                  : {}),
-                playerName: data?.members?.[i]?.playerName,
-                position: data?.members?.[i]?.position,
-                role: data?.members?.[i]?.role,
-                id: data?.members?.[i]?.id,
-                gameId: data?.members?.[i]?.gameId,
-              }
-            : {}),
-          playerIndex: i,
-        };
+        // Game type "all"
+        members[i] = createMemberObject(
+          data?.members?.[i],
+          i,
+          null,
+          null,
+          'all'
+        );
       }
     }
     if (members?.length) {
