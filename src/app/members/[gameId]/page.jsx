@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { useParams } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
 import MemberForm from '@/components/Form/MemberForm';
 import Loader from '@/components/Loader/loader';
@@ -12,19 +12,20 @@ const MemberPage = () => {
   const param = useParams();
   const { data, isLoading } = useGetSingleGameQuery(param?.['gameId']);
 
+  if (!data) {
+    // If no data is returned, trigger the 404 error page
+    return notFound();
+  }
+
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          {data ? (
-            <div>
-              <MemberForm />
-            </div>
-          ) : (
-            <>404 page not found!</>
-          )}
+          <div>
+            <MemberForm />
+          </div>
         </>
       )}
     </>
