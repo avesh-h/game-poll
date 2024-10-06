@@ -14,7 +14,7 @@ import {
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { FormProvider, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -89,6 +89,8 @@ const CreateGameForm = ({ content, gameData }) => {
 
   const { handleSubmit, register, reset, watch, setValue } = methods;
 
+  const editGame = useParams();
+
   //Contants
   const selectedDate = watch('gameDate');
   const selectedStartTime = watch('startTime');
@@ -129,46 +131,103 @@ const CreateGameForm = ({ content, gameData }) => {
     let res;
     if (gameData) {
       data.gameId = gameData?._id;
-      res = await updateGame(data);
-      if (res?.data?.status === API_STATUS.success) {
-        router.push(`/gamesList/${res?.data?.updatedGame?._id}`);
-        enqueueSnackbar('Successfully Updated!', { variant: 'success' });
-      }
-    } else {
-      //Create empty objects for the members
-      const members = [];
-      let startIndex = 0;
-      let startFromZero = false;
-      for (let i = 0; i < data?.noOfPlayers; i++) {
-        if (data?.gameType === 'team') {
-          //Gametype = "team"
-          if (i > Math.ceil(data?.noOfPlayers / 2) - 1) {
-            if (!startFromZero) {
-              startIndex = 0;
-              members[i] = {
-                playerIndex: startIndex,
-                team: 'teamB',
-                memberIndex: i,
-              };
-              startFromZero = true;
-            } else {
-              startIndex++;
-              members[i] = {
-                playerIndex: startIndex,
-                team: 'teamB',
-                memberIndex: i,
-              };
-            }
+      data.members = gameData?.members;
+    }
+    //Create empty objects for the members
+    const members = [];
+    let startIndex = 0;
+    let startFromZero = false;
+    for (let i = 0; i < data?.noOfPlayers; i++) {
+      if (data?.gameType === 'team') {
+        //Gametype = "team"
+        if (i > Math.ceil(data?.noOfPlayers / 2) - 1) {
+          if (!startFromZero) {
+            startIndex = 0;
+            members[i] = {
+              ...(data?.members?.[i]?.id
+                ? {
+                    ...(data?.members?.[i]?.email
+                      ? { email: data?.members?.[i]?.email }
+                      : {}),
+                    playerName: data?.members?.[i]?.playerName,
+                    position: data?.members?.[i]?.position,
+                    role: data?.members?.[i]?.role,
+                    id: data?.members?.[i]?.id,
+                    gameId: data?.members?.[i]?.gameId,
+                  }
+                : {}),
+              playerIndex: startIndex,
+              team: data?.members?.[i]?.team || 'teamB',
+              memberIndex: i,
+            };
+            startFromZero = true;
           } else {
-            members[i] = { playerIndex: i, team: 'teamA', memberIndex: i };
+            startIndex++;
+            members[i] = {
+              ...(data?.members?.[i]?.id
+                ? {
+                    ...(data?.members?.[i]?.email
+                      ? { email: data?.members?.[i]?.email }
+                      : {}),
+                    playerName: data?.members?.[i]?.playerName,
+                    position: data?.members?.[i]?.position,
+                    role: data?.members?.[i]?.role,
+                    id: data?.members?.[i]?.id,
+                    gameId: data?.members?.[i]?.gameId,
+                  }
+                : {}),
+              playerIndex: startIndex,
+              team: data?.members?.[i]?.team || 'teamB',
+              memberIndex: i,
+            };
           }
         } else {
-          //Gametype = "all"
-          members[i] = { playerIndex: i };
+          members[i] = {
+            ...(data?.members?.[i]?.id
+              ? {
+                  ...(data?.members?.[i]?.email
+                    ? { email: data?.members?.[i]?.email }
+                    : {}),
+                  playerName: data?.members?.[i]?.playerName,
+                  position: data?.members?.[i]?.position,
+                  role: data?.members?.[i]?.role,
+                  id: data?.members?.[i]?.id,
+                  gameId: data?.members?.[i]?.gameId,
+                }
+              : {}),
+            playerIndex: i,
+            team: data?.members?.[i]?.team || 'teamA',
+            memberIndex: i,
+          };
         }
+      } else {
+        //Gametype = "all"
+        members[i] = {
+          ...(data?.members?.[i]?.id
+            ? {
+                ...(data?.members?.[i]?.email
+                  ? { email: data?.members?.[i]?.email }
+                  : {}),
+                playerName: data?.members?.[i]?.playerName,
+                position: data?.members?.[i]?.position,
+                role: data?.members?.[i]?.role,
+                id: data?.members?.[i]?.id,
+                gameId: data?.members?.[i]?.gameId,
+              }
+            : {}),
+          playerIndex: i,
+        };
       }
-      if (members?.length) {
-        data.members = members;
+    }
+    if (members?.length) {
+      data.members = members;
+      if (editGame?.gameId) {
+        res = await updateGame(data);
+        if (res?.data?.status === API_STATUS.success) {
+          router.push(`/gamesList/${res?.data?.updatedGame?._id}`);
+          enqueueSnackbar('Successfully Updated!', { variant: 'success' });
+        }
+      } else {
         res = await createGame(data);
         if (res?.data?.message) {
           enqueueSnackbar(res?.data?.message, { variant: 'success' });
