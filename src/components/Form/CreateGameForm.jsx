@@ -114,7 +114,7 @@ const CreateGameForm = ({ content, gameData }) => {
             gameId: member.gameId,
           }
         : {}),
-      playerIndex: startIndex || index,
+      playerIndex: team === 'teamB' ? startIndex : index,
     };
 
     // Only add `team` if it's not null
