@@ -12,7 +12,7 @@ const MemberPage = () => {
   const param = useParams();
   const { data, isLoading } = useGetSingleGameQuery(param?.['gameId']);
 
-  if (!data) {
+  if (!data && !isLoading) {
     // If no data is returned, trigger the 404 error page
     return notFound();
   }
