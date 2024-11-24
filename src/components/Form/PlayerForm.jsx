@@ -24,7 +24,14 @@ import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
 import { socket } from '@/lib/utils/socket';
 
-const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
+const PlayerForm = ({
+  player,
+  ind,
+  existPlayer,
+  team,
+  isSmallScreen,
+  gameData,
+}) => {
   const session = useSession();
   const [isEdit, setIsEdit] = useState(false);
   const methods = useForm({
@@ -125,7 +132,7 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
         //Emit socket to playes list
         if (socket) {
           socket.emit('update_players_list', {
-            gameDetails: gameDetails?.selectedGame,
+            gameDetails: gameData || gameDetails?.selectedGame,
             player: playerData,
             action: 'add',
           });
@@ -158,7 +165,7 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
               //Emit socket to playes list
               if (socket) {
                 socket.emit('update_players_list', {
-                  gameDetails: gameDetails?.selectedGame,
+                  gameDetails: gameData || gameDetails?.selectedGame,
                   player: playerDetails,
                   action: 'remove',
                 });
