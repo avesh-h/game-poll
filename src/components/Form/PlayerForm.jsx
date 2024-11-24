@@ -22,6 +22,7 @@ import {
 } from '@/lib/actions/gameActions';
 import { useRemoveMemberMutation } from '@/lib/actions/memberActions';
 import { localMember } from '@/lib/utils/editPlayerDetails';
+import { socket } from '@/lib/utils/socket';
 
 const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
   const session = useSession();
@@ -121,6 +122,14 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
       }
       const res = await addPlayer(playerData);
       if (res?.data?.status === API_STATUS?.success) {
+        //Emit socket to playes list
+        if (socket) {
+          socket.emit('update_players_list', {
+            gameDetails: gameDetails?.selectedGame,
+            player: playerData,
+            action: 'add',
+          });
+        }
         setIsEdit(false);
       }
     }
@@ -146,6 +155,14 @@ const PlayerForm = ({ player, ind, existPlayer, team, isSmallScreen }) => {
               gameId: playerDetails?.gameId,
             });
             if (response?.data?.status === API_STATUS?.success) {
+              //Emit socket to playes list
+              if (socket) {
+                socket.emit('update_players_list', {
+                  gameDetails: gameDetails?.selectedGame,
+                  player: playerDetails,
+                  action: 'remove',
+                });
+              }
               enqueueSnackbar(response?.data?.message, { variant: 'success' });
             }
           }

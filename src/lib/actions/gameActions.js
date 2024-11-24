@@ -48,7 +48,13 @@ export const gameActions = apiInterceptor.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['getSingleGame'],
+      // Now update via socket
+      invalidatesTags: (res, err) => {
+        if (res) {
+          return ['getSingleGame'];
+        }
+        return [];
+      },
     }),
 
     deleteGame: builder.mutation({
