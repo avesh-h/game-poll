@@ -57,6 +57,7 @@ const ProfileSettings = () => {
       const formData = new FormData();
       formData.append('profileImage', payload?.profileImage);
       formData.append('payloadObj', JSON.stringify({ ...payload }));
+      console.log('fffffffffffff', formData);
       const res = await editProfile({ formData, id: session?.data?.user?.id });
       if (res?.data?.status === API_STATUS.success) {
         enqueueSnackbar(res?.data?.message, { variant: 'success' });

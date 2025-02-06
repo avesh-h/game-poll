@@ -12,7 +12,7 @@ import { verifyAuth } from './lib/jwtVerify';
 //   '/activate',
 // ];
 
-const unAuthRoutes = ['/login', '/register'];
+const unAuthRoutes = ['/login', '/register', '/'];
 
 export const middleware = async (req) => {
   const token =

@@ -8,6 +8,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
 
 import Signup from '@/components/Form/Signup';
+import LoadingScreen from '@/components/LoadingScreen';
 import { authActions } from '@/lib/redux/authSlice';
 
 const content = {
@@ -63,7 +64,7 @@ const LoginComponent = () => {
 
 const Login = () => {
   return (
-    <Suspense fallback={<h1>...Loading</h1>}>
+    <Suspense fallback={<LoadingScreen />}>
       <LoginComponent />
     </Suspense>
   );
