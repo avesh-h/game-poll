@@ -41,7 +41,9 @@ export const middleware = async (req) => {
         }
         return response;
       } else if (
-        unAuthRoutes.some((path) => req.nextUrl.pathname.startsWith(path))
+        unAuthRoutes.some(
+          (path) => path !== '/' && req.nextUrl.pathname.startsWith(path)
+        )
       ) {
         //If user already authenticated and try to access unauth routes
         return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/gamesList`);
