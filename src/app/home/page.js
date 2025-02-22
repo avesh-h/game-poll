@@ -8,7 +8,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import createGameFormImg from '../../public/assets/create-game.png';
+import createGameFormImg from '../../../public/assets/create-game.png';
+import teamImg from '../../../public/assets/team-list.png';
 
 const darkTheme = createTheme({
   palette: {
@@ -58,22 +59,9 @@ export default function LandingPage() {
                     bgcolor: 'grey.100',
                   },
                 }}
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/register')}
               >
                 Get Started
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                sx={{
-                  'color': 'white',
-                  'borderColor': 'white',
-                  '&:hover': {
-                    borderColor: 'grey.400',
-                  },
-                }}
-              >
-                Learn More
               </Button>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -85,7 +73,7 @@ export default function LandingPage() {
                 }}
               >
                 <Image
-                  src={createGameFormImg}
+                  src={teamImg}
                   alt="Game Schedule Dashboard"
                   width={600}
                   height={400}
@@ -172,7 +160,7 @@ export default function LandingPage() {
                   }}
                 >
                   <Image
-                    src=""
+                    src={createGameFormImg}
                     alt="Create Game Form"
                     width={600}
                     height={400}
@@ -237,6 +225,7 @@ export default function LandingPage() {
                   bgcolor: 'grey.100',
                 },
               }}
+              onClick={() => router.push('/login')}
             >
               Create Your First Game
             </Button>

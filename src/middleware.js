@@ -12,7 +12,16 @@ import { verifyAuth } from './lib/jwtVerify';
 //   '/activate',
 // ];
 
-const unAuthRoutes = ['/login', '/register', '/'];
+// const publicRoutes = [
+//   '/create-game',
+//   '/gamesList',
+//   '/games',
+//   '/games/*',
+//   '/profile',
+//   '/profile/*',
+// ];
+
+const unAuthRoutes = ['/login', '/register', '/home'];
 
 export const middleware = async (req) => {
   const token =
@@ -26,7 +35,7 @@ export const middleware = async (req) => {
     if (unAuthRoutes.some((path) => req.nextUrl.pathname.startsWith(path))) {
       return NextResponse.next();
     }
-    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/home`);
   } else {
     try {
       const decoded = await verifyAuth(token?.jwtToken || token?.value);

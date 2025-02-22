@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 
-import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Stack } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
@@ -17,16 +16,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Cookies from 'js-cookie';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { authActions } from '@/lib/redux/authSlice';
-import { isMemberLoggedIn } from '@/lib/utils/editPlayerDetails';
 import { Images } from '@/constants/images';
-import Image from 'next/image';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useGetProfileDetailsQuery } from '@/lib/actions/profileActions';
+import { authActions } from '@/lib/redux/authSlice';
+import { isMemberLoggedIn } from '@/lib/utils/editPlayerDetails';
 
 const pages = [
   {
@@ -128,33 +127,51 @@ function ResponsiveAppBar() {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Stack direction={'row'} onClick={() => router.push('/dashboard')}>
-            <Image
-              src={Images?.soccerPlayer?.filename}
-              width={45}
-              height={40}
-              alt={Images?.soccerPlayer?.alt}
-              style={{
-                filter: 'invert(90%)',
-                display: isSmallScreen ? 'none' : 'block',
-              }}
-            />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 500,
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              PLAY-O-TIME
-            </Typography>
+          <Stack
+            direction={'row'}
+            sx={{
+              width: isLoggedIn ? 'auto' : '100%',
+              justifyContent: isLoggedIn ? 'normal' : 'space-between',
+            }}
+          >
+            <Stack direction={'row'} alignItems={'center'}>
+              <Image
+                src={Images?.soccerPlayer?.filename}
+                width={45}
+                height={40}
+                alt={Images?.soccerPlayer?.alt}
+                style={{
+                  filter: 'invert(90%)',
+                  display: isSmallScreen ? 'none' : 'block',
+                }}
+              />
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href="#app-bar-with-responsive-menu"
+                sx={{
+                  mr: 2,
+                  display: { xs: 'none', md: 'flex' },
+                  fontFamily: 'monospace',
+                  fontWeight: 500,
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                PLAY-O-TIME
+              </Typography>
+            </Stack>
+            {!isLoggedIn ? (
+              <Button
+                sx={{
+                  color: '#fff',
+                }}
+                onClick={() => router.push('/login')}
+              >
+                Sign in
+              </Button>
+            ) : null}
           </Stack>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             {isLoggedIn ? (
