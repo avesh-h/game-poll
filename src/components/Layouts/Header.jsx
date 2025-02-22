@@ -121,7 +121,7 @@ function ResponsiveAppBar() {
     <AppBar
       position="static"
       sx={{
-        bgcolor: (theme) => theme.palette.navbar.main,
+        bgcolor: '#121212',
         borderBottom: '1px solid rgba(204, 204, 204,0.2)',
       }}
     >
